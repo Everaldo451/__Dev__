@@ -8,7 +8,10 @@ function App() {
   const [count, setCount] = useState(0)
   const [csrf, setCSRF] = useState(null)
 
-  axios.get("http://localhost:5000/csrf/get")
+  axios.get("http://localhost:5000/csrf/get",
+    {
+      withCredentials:true
+    })
   .then(response => setCSRF(response.data.csrf))
   .catch(error => console.log(error))
 
