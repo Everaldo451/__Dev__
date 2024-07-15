@@ -1,12 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, createContext } from 'react'
+import Home from './Routes/Home'
+import {BrowserRouter, Route, Routes} from "react-router-dom"
 import axios from "axios"
+import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+export const CSRFContext = createContext(null)
+
+export const App = () => {
   const [csrf, setCSRF] = useState(null)
+
 
   axios.get("http://localhost:5000/csrf/get",
     {
@@ -16,14 +18,13 @@ function App() {
   .catch(error => console.log(error))
 
   return (
-    <>
-      <form action='http://localhost:5000/csrf/post' method='POST'>
-        <input type='text' name='text'/>
-        <input type="hidden" name='csrf_token' value={csrf?csrf:"none"}/>
-        <input type='submit'/>
-      </form>
-    </>
+    <BrowserRouter>
+      <CSRFContext.Provider value={csrf}>
+        <Routes>
+          <Route path='/' element={<Home/>}/>
+        </Routes>
+      </CSRFContext.Provider>
+    </BrowserRouter>
   )
 }
 
-export default App

@@ -22,3 +22,13 @@ def get():
         
         print(request.args)
         return redirect("http://localhost:5173")
+
+
+@csrf_routes.route("/post",methods=["POST"])
+def post():
+
+    print(request.args)
+    print(request.form)
+    print(session.get("csrf_token"))
+
+    return redirect("http://localhost:5173")
