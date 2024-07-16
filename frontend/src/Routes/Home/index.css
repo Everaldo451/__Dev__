@@ -1,0 +1,42 @@
+main.Home > section.introduct {
+    display: grid;
+    grid-template-columns: 4fr 3.5fr;
+    height: 100vh;
+}
+
+main.Home {
+    padding: 0 30px;
+}
+
+main.Home > section.introduct div.container {
+    display: grid;
+    place-items: center;
+}
+
+main.Home > section.introduct div.hello{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: white;
+}
+
+main.Home > section.introduct div.hello p{margin: 0;text-align: center;}
+
+/*FORMS*/
+
+main.Home > section.introduct div.hello form{
+    margin-top: 20px;
+    width: 100%;
+    display: grid;
+    place-items: center;
+}
+
+main.Home > section.introduct div.hello form input[type="text"]{
+    padding: 10px 40px 10px 15px;
+    border-radius: 20px;
+    border: 2px solid black;
+    outline: none;
+    width: 40%;
+}

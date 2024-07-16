@@ -1,0 +1,20 @@
+#root > header nav ul {
+    list-style: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 10px 30px;
+}
+
+#root > header {
+    position: fixed;
+    width: 100%;
+}
+
+#root > header nav > ul > li > a{
+    display: block;
+    color: white;
+}
+
+#root > header nav > ul > li:last-child{margin-left: auto;}
