@@ -28,7 +28,7 @@ main.Home > section.introduct div.hello p{margin: 0;text-align: center;}
 
 main.Home > section.introduct div.hello form{
     margin-top: 20px;
-    width: 100%;
+    width: 40%;
     display: grid;
     place-items: center;
 }
@@ -38,5 +38,5 @@ main.Home > section.introduct div.hello form input[type="text"]{
     border-radius: 20px;
     border: 2px solid black;
     outline: none;
-    width: 40%;
+    width: 100%;
 }

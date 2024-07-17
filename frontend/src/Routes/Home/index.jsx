@@ -7,6 +7,8 @@ import Computador from "../../assets/computador.webp"
 
 function Home(props) {
 
+    const input = document.querySelector("input")
+
     const csrf  = useContext(CSRFContext)
 
     const [text, setText] = useState("")
@@ -19,11 +21,10 @@ function Home(props) {
     useEffect(()=>{
         const interval = setInterval(()=>{
             if (count < theText.length) {
-                console.log(count)
                 setText(text+theText[count])
                 setCount(count+1)
             } else {clearInterval(interval)}
-        },100)
+        },50)
 
         return () => clearInterval(interval)
 
@@ -39,6 +40,7 @@ function Home(props) {
                     <form>
                         <input type="text" name="course" placeholder="Digite um curso"/>
                     </form>
+
                 </div>
                 <div className="container">
                     <img src={Computador} width="100%"></img>
