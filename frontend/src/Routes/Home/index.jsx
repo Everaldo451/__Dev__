@@ -37,7 +37,7 @@ function Home(props) {
             <section className="introduct">
                 <div className="hello">
                     <p>{text}</p>
-                    <form>
+                    <form action="http://localhost:5000/csrf/post" method="POST">
                         <input type="text" name="course" placeholder="Digite um curso"/>
                     </form>
 

@@ -16,9 +16,10 @@ def create_app():
         args = request.args or request.form
         if args:
             for key, value in args.items():
-                if re.search("<.*>.*</.*>",value) or re.search("<.*/>",value) or re.search("<.*>",value) or re.search("</.*>"):
+                print(key,value)
+                if re.search("<.*>.*</.*>",value) or re.search("<.*/>",value) or re.search("<.*>",value) or re.search("</.*>",value):
                     flash("Error")
-                    return redirect(request.full_path)
+                    return redirect(request.origin)
 
             
 
