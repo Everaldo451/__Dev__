@@ -3,8 +3,10 @@
     background-color: transparent;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin: 0;
     padding: 10px 30px;
+    backdrop-filter: blur(10px)
 }
 
 #root > header {
@@ -12,9 +14,12 @@
     width: 100%;
 }
 
-#root > header nav > ul > li > a{
+#root > header h1 {
+    margin: 0;
+}
+
+#root > header nav > ul > li > *{
     display: block;
     color: white;
 }
 
-#root > header nav > ul > li:last-child{margin-left: auto;}

@@ -1,10 +1,11 @@
 main.Home > section.introduct {
+    background-color: inherit;
     display: grid;
     grid-template-columns: 4fr 3.5fr;
     height: 100vh;
 }
 
-main.Home {
+main.Home > section{
     padding: 0 30px;
 }
 
@@ -39,4 +40,59 @@ main.Home > section.introduct div.hello form input[type="text"]{
     border: 2px solid black;
     outline: none;
     width: 100%;
+}
+
+main.Home > section.aboutus {
+    padding: 20px 30px;
+    background-color: rgb(240, 242, 255);
+}
+
+
+main.Home > section.aboutus > section > div {
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-template-rows: auto;
+    grid-auto-flow: column;
+    gap: 20px;
+}
+
+
+main.Home > section.aboutus > section > div div, main.Home > section.aboutus > section.text {
+    box-shadow: 0px 5px 10px rgb(150, 165, 177);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.5s;
+}
+
+main.Home > section.aboutus > section > div div:hover {
+    box-shadow: 0px 8px 10px rgb(150, 165, 177);
+    cursor: pointer;
+    transform: translate(0,-3px);
+}
+
+main.Home > section.aboutus h2 {
+    margin: 0;
+    margin-bottom: 100px;
+    font-size: 30px;
+    text-align: center;
+}
+
+main.Home > section.aboutus img{width: 40%;margin-top: 20px;}
+
+main.Home > section.aboutus h3 {
+    margin: 0;
+    font-size: 22px;
+    text-align: center;
+}
+
+main.Home > section.aboutus > section.text {
+    margin-top: 50px;
+}
+
+main.Home > section.aboutus > section.text p {
+    margin: 10px 0;
+    text-indent: 40px;
 }
