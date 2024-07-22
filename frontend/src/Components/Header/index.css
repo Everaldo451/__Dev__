@@ -20,6 +20,5 @@
 
 #root > header nav > ul > li > *{
     display: block;
-    color: white;
 }
 
