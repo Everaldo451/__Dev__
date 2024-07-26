@@ -15,19 +15,25 @@ function Login(){
             <main className={styles.Login}>
                 <section>
                     <ul>
-                        <li>Login</li>
-                        <li>Registro</li>
+                        <li id="login" onClick={(e) => setAction(e.target.id)}>Login</li>
+                        <li id="register" onClick={(e) => {setAction(e.target.id)}}>Registro</li>
                     </ul>
 
                     
                     <form action={action?`http://localhost:5000/auth/${action}`:""} method="POST">
                         <input type="hidden" name="csrf_token" value={csrf?csrf:""}/>
                         {action == "register"?
-                        <input type="text" name="username"/>
-                        : null
+                        <>
+                        <input type="text" name="username" placeholder="Digite um nome de usuário" required/>
+                        <input type="email" name="email" placeholder="Digite um email" required/>
+                        <input type="password" name="password" placeholder="Digite uma senha" required/>
+                        </>
+                        : 
+                        <>
+                        <input type="email" name="email" placeholder="Digite seu email" required/>
+                        <input type="password" name="password" placeholder="Digite sua senha" required/>
+                        </>
                         }
-                        <input type="email" name="email"/>
-                        <input type="password" name="password"/>
                         <input type="submit"/>
                     </form>
                     

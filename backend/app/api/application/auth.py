@@ -1,5 +1,4 @@
-from flask import Blueprint, current_app, redirect, request
-from jwt import jwk_from_dict,jwt,JWT
+from flask import Blueprint, redirect, request
 from .jwt import AccessToken
 
 auth = Blueprint("auth",__name__,url_prefix="/auth")
@@ -16,9 +15,18 @@ def accessjwt():
 
     return acess.encode(message)
 
+
+
 @auth.route("/login",methods=["POST"])
 def login():
 
-    print("oi")
+
+    return redirect(request.origin)
+
+
+
+@auth.route("/register",methods=["POST"])
+def register():
+
     return redirect(request.origin)
 
