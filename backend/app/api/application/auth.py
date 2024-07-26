@@ -12,7 +12,11 @@ def getuser():
 
         acess = AccessToken()
 
-        return {"user":acess.decode(request.cookies.get("access"))}
+        decoded = acess.decode(request.cookies.get("access"))
+
+        user = User.query.filter_by(id=decoded.get("id")).first()
+
+        return {"user":{"username":user.username,"email":user.email}}
     
     else: return redirect(request.origin)
 
