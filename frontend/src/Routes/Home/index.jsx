@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react"
-import { CSRFContext } from "../../main"
+import { CSRFContext, User } from "../../main"
 import Header from "../../Components/Header"
 import Footer from "../../Components/Footer"
 import Box from "../../Components/HomeBox"
@@ -12,6 +12,9 @@ import Quality from "../../assets/verificar.png"
 function Home() {
 
     const csrf  = useContext(CSRFContext)
+    const user = useContext(User)
+
+    console.log(user)
 
     const [text, setText] = useState("")
 

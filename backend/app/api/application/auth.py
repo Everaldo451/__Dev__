@@ -1,49 +1,68 @@
-from flask import Blueprint, redirect, request, current_app, make_response
-from werkzeug.security import generate_password_hash
+from flask import Blueprint, redirect, request, current_app, make_response, flash
+from werkzeug.security import generate_password_hash, check_password_hash
 from .jwt import AccessToken
 from ...models import User, db
 
 auth = Blueprint("auth",__name__,url_prefix="/auth")
 
-@auth.route("/accessjwt",methods=["GET"])
-def accessjwt():
+@auth.route("/getuser",methods=["GET"])
+def getuser():
 
-    message = {
-        "user":"user",
-        "userid":"userid"
-    }
+    if request.cookies.get("access"):
 
-    acess = AccessToken()
+        acess = AccessToken()
 
-    return acess.encode(message)
+        return {"user":acess.decode(request.cookies.get("access"))}
+    
+    else: return redirect(request.origin)
 
 
 
 @auth.route("/login",methods=["POST"])
 def login():
 
+    user = User.query.filter_by(email=request.form.get("email")).first()
 
-    return redirect(request.origin)
+    print(user.email)
+
+    if user and check_password_hash(user.password, request.form.get("password")):
+
+        access = AccessToken()
+
+        response = make_response(redirect(request.origin))
+        response.set_cookie("access",access.encode({"id":user.id}),max_age=access.lifetime())
+
+        return response
+    
+    else: return redirect(request.origin)
 
 
 
 @auth.route("/register",methods=["POST"])
 def register():
 
-    #UsModel = User(email=request.form.get("email"),password=generate_password_hash(request.form.get("password"),username=request.form.get("username"),admin=False))
+    try:
 
-    #current_app.db.session.add(UsModel)
-    #current_app.db.session.commit()
+        user = User(email=request.form.get("email"),password=generate_password_hash(request.form.get("password")),username=request.form.get("username"),admin=False)
 
-    message = {
-        "id": 1
-    }
+        with current_app.app_context():
+            current_app.db.session.add(user)
+            current_app.db.session.commit()
 
-    access = AccessToken()
+        user = User.query.filter_by(email=request.form.get("email")).first()
 
-    response = make_response(redirect(request.host))
-    response.set_cookie("access",access.encode(message),max_age=access.lifetime())
+        access = AccessToken()
+
+        response = make_response(redirect(request.origin))
+        response.set_cookie("access",access.encode({"id":user.id}),max_age=access.lifetime())
 
 
-    return response
+        return response
+    
+    except: 
+
+        flash("Email já existente")
+        print(request.headers)
+        print(request.origin)
+        return redirect(request.origin)
 

@@ -5,6 +5,11 @@ from datetime import datetime, timedelta
 
 class Jwt:
 
+    def __init__(self):
+        self._jwt_headers = ["iss","iat","expire","token_type"]
+
+    #ENCODE
+
     def encode(self,payload):
 
         time = datetime.utcnow()
@@ -32,6 +37,9 @@ class Jwt:
         })
 
         return jwt.encode(payload=message, key=signing_key,alg='HS256')
+    
+
+    #DECODE
 
     def decode(self,jw):
 
@@ -50,7 +58,13 @@ class Jwt:
 
             if int(token.get("expire")) > datetime.utcnow().timestamp():
 
-                return jwt.decode(message=jw,key=signing_key)
+                message = jwt.decode(message=jw,key=signing_key)
+
+                for v in self._jwt_headers:
+
+                    message.pop(v)
+
+                return message
             
             else: return IndexError
         
@@ -63,6 +77,8 @@ class Jwt:
 class AccessToken(Jwt):
 
     def __init__(self):
+        super().__init__()
+        print(self._jwt_headers)
         self._token_type = "access"
         self._token_expire = timedelta(minutes=10)
 

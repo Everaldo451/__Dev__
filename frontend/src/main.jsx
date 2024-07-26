@@ -7,11 +7,13 @@ import './index.css'
 
 export const HeaderColor = createContext(null)
 export const CSRFContext = createContext(null)
+export const User = createContext(null)
 
 function Main() {
 
   const [hcolor, setHColor] = useState("white")
   const [csrf, setCSRF] = useState(null)
+  const [user,setUser] = useState(null)
 
   useEffect(()=>{
     axios.get("http://localhost:5000/csrf/get",
@@ -19,6 +21,14 @@ function Main() {
         withCredentials:true
       })
     .then(response => setCSRF(response.data.csrf))
+    .catch(error => console.log(error))
+
+
+    axios.get("http://localhost:5000/auth/getuser",
+      {
+        withCredentials:true,
+      })
+    .then(response => setUser(response.data.user))
     .catch(error => console.log(error))
   },[])
 
@@ -52,11 +62,13 @@ function Main() {
   })
 
   return (
+    <User.Provider value={user}>
     <HeaderColor.Provider value={hcolor}>
     <CSRFContext.Provider value={csrf}>
       <App/>
     </CSRFContext.Provider>
     </HeaderColor.Provider>
+    </User.Provider>
   )
 
 }
