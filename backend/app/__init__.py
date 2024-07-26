@@ -23,11 +23,13 @@ def create_app():
                     flash("Error")
                     return redirect(request.origin)
 
-            
-
+    
     cors.init_app(app)
     csrf.init_app(app)
     db.init_app(app)
 
+    #db.create_all()
+
+    app.db = db
 
     return app

@@ -56,6 +56,9 @@ class Jwt:
         
         else: return TypeError
 
+    def lifetime(self):
+        return self._token_expire
+
 
 class AccessToken(Jwt):
 
