@@ -78,7 +78,6 @@ class AccessToken(Jwt):
 
     def __init__(self):
         super().__init__()
-        print(self._jwt_headers)
         self._token_type = "access"
         self._token_expire = timedelta(minutes=10)
 
