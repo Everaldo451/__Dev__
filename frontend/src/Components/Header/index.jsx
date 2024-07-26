@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import { HeaderColor } from "../../main"
-import "./index.css"
+import styles from "./index.module.css"
+import {Link} from "react-router-dom"
 
 
 function Header() {
@@ -8,12 +9,12 @@ function Header() {
     const hcolor = useContext(HeaderColor)
 
     return(
-    <header>
+    <header className={styles.Main}>
         <nav>
             <ul style={{color:hcolor || "white"}}>
-                <li><a>Home</a></li>
+                <li><Link to="/" style={{color:hcolor || "white", textDecoration:"none"}}>Home</Link></li>
                 <li><h1>__DEV__</h1></li>
-                <li><a>Login</a></li>
+                <li><Link to="/login" style={{color:hcolor || "white", textDecoration:"none"}}>Login</Link></li>
             </ul>
         </nav>
     </header>

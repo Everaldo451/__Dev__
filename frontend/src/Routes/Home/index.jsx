@@ -3,7 +3,7 @@ import { CSRFContext } from "../../main"
 import Header from "../../Components/Header"
 import Footer from "../../Components/Footer"
 import Box from "../../Components/HomeBox"
-import "./index.css"
+import styles from "./index.module.css"
 import Computador from "../../assets/computador.webp"
 import History from "../../assets/historia.png"
 import Objective from "../../assets/alvo.png"
@@ -94,30 +94,30 @@ function Home(props) {
     return (
     <>
         <Header/>
-        <main className="Home">
-            <section className="introduct">
-                <div className="hello">
+        <main className={styles.Home}>
+            <section className={styles.introduct}>
+                <div className={styles.hello}>
                     <p>{text}</p>
                     <form action="http://localhost:5000/csrf/post" method="POST">
                         <input type="text" name="course" placeholder="Digite um curso"/>
                     </form>
 
                 </div>
-                <div className="container">
+                <div className={styles.container}>
                     <img src={Computador} width="100%"></img>
                 </div>
             </section>
-            <section className="aboutus">
+            <section className={styles.aboutus}>
                 <h2>Sobre nós</h2>
-                <section className="topics">
-                    <div className="grid">
+                <section className={styles.topics}>
+                    <div className={styles.grid}>
                         <Box text='Historia' image={History} setattr={setBox} box="history"/>
                         <Box text="Qualidade" image={Quality} setattr={setBox} box="quality"/>
                         <Box text="Objetivo" image={Objective} setattr={setBox} box="objective"/>
                     </div>
                 </section>
                 {box?
-                <section className="text">
+                <section className={styles.text}>
                         {boxies[box]?boxies[box]["data"]:null}
                 </section>
                 : null}

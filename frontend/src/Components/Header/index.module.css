@@ -1,4 +1,4 @@
-#root > header nav ul {
+header.Main nav ul {
     list-style: none;
     background-color: transparent;
     display: flex;
@@ -9,16 +9,18 @@
     backdrop-filter: blur(10px)
 }
 
-#root > header {
+
+
+header.Main {
     position: fixed;
     width: 100%;
 }
 
-#root > header h1 {
+header.Main h1 {
     margin: 0;
 }
 
-#root > header nav > ul > li > *{
+header.Main nav > ul > li > *{
     display: block;
 }
 
