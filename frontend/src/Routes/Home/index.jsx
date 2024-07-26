@@ -98,7 +98,7 @@ function Home(props) {
             <section className={styles.introduct}>
                 <div className={styles.hello}>
                     <p>{text}</p>
-                    <form action="http://localhost:5000/csrf/post" method="POST">
+                    <form action="http://localhost:5000/auth/accessjwt" method="GET">
                         <input type="text" name="course" placeholder="Digite um curso"/>
                     </form>
 

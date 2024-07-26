@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, flash
 from .models import db
 from .api.security.csrf import csrf, csrf_routes
 from .api.security.cors import cors
+from .api.application.auth import auth
 import re
 
 def create_app():
@@ -10,6 +11,7 @@ def create_app():
     app.config.from_pyfile("settings.py")
 
     app.register_blueprint(csrf_routes)
+    app.register_blueprint(auth)
 
     @app.before_request
     def before():
