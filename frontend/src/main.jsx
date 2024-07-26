@@ -1,10 +1,68 @@
 import React from 'react'
+import { useState, createContext, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
+import axios from 'axios'
 import {App} from './App.jsx'
 import './index.css'
 
+export const HeaderColor = createContext(null)
+export const CSRFContext = createContext(null)
+
+function Main() {
+
+  const [hcolor, setHColor] = useState("white")
+  const [csrf, setCSRF] = useState(null)
+
+  useEffect(()=>{
+    axios.get("http://localhost:5000/csrf/get",
+      {
+        withCredentials:true
+      })
+    .then(response => setCSRF(response.data.csrf))
+    .catch(error => console.log(error))
+  },[])
+
+  window.addEventListener("scroll",()=> {
+
+    const header = document.querySelector("header")
+    const main = document.querySelector("main")
+    const mainsecs = main.querySelectorAll("section")
+
+    for (const section of mainsecs) {
+      if (section.getBoundingClientRect()['top'] <= header.clientHeight && section.getBoundingClientRect()['bottom'] >= header.clientHeight) {
+        let color = window.getComputedStyle(section,null).getPropertyValue("background-color")
+        if (color.search("rgba")!=-1) {
+          color = color.replace("rgba(","")
+        } else {
+          color = color.replace("rgb(","")
+        }
+        color = color.replace(")","")
+
+        const rgb = color.split(",")
+
+        if ((rgb[0]*299 + rgb[1]*587 + rgb[2]*114)/1000 <= 127.5) {
+          setHColor("white")
+        } else {
+          setHColor("black")
+        }
+
+        break
+      } 
+    }
+  })
+
+  return (
+    <HeaderColor.Provider value={hcolor}>
+    <CSRFContext.Provider value={csrf}>
+      <App/>
+    </CSRFContext.Provider>
+    </HeaderColor.Provider>
+  )
+
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <Main/>
   </React.StrictMode>,
 )

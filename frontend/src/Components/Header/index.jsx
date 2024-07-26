@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { HeaderColor } from "../../App"
+import { HeaderColor } from "../../main"
 import "./index.css"
 
 

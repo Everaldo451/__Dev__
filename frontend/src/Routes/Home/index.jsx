@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react"
-import {CSRFContext} from "../../App"
+import { CSRFContext } from "../../main"
 import Header from "../../Components/Header"
 import Footer from "../../Components/Footer"
 import Box from "../../Components/HomeBox"
