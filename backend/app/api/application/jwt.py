@@ -44,7 +44,19 @@ class Jwt:
             'use':'sig'
         })
 
-        return jwt.decode(message=jw,key=signing_key)
+        token = jwt.decode(message=jw,key=signing_key)
+
+        if self._token_type and token.get("token_type") == self._token_type:
+
+            time = token.get("expire")
+
+            if int(token.get("expire")) > datetime.utcnow().timestamp():
+
+                return jwt.decode(message=jw,key=signing_key)
+            
+            else: return IndexError
+        
+        else: return TypeError
 
 
 class AccessToken(Jwt):

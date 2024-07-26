@@ -9,7 +9,7 @@ import History from "../../assets/historia.png"
 import Objective from "../../assets/alvo.png"
 import Quality from "../../assets/verificar.png"
 
-function Home(props) {
+function Home() {
 
     const csrf  = useContext(CSRFContext)
 
@@ -100,6 +100,7 @@ function Home(props) {
                     <p>{text}</p>
                     <form action="http://localhost:5000/auth/accessjwt" method="GET">
                         <input type="text" name="course" placeholder="Digite um curso"/>
+                        <input type="hidden" name="csrf_token" value={csrf?csrf:""}></input>
                     </form>
 
                 </div>

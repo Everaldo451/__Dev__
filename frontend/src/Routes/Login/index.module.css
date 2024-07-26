@@ -1,0 +1,29 @@
+main.Login {margin: auto;display: flex;flex-direction: column;}
+
+main.Login ul{
+    padding: 10px 0;
+    font-size: 20px;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+    list-style: none;
+    color: white;
+    border-bottom: 2px solid white;
+    margin-bottom: 10px;
+}
+
+main.Login form {
+    display: flex;
+    flex-direction: column;
+}
+
+main.Login form input{
+    padding: 10px;
+    min-width: 400px;
+    margin-top: 10px;
+}
+
+main.Login form > input[type="submit"] {
+    align-self: center;
+    min-width: 0;
+}
