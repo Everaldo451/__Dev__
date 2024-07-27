@@ -1,12 +1,25 @@
-header.Main nav ul {
+header.Main nav ul.header {
     list-style: none;
     background-color: transparent;
-    display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 0;
     padding: 10px 30px;
     backdrop-filter: blur(10px)
+}
+
+header.Main nav ul{
+    display: flex;
+    margin: 0;
+}
+
+header.Main nav ul.options{
+    flex-direction: column;
+    padding: 0;
+}
+
+header.Main nav ul.options li a {
+    padding: 10px;
 }
 
 
