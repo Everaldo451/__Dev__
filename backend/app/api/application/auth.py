@@ -73,4 +73,16 @@ def register():
 
         flash("Email já existente")
         return redirect(request.origin)
+    
+    
+    
+@auth.route("/logout",methods=["POST"])
+@jwt_authorization_verify
+def logout():
+
+    response = make_response(redirect(request.origin))
+    response.set_cookie("access",None)
+    response.set_cookie("refresh",None)
+
+    return response
 

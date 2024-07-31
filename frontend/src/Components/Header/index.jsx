@@ -19,7 +19,8 @@ function Header() {
                 <div className={styles.foto}>
                     <div className={styles.img} style={user.foto?{backgroundImage:user.foto}:{backgroundColor:hcolor}}></div>
                     <ul className={styles.options} style={hcolor=="white"?{backgroundColor:"black"}:{backgroundColor:"grey"}}>
-                        <li><Link to="/configs">Config</Link></li>
+                        <li><Link to="/configs">Configurações</Link></li>
+                        <li><Link to="/area">Área do Estudante</Link></li>
                         <li><a href="http://localhost:5000/auth/logout">Logout</a></li>
                     </ul>
                 </div>

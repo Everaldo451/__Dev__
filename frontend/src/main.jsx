@@ -19,7 +19,7 @@ function Main() {
 
   axios.interceptors.request.use(
     config => {
-      config.headers['Authorization'] = `Bearer ${GetCookie("access",GetCookies())}`;
+      config.headers['Authorization'] = GetCookie("access",GetCookies()) ? `Bearer ${GetCookie("access",GetCookies())}`:null;
       return config
     },
     error => {

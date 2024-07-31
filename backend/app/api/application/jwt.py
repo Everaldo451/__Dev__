@@ -38,6 +38,8 @@ def jwt_authorization_verify(function):
             
             return response
         
+    verify.__name__ = function.__name__
+        
     return verify
 
 

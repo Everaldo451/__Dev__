@@ -54,6 +54,8 @@ header.Main nav ul.options li a {
     padding: 10px 20px;
     color: white;
     text-decoration: none;
+    text-align: center;
+    text-wrap: nowrap;
 }
 
 
