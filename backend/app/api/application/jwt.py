@@ -4,8 +4,16 @@ import base64
 from datetime import datetime, timedelta
 from .exceptions import JWTExceptions
 
+app = None
+
+class JWTService():
+
+    def __init__(self,app):
+
+        self._app = app
+
 def jwt_authorization_verify(function):
-    def verify():
+    def verify(*args, **kwargs):
         access = AccessToken()
         refresh = RefreshToken()
 
@@ -13,18 +21,17 @@ def jwt_authorization_verify(function):
                 
             jwt = access.decode(request.authorization.token)
 
-            return function()
+            return function(*args, **kwargs)
         
         except:
             pass
-        
 
+        
         response = make_response("Unauthorized")
         response.status_code = 401
 
         try:
 
-            refresh = RefreshToken()
 
             jwt = refresh.decode(request.cookies.get("refresh"))
 
@@ -33,6 +40,8 @@ def jwt_authorization_verify(function):
             return response
             
         except: return response
+        
+    return verify()
 
 
 class Jwt:

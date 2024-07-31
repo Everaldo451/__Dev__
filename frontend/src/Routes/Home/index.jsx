@@ -109,7 +109,7 @@ function Home() {
             <section className={styles.introduct}>
                 <div className={styles.hello}>
                     <p>{text}</p>
-                    <form action="http://localhost:5000/auth/accessjwt" method="GET">
+                    <form action="http://localhost:5000/csrf/post" method="GET">
                         <input type="text" name="course" placeholder="Digite um curso"/>
                         <input type="hidden" name="csrf_token" value={csrf?csrf:""}></input>
                     </form>
