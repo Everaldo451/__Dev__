@@ -4,14 +4,6 @@ import base64
 from datetime import datetime, timedelta
 from .exceptions import JWTExceptions
 
-app = None
-
-class JWTService():
-
-    def __init__(self,app):
-
-        self._app = app
-
 def jwt_authorization_verify(function):
     def verify(*args, **kwargs):
         access = AccessToken()
@@ -41,7 +33,7 @@ def jwt_authorization_verify(function):
             
         except: return response
         
-    return verify()
+    return verify
 
 
 class Jwt:
