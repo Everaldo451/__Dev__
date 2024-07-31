@@ -14,20 +14,28 @@ function Home() {
     const csrf  = useContext(CSRFContext)
     const user = useContext(User)
 
-    console.log(user)
-
     const [text, setText] = useState("")
 
     const [count, setCount] = useState(0)
 
-    const theText = "Ola, seja bem vindo. Se inscreva para progredir na sua jornada como programador."
+    const theText = user?
+    `Ola, ${user.username}, seja bem vindo. Se inscreva para progredir na sua jornada como programador.`
+    : "Ola, seja bem vindo. Se inscreva para progredir na sua jornada como programador."
+
+    const [usertext, setUserText] = useState("Ola, seja bem vindo. Se inscreva para progredir na sua jornada como programador.")
 
 
     useEffect(()=>{
         const interval = setInterval(()=>{
             if (count < theText.length) {
-                setText(text+theText[count])
-                setCount(count+1)
+                if (theText != usertext) {
+                    setUserText(theText)
+                    setText("")
+                    setCount(0)
+                } else {
+                    setText(text+theText[count])
+                    setCount(count+1)
+                }
             } else {clearInterval(interval)}
         },50)
 

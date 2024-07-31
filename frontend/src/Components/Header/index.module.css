@@ -8,18 +8,52 @@ header.Main nav ul.header {
     backdrop-filter: blur(10px)
 }
 
+header.Main nav div.foto {
+    position: relative;
+    align-self: stretch;
+}
+
+header.Main nav div.foto div.img{
+    position: relative;
+    height: 100%;
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    transform: translate(-100%,0);
+}
+
+header.Main nav div.foto div.img::after{
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 10px;
+    top: 100%;
+    left: 0;
+}
+
+header.Main nav div.foto:hover ul.options {
+    display: block;
+}
+
 header.Main nav ul{
     display: flex;
     margin: 0;
 }
 
 header.Main nav ul.options{
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    list-style: none;
     flex-direction: column;
     padding: 0;
 }
 
 header.Main nav ul.options li a {
-    padding: 10px;
+    display: block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
 }
 
 

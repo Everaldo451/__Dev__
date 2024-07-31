@@ -20,15 +20,14 @@ function Main() {
       {
         withCredentials:true
       })
-    .then(response => setCSRF(response.data.csrf))
+    .then(response => {setCSRF(response.data.csrf)})
     .catch(error => console.log(error))
-
 
     axios.get("http://localhost:5000/auth/getuser",
       {
-        withCredentials:true,
+        withCredentials:true
       })
-    .then(response => setUser(response.data.user))
+    .then(response => {setUser(response.data.user)})
     .catch(error => console.log(error))
   },[])
 

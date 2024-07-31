@@ -17,10 +17,11 @@ function Header() {
                 <li><h1>__DEV__</h1></li>
                 {user?
                 <div className={styles.foto}>
-                <ul className={styles.options}>
-                    <li><Link to="/configs">Config</Link></li>
-                    <li><a href="http://localhost:5000/auth/login">Logout</a></li>
-                </ul>
+                    <div className={styles.img} style={user.foto?{backgroundImage:user.foto}:{backgroundColor:hcolor}}></div>
+                    <ul className={styles.options} style={hcolor=="white"?{backgroundColor:"black"}:{backgroundColor:"grey"}}>
+                        <li><Link to="/configs">Config</Link></li>
+                        <li><a href="http://localhost:5000/auth/logout">Logout</a></li>
+                    </ul>
                 </div>
                 :
                 <li><Link to="/login" style={{color:hcolor || "white", textDecoration:"none"}}>Login</Link></li>

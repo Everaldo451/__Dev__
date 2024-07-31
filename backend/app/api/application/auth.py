@@ -18,7 +18,7 @@ def getuser():
 
         return {"user":{"username":user.username,"email":user.email}}
     
-    else: return redirect(request.origin)
+    else: return {"user":None}
 
 
 
