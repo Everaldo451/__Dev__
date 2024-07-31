@@ -10,6 +10,11 @@ export const HeaderColor = createContext(null)
 export const CSRFContext = createContext(null)
 export const User = createContext(null)
 
+function FormErrorFunction (e) {
+  e.preventDefault()
+  console.log(e.error, e.message)
+}
+
 function Main() {
 
   const [hcolor, setHColor] = useState("white")
@@ -73,6 +78,8 @@ function Main() {
   )
 
 }
+
+export default FormErrorFunction
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

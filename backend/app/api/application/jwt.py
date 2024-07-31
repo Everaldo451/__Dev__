@@ -1,8 +1,39 @@
-from flask import current_app
+from flask import current_app, request, make_response
 from jwt import jwk_from_dict,JWT
 import base64
 from datetime import datetime, timedelta
 from .exceptions import JWTExceptions
+
+def jwt_authorization_verify(function):
+    def verify():
+        access = AccessToken()
+        refresh = RefreshToken()
+
+        try:
+                
+            jwt = access.decode(request.authorization.token)
+
+            return function()
+        
+        except:
+            pass
+        
+
+        response = make_response("Unauthorized")
+        response.status_code = 401
+
+        try:
+
+            refresh = RefreshToken()
+
+            jwt = refresh.decode(request.cookies.get("refresh"))
+
+            response.set_cookie("access",access.encode(jwt))
+
+            return response
+            
+        except: return response
+
 
 class Jwt:
 
@@ -87,7 +118,6 @@ class AccessToken(Jwt):
         super().__init__()
         self._token_type = "access"
         self._token_expire = timedelta(minutes=10)
-        
 
 class RefreshToken(Jwt):
 
