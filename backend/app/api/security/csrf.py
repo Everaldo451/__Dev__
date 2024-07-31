@@ -1,6 +1,5 @@
 from flask import Blueprint, session,request, redirect
 from flask_wtf.csrf import CSRFProtect, CSRFError, generate_csrf
-from ..application.jwt import jwt_authorization_verify
 
 csrf = CSRFProtect()
 
@@ -27,7 +26,6 @@ def get():
 
 
 @csrf_routes.route("/post",methods=["GET"])
-@jwt_authorization_verify
 def post():
 
     return redirect("http://localhost:5173")

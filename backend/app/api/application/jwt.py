@@ -19,11 +19,11 @@ def jwt_authorization_verify(function):
             pass
 
         
-        response = make_response("Unauthorized")
-        response.status_code = 401
 
         try:
 
+            response = make_response({"message":"Unauthorized","code":1})
+            response.status_code = 401
 
             jwt = refresh.decode(request.cookies.get("refresh"))
 
@@ -31,7 +31,12 @@ def jwt_authorization_verify(function):
 
             return response
             
-        except: return response
+        except: 
+
+            response = make_response({"message":"Unauthorized","code":2})
+            response.status_code = 401
+            
+            return response
         
     return verify
 

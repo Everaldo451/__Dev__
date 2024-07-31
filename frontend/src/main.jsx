@@ -17,6 +17,16 @@ function FormErrorFunction (e) {
 
 function Main() {
 
+  axios.interceptors.request.use(
+    config => {
+      config.headers['Authorization'] = `Bearer ${GetCookie("access",GetCookies())}`;
+      return config
+    },
+    error => {
+      return Promise.reject(error)
+    }
+  )
+
   const [hcolor, setHColor] = useState("white")
   const [csrf, setCSRF] = useState(null)
   const [user,setUser] = useState(null)
@@ -31,11 +41,17 @@ function Main() {
 
     axios.get("http://localhost:5000/auth/getuser",
       {
-        withCredentials:true,
-        headers:{Authorization:`Bearer ${GetCookie("access",GetCookies())}`}
+        withCredentials:true
       })
     .then(response => {setUser(response.data.user)})
-    .catch(error => console.log(error))
+    .catch(error => {
+      if (error.response.status == 401){
+        switch (error.response.data.code) {
+          case 1: window.location.reload();
+          case 2: return null
+        }
+      }
+    })
   },[])
 
   window.addEventListener("scroll",()=> {

@@ -1,31 +1,21 @@
 from flask import Blueprint, redirect, request, current_app, make_response, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from .jwt import AccessToken, RefreshToken
+from .jwt import AccessToken, RefreshToken, jwt_authorization_verify
 from ...models import User, db
 
 auth = Blueprint("auth",__name__,url_prefix="/auth")
 
 @auth.route("/getuser",methods=["GET"])
+@jwt_authorization_verify
 def getuser():
 
-    if request.authorization.token:
+    acess = AccessToken()
 
-        try:
+    decoded = acess.decode(request.authorization.token)
 
-            acess = AccessToken()
+    user = User.query.filter_by(id=decoded.get("id")).first()
 
-            decoded = acess.decode(request.authorization.token)
-
-            user = User.query.filter_by(id=decoded.get("id")).first()
-
-            return {"user":{"username":user.username,"email":user.email}}
-        
-        except Exception as e: 
-            print(e)
-            
-            return {"user":None,"error":e}
-    
-    else: return {"user":None}
+    return {"user":{"username":user.username,"email":user.email}}
 
 
 
