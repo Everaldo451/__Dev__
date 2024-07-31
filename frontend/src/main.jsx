@@ -3,6 +3,7 @@ import { useState, createContext, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import axios from 'axios'
 import {App} from './App.jsx'
+import { GetCookies, GetCookie } from './GetCookies.jsx'
 import './index.css'
 
 export const HeaderColor = createContext(null)
@@ -25,7 +26,8 @@ function Main() {
 
     axios.get("http://localhost:5000/auth/getuser",
       {
-        withCredentials:true
+        withCredentials:true,
+        headers:{Authorization:`Bearer ${GetCookie("access",GetCookies())}`}
       })
     .then(response => {setUser(response.data.user)})
     .catch(error => console.log(error))

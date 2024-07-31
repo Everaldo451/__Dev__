@@ -2,6 +2,7 @@ from flask import current_app
 from jwt import jwk_from_dict,JWT
 import base64
 from datetime import datetime, timedelta
+from .exceptions import JWTExceptions
 
 class Jwt:
 
@@ -10,7 +11,7 @@ class Jwt:
 
     #ENCODE
 
-    def encode(self,payload):
+    def encode(self,payload:dict) -> str:
 
         time = datetime.utcnow()
 
@@ -21,36 +22,42 @@ class Jwt:
             "token_type":self._token_type
         }
 
-        if dict(payload):
-
-            for key, value in dict(payload).items():
-                message[str(key)] = value
-
+        for key, value in payload.items():
+            message[str(key)] = value
+        
     
         jwt = JWT()
 
-        signing_key = jwk_from_dict({
-            'kty':'oct',
-            'k':base64.urlsafe_b64encode(current_app.secret_key.encode()).decode("utf-8").rstrip("="),
-            'alg':'HS256',
-            'use':'sig'
-        })
+        if current_app.secret_key:
+
+            signing_key = jwk_from_dict({
+                'kty':'oct',
+                'k':base64.urlsafe_b64encode(current_app.secret_key.encode()).decode("utf-8").rstrip("="),
+                'alg':'HS256',
+                'use':'sig'
+            })
+
+        else: raise ValueError("Secret Key cannot be null")
 
         return jwt.encode(payload=message, key=signing_key,alg='HS256')
     
 
     #DECODE
 
-    def decode(self,jw):
+    def decode(self,jw:str) -> dict:
 
         jwt = JWT()
 
-        signing_key = jwk_from_dict({
-            'kty':'oct',
-            'k':base64.urlsafe_b64encode(current_app.secret_key.encode()).decode("utf-8").rstrip("="),
-            'alg':'HS256',
-            'use':'sig'
-        })
+        if current_app.secret_key:
+
+            signing_key = jwk_from_dict({
+                'kty':'oct',
+                'k':base64.urlsafe_b64encode(current_app.secret_key.encode()).decode("utf-8").rstrip("="),
+                'alg':'HS256',
+                'use':'sig'
+            })
+        
+        else: raise ValueError("Secret Key cannot be null")
 
         token = jwt.decode(message=jw,key=signing_key)
 
@@ -66,9 +73,9 @@ class Jwt:
 
                 return message
             
-            else: return IndexError
+            else: raise JWTExceptions().TokenLifetimeExceded("Tempo do token excedido")
         
-        else: return TypeError
+        else: raise JWTExceptions().TokenTypeError("Incorrect Token Type")
 
     def lifetime(self):
         return self._token_expire
@@ -80,5 +87,13 @@ class AccessToken(Jwt):
         super().__init__()
         self._token_type = "access"
         self._token_expire = timedelta(minutes=10)
+        
+
+class RefreshToken(Jwt):
+
+    def __init__(self):
+        super().__init__()
+        self._token_type = "refresh"
+        self._token_expire = timedelta(days=1)
 
 

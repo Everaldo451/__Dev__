@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, request, current_app, make_response, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from .jwt import AccessToken
+from .jwt import AccessToken, RefreshToken
 from ...models import User, db
 
 auth = Blueprint("auth",__name__,url_prefix="/auth")
@@ -8,15 +8,22 @@ auth = Blueprint("auth",__name__,url_prefix="/auth")
 @auth.route("/getuser",methods=["GET"])
 def getuser():
 
-    if request.cookies.get("access"):
+    if request.authorization.token:
 
-        acess = AccessToken()
+        try:
 
-        decoded = acess.decode(request.cookies.get("access"))
+            acess = AccessToken()
 
-        user = User.query.filter_by(id=decoded.get("id")).first()
+            decoded = acess.decode(request.authorization.token)
 
-        return {"user":{"username":user.username,"email":user.email}}
+            user = User.query.filter_by(id=decoded.get("id")).first()
+
+            return {"user":{"username":user.username,"email":user.email}}
+        
+        except Exception as e: 
+            print(e)
+            
+            return {"user":None,"error":e}
     
     else: return {"user":None}
 
@@ -31,12 +38,21 @@ def login():
 
     if user and check_password_hash(user.password, request.form.get("password")):
 
-        access = AccessToken()
+        try:
 
-        response = make_response(redirect(request.origin))
-        response.set_cookie("access",access.encode({"id":user.id}),max_age=access.lifetime())
+            access = AccessToken()
+            refresh = RefreshToken()
 
-        return response
+            response = make_response(redirect(request.origin))
+            response.set_cookie("access",access.encode({"id":user.id}),max_age=access.lifetime())
+            response.set_cookie("refresh",refresh.encode({"id":user.id}),max_age=refresh.lifetime(),httponly=True)
+
+            return response
+        
+        except Exception as e: 
+            print(e)
+            
+            return redirect(request.origin)
     
     else: return redirect(request.origin)
 
@@ -66,7 +82,5 @@ def register():
     except: 
 
         flash("Email já existente")
-        print(request.headers)
-        print(request.origin)
         return redirect(request.origin)
 
