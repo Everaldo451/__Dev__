@@ -4,7 +4,7 @@ import base64
 from datetime import datetime, timedelta
 from .exceptions import JWTExceptions
 
-def jwt_authorization_verify(function):
+def jwt_authorization_required(function):
     def verify(*args, **kwargs):
         access = AccessToken()
         refresh = RefreshToken()

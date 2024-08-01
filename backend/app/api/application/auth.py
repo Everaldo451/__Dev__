@@ -1,12 +1,12 @@
 from flask import Blueprint, redirect, request, current_app, make_response, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from .jwt import AccessToken, RefreshToken, jwt_authorization_verify
+from .jwt import AccessToken, RefreshToken, jwt_authorization_required
 from ...models import User, db
 
 auth = Blueprint("auth",__name__,url_prefix="/auth")
 
 @auth.route("/getuser",methods=["GET"])
-@jwt_authorization_verify
+@jwt_authorization_required
 def getuser():
 
     acess = AccessToken()
@@ -77,7 +77,7 @@ def register():
     
     
 @auth.route("/logout",methods=["POST"])
-@jwt_authorization_verify
+@jwt_authorization_required
 def logout():
 
     response = make_response(redirect(request.origin))

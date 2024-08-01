@@ -32,27 +32,61 @@ function Main() {
   const [user,setUser] = useState(null)
 
   useEffect(()=>{
+
     axios.get("http://localhost:5000/csrf/get",
       {
         withCredentials:true
       })
     .then(response => {setCSRF(response.data.csrf)})
     .catch(error => console.log(error))
+    
 
-    axios.get("http://localhost:5000/auth/getuser",
-      {
-        withCredentials:true
-      })
-    .then(response => {setUser(response.data.user)})
-    .catch(error => {
-      if (error.response.status == 401){
-        switch (error.response.data.code) {
-          case 1: window.location.reload();
-          case 2: return null
+    const interval = setInterval(async () => {
+
+      if (GetCookie("access",GetCookies())) {
+        return
+      } else {
+        try {
+
+          const accesstoken = await axios.get(
+            "http://localhost:5000/auth/accesstoken",
+            {
+              withCredentials: true
+            }
+          )
+
+          if (GetCookie("access",GetCookies())) {          
+
+            const userdata = await axios.get(
+              "http://localhost:5000/auth/getuser",
+              {
+                withCredentials: true
+              }
+            )
+
+            setUser(userdata.data.user)
+
+          } else {
+
+            setUser(null)
+          }
+
+        } catch (error) {
+
+          if (error.response.status == 401){
+            switch (error.response.data.code) {
+              case 1: window.location.reload();
+              case 2: return null
+            }
+          }
+
         }
       }
-    })
-  },[])
+      
+    }, 1000);
+
+    return () => clearInterval(interval)
+  },[csrf,user])
 
   window.addEventListener("scroll",()=> {
 
