@@ -65,6 +65,9 @@ async function AccessTokenInterval(user, setUser, interval) {
     } catch (error) {
 
       if (error.response.status == 401){
+
+        setUser(null)
+
         clearInterval(interval)
       }
 

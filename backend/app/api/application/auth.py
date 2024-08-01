@@ -96,13 +96,14 @@ def register():
 
     
     
-@auth.route("/logout",methods=["POST"])
+@auth.route("/logout",methods=["GET"])
 @jwt_authorization_required
 def logout():
 
-    response = make_response(redirect(request.origin))
-    response.set_cookie("access",None)
-    response.set_cookie("refresh",None)
+    response = make_response()
+    response.status_code = 204
+    response.delete_cookie("access")
+    response.delete_cookie("refresh")
 
     return response
 

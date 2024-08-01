@@ -2,7 +2,23 @@ import { useContext } from "react"
 import { HeaderColor, User } from "../../main"
 import styles from "./index.module.css"
 import {Link} from "react-router-dom"
+import axios from "axios"
 
+async function onclick() {
+
+    try {
+
+        const response = await axios.get("http://localhost:5000/auth/logout",{withCredentials:true})
+
+        
+        window.location.assign("/")
+
+    } catch(error) {
+
+        
+
+    }
+}
 
 function Header() {
 
@@ -21,7 +37,7 @@ function Header() {
                     <ul className={styles.options} style={hcolor=="white"?{backgroundColor:"black"}:{backgroundColor:"grey"}}>
                         <li><Link to="/configs">Configurações</Link></li>
                         <li><Link to="/area">Área do Estudante</Link></li>
-                        <li><a href="http://localhost:5000/auth/logout">Logout</a></li>
+                        <li><button onClick={onclick}>Logout</button></li>
                     </ul>
                 </div>
                 :
