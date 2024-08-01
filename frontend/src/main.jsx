@@ -1,31 +1,79 @@
 import React from 'react'
-import { useState, createContext, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import axios from 'axios'
+import { useState, createContext, useEffect } from 'react'
 import {App} from './App.jsx'
 import { GetCookies, GetCookie } from './GetCookies.jsx'
+import axios from 'axios'
 import './index.css'
 
 export const HeaderColor = createContext(null)
 export const CSRFContext = createContext(null)
 export const User = createContext(null)
 
-function FormErrorFunction (e) {
-  e.preventDefault()
-  console.log(e.error, e.message)
+axios.interceptors.request.use(
+  config => {
+    config.headers['Authorization'] = GetCookie("access",GetCookies()) ? `Bearer ${GetCookie("access",GetCookies())}`:null;
+    return config
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
+
+async function AccessTokenInterval(user, setUser, interval) {
+
+  if (GetCookie("access",GetCookies())) {
+    if (!user) {
+      const userdata = await axios.get(
+        "http://localhost:5000/auth/getuser",
+        {
+          withCredentials: true
+        }
+      )
+
+      setUser(userdata.data.user)
+    }
+    return
+  } else {
+    try {
+
+      const accesstoken = await axios.get(
+        "http://localhost:5000/auth/gettoken",
+        {
+          withCredentials: true
+        }
+      )
+
+      if (GetCookie("access",GetCookies())) {          
+
+        const userdata = await axios.get(
+          "http://localhost:5000/auth/getuser",
+          {
+            withCredentials: true
+          }
+        )
+
+        setUser(userdata.data.user)
+
+      } else {
+
+        setUser(null)
+
+        clearInterval(interval)
+      }
+
+    } catch (error) {
+
+      if (error.response.status == 401){
+        clearInterval(interval)
+      }
+
+    }
+  }
+  
 }
 
 function Main() {
-
-  axios.interceptors.request.use(
-    config => {
-      config.headers['Authorization'] = GetCookie("access",GetCookies()) ? `Bearer ${GetCookie("access",GetCookies())}`:null;
-      return config
-    },
-    error => {
-      return Promise.reject(error)
-    }
-  )
 
   const [hcolor, setHColor] = useState("white")
   const [csrf, setCSRF] = useState(null)
@@ -41,51 +89,9 @@ function Main() {
     .catch(error => console.log(error))
     
 
-    const interval = setInterval(async () => {
+    const interv = setInterval(async () => {AccessTokenInterval(user, setUser, interv)}, 1000);
 
-      if (GetCookie("access",GetCookies())) {
-        return
-      } else {
-        try {
-
-          const accesstoken = await axios.get(
-            "http://localhost:5000/auth/accesstoken",
-            {
-              withCredentials: true
-            }
-          )
-
-          if (GetCookie("access",GetCookies())) {          
-
-            const userdata = await axios.get(
-              "http://localhost:5000/auth/getuser",
-              {
-                withCredentials: true
-              }
-            )
-
-            setUser(userdata.data.user)
-
-          } else {
-
-            setUser(null)
-          }
-
-        } catch (error) {
-
-          if (error.response.status == 401){
-            switch (error.response.data.code) {
-              case 1: window.location.reload();
-              case 2: return null
-            }
-          }
-
-        }
-      }
-      
-    }, 1000);
-
-    return () => clearInterval(interval)
+    return () => clearInterval(interv)
   },[csrf,user])
 
   window.addEventListener("scroll",()=> {
@@ -129,7 +135,8 @@ function Main() {
 
 }
 
-export default FormErrorFunction
+export default AccessTokenInterval
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

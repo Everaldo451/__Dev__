@@ -4,10 +4,11 @@ import base64
 from datetime import datetime, timedelta
 from .exceptions import JWTExceptions
 
+######DECORATORS#########
+
 def jwt_authorization_required(function):
-    def verify(*args, **kwargs):
+    def required(*args, **kwargs):
         access = AccessToken()
-        refresh = RefreshToken()
 
         try:
                 
@@ -16,31 +17,43 @@ def jwt_authorization_required(function):
             return function(*args, **kwargs)
         
         except:
-            pass
 
+            response = make_response("Unauthorized")
+            response.status_code = 401
+
+            return response
         
+    required.__name__ = function.__name__
+        
+    return required
 
+
+
+
+
+def refresh_token_required(function):
+    def required(*args, **kwargs):
+        
         try:
 
-            response = make_response({"message":"Unauthorized","code":1})
+            refresh = RefreshToken()
+            refresh.decode(request.cookies.get("refresh"))
+
+            return function(*args, **kwargs)
+        
+        except:
+
+            response = make_response("Unauthorized")
             response.status_code = 401
 
-            jwt = refresh.decode(request.cookies.get("refresh"))
-
-            response.set_cookie("access",access.encode(jwt))
-
-            return response
-            
-        except: 
-
-            response = make_response({"message":"Unauthorized","code":2})
-            response.status_code = 401
-            
             return response
         
-    verify.__name__ = function.__name__
-        
-    return verify
+    required.__name__ = function.__name__
+
+    return required
+
+
+######DECORATORS END#########
 
 
 class Jwt:
