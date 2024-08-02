@@ -8,6 +8,8 @@ header.Main nav ul.header {
     backdrop-filter: blur(10px)
 }
 
+header.Main {z-index: 2;}
+
 header.Main nav div.foto {
     position: relative;
     align-self: stretch;

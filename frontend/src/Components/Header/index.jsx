@@ -10,12 +10,12 @@ async function onclick() {
 
         const response = await axios.get("http://localhost:5000/auth/logout",{withCredentials:true})
 
-        
+
         window.location.assign("/")
 
     } catch(error) {
 
-        
+        return
 
     }
 }
