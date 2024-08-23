@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { CSRFContext, User } from "../../main"
 import Header from "../../Components/Header"
 import Footer from "../../Components/Footer"
@@ -8,11 +9,13 @@ import Computador from "../../assets/computador.webp"
 import History from "../../assets/historia.png"
 import Objective from "../../assets/alvo.png"
 import Quality from "../../assets/verificar.png"
+import SearchBar from "../../Components/SearchBar"
 
 function Home() {
 
     const csrf  = useContext(CSRFContext)
     const user = useContext(User)
+    const navigate = useNavigate()
 
     const [text, setText] = useState("")
 
@@ -102,17 +105,20 @@ function Home() {
         }
     }
 
+    function onsubmit(e) {
+        const element = e.currentTarget
+        const str = ""
+        const data = new FormData(element)
+        navigate(element.action.replace(window.location.origin,"") + `/${data.get("course")}`)
+    }
+
     return (
     <>
-        <Header/>
         <main className={styles.Home}>
             <section className={styles.introduct}>
                 <div className={styles.hello}>
                     <p>{text}</p>
-                    <form action="/courses" method="GET">
-                        <input type="text" name="course" placeholder="Digite um curso"/>
-                        <input type="hidden" name="csrf_token" value={csrf?csrf:""}></input>
-                    </form>
+                    <SearchBar/>
 
                 </div>
                 <div className={styles.container}>

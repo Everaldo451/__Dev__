@@ -95,7 +95,7 @@ function Main() {
     const interv = setInterval(async () => {AccessTokenInterval(user, setUser, interv)}, 1000);
 
     return () => clearInterval(interv)
-  },[csrf,user])
+  },[user])
 
   window.addEventListener("scroll",()=> {
 

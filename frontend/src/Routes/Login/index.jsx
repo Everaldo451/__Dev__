@@ -11,7 +11,6 @@ function Login(){
 
     return(
         <>
-        <Header/>
             <main className={styles.Login}>
                 <section>
                     <ul>
@@ -39,7 +38,6 @@ function Login(){
                     
                 </section>
             </main>
-        <Footer/>
         </>
     )
 }

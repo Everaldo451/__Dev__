@@ -1,0 +1,12 @@
+div.SearchBar{
+    margin-top: 20px;
+    width: 40%;
+}
+
+div.SearchBar input[type="text"]{
+    padding: 10px 40px 10px 15px;
+    border-radius: 20px;
+    border: 2px solid black;
+    outline: none;
+    width: 100%;
+}

@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, flash
 from flask_cors import CORS
 from .models import db
 from .api.security.csrf import csrf, csrf_routes
+from .api.application.courses import courses
 from .api.application.auth import auth
 import re
 
@@ -31,6 +32,7 @@ def create_app():
 
     app.register_blueprint(csrf_routes)
     app.register_blueprint(auth)
+    app.register_blueprint(courses)
 
     with app.app_context():
         db.create_all()
