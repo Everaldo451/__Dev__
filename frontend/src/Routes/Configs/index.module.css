@@ -1,0 +1,31 @@
+main.Configs {
+    margin: auto 0;
+    padding: 0 30px;
+}
+
+main.Configs > section{
+    padding: 20px;
+    border-radius: 15px;
+    background-color: white;
+}
+
+main.Configs > section form {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+main.Configs > section form > div.Config{display: flex;width: 100%;align-items: center;}
+
+main.Configs > section form > div.Config button{margin-left: auto;}
+
+main.Configs > section form > div.Config:nth-child(n+2){margin-top: 20px;}
+
+
+main.Configs .OffChangeInput {
+    border:none;
+    padding: 0;
+    outline: none;
+    font-size: 16px;
+}

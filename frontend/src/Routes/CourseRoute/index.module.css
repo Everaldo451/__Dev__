@@ -23,3 +23,13 @@ main.CourseRoute > section.courses section.Course{
     background-color: rgb(128, 133, 150);
     color: rgb(80, 91, 97);
 }
+
+main.CourseRoute > .resultsLanguage {
+    display: flex;
+    align-items: center;
+}
+
+main.CourseRoute > .resultsLanguage > select {
+    margin-left: auto;
+    padding: 5px;
+}

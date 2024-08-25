@@ -20,40 +20,28 @@ axios.interceptors.request.use(
   }
 )
 
-async function AccessTokenInterval(user, setUser, interval) {
+async function AccessTokenInterval(user, setUser, setLoaded, interval) {
 
   if (GetCookie("access",GetCookies())) {
     if (!user) {
-      const userdata = await axios.get(
-        "http://localhost:5000/auth/getuser",
-        {
-          withCredentials: true
-        }
-      )
+      const userdata = await axios.get("http://localhost:5000/auth/getuser",{withCredentials: true})
 
       setUser(userdata.data.user)
     }
+
+    setLoaded(true)
     return
   } else {
     try {
 
-      const accesstoken = await axios.get(
-        "http://localhost:5000/auth/gettoken",
-        {
-          withCredentials: true
-        }
-      )
+      const accesstoken = await axios.get("http://localhost:5000/auth/gettoken",{withCredentials: true})
 
       if (GetCookie("access",GetCookies())) {          
 
-        const userdata = await axios.get(
-          "http://localhost:5000/auth/getuser",
-          {
-            withCredentials: true
-          }
-        )
+        const userdata = await axios.get("http://localhost:5000/auth/getuser",{withCredentials: true})
 
         setUser(userdata.data.user)
+
 
       } else {
 
@@ -73,6 +61,7 @@ async function AccessTokenInterval(user, setUser, interval) {
 
     }
   }
+  setLoaded(true)
   
 }
 
@@ -81,6 +70,7 @@ function Main() {
   const [hcolor, setHColor] = useState("white")
   const [csrf, setCSRF] = useState(null)
   const [user,setUser] = useState(null)
+  const [loaded,setLoaded] = useState(false)
 
   useEffect(()=>{
 
@@ -92,7 +82,7 @@ function Main() {
     .catch(error => console.log(error))
     
 
-    const interv = setInterval(async () => {AccessTokenInterval(user, setUser, interv)}, 1000);
+    const interv = setInterval(async () => {AccessTokenInterval(user, setUser, setLoaded, interv)}, 1000);
 
     return () => clearInterval(interv)
   },[user])
@@ -104,8 +94,11 @@ function Main() {
     const mainsecs = main.querySelectorAll("section")
 
     for (const section of mainsecs) {
+
       if (section.getBoundingClientRect()['top'] <= header.clientHeight && section.getBoundingClientRect()['bottom'] >= header.clientHeight) {
+
         let color = window.getComputedStyle(section,null).getPropertyValue("background-color")
+        
         if (color.search("rgba")!=-1) {
           color = color.replace("rgba(","")
         } else {
@@ -126,15 +119,20 @@ function Main() {
     }
   })
 
-  return (
-    <User.Provider value={user}>
-    <HeaderColor.Provider value={hcolor}>
-    <CSRFContext.Provider value={csrf}>
-      <App/>
-    </CSRFContext.Provider>
-    </HeaderColor.Provider>
-    </User.Provider>
-  )
+  if (loaded == true) {
+
+    return (
+
+      <User.Provider value={user}>
+        <HeaderColor.Provider value={hcolor}>
+          <CSRFContext.Provider value={csrf}>
+            <App/>
+          </CSRFContext.Provider>
+        </HeaderColor.Provider>
+      </User.Provider>
+    )
+
+  } else {return <></>}
 
 }
 
@@ -142,7 +140,7 @@ export default AccessTokenInterval
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  //<React.StrictMode>
     <Main/>
-  </React.StrictMode>,
+  //</React.StrictMode>,
 )

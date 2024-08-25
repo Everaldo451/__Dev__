@@ -20,12 +20,5 @@ def get():
     
     else:
         
-        print(request.args)
         return redirect("http://localhost:5173")
     
-
-
-@csrf_routes.route("/post",methods=["GET"])
-def post():
-
-    return redirect("http://localhost:5173")

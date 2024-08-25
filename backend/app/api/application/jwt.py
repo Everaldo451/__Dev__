@@ -11,16 +11,12 @@ def jwt_authorization_required(function):
         access = AccessToken()
 
         try:
-
-            print(request.authorization.token,request.url_rule)
                 
             jwt = access.decode(request.authorization.token)
 
             return function(*args, **kwargs)
         
         except Exception as e:
-
-            print(e.args)
 
             response = make_response("Unauthorized")
             response.status_code = 401
