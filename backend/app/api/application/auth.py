@@ -1,45 +1,72 @@
 from flask import Blueprint, redirect, request, current_app, make_response, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from .jwt import AccessToken, RefreshToken, jwt_authorization_required, refresh_token_required
-from ...models import User, db
+from ...models import User
+from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import set_access_cookies, set_refresh_cookies
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import unset_jwt_cookies
 
 auth = Blueprint("auth",__name__,url_prefix="/auth")
 
-access = AccessToken()
-refresh = RefreshToken()
-#JWT
+
+###################JWT
 
 @auth.route("/getuser",methods=["GET"])
-@jwt_authorization_required
+@jwt_required(locations="headers")
 def getuser():
 
-    decoded = access.decode(request.authorization.token)
+    identity = get_jwt_identity()
 
-    user = User.query.filter_by(id=decoded.get("id")).first()
+    user = User.query.filter_by(id=identity).first()
 
-    return {"user":{"username":user.username,"email":user.email}}
-
-
+    return {"user":{"username":user.username,"email":user.email,"courses":user.courses}}
 
 
-@auth.route("/gettoken",methods=["GET"])
-@refresh_token_required
-def gettoken():
 
-    decoded = refresh.decode(request.cookies.get("refresh"))
+
+
+
+@auth.route('/access',methods=["POST"])
+@jwt_required(locations="cookies")
+def access():
 
     response = make_response()
-    response.status_code = 204
-    response.set_cookie("access",access.encode({"id":decoded.get("id")}),max_age=access.lifetime())
+
+    response.data = request.cookies.get(current_app.config.get("JWT_ACCESS_COOKIE_NAME"))
 
     return response
 
 
 
-#JWT END
 
 
-#AUTH
+@auth.route("/refresh",methods=["POST"])
+@jwt_required(refresh=True,locations="cookies")
+def refresh():
+
+    response = make_response()
+
+    print("oi")
+
+    try:
+
+        access = create_access_token(identity=get_jwt_identity())
+
+        set_access_cookies(response,access)
+
+        response.data = access
+
+        return response
+    
+
+    except: return response
+
+
+
+##############JWT END
+
+
+##############AUTH
 
 
 
@@ -53,8 +80,12 @@ def login():
         try:
 
             response = make_response(redirect(request.origin))
-            response.set_cookie("access",access.encode({"id":user.id}),max_age=access.lifetime())
-            response.set_cookie("refresh",refresh.encode({"id":user.id}),max_age=refresh.lifetime(),httponly=True)
+
+            access = create_access_token(identity=user.id)
+            set_access_cookies(response,access)
+            refresh = create_refresh_token(identity=user.id)
+            set_refresh_cookies(response,refresh)
+
 
             return response
         
@@ -73,7 +104,11 @@ def register():
 
     try:
 
-        user = User(email=request.form.get("email"),password=generate_password_hash(request.form.get("password")),username=request.form.get("username"),admin=False)
+        user = User(
+            email=request.form.get("email"),
+            password=generate_password_hash(request.form.get("password")),
+            username=request.form.get("username")
+        )
 
         with current_app.app_context():
             current_app.db.session.add(user)
@@ -82,8 +117,11 @@ def register():
         user = User.query.filter_by(email=request.form.get("email")).first()
 
         response = make_response(redirect(request.origin))
-        response.set_cookie("access",access.encode({"id":user.id}),max_age=access.lifetime())
-        response.set_cookie("refresh",refresh.encode({"id":user.id}),max_age=refresh.lifetime(),httponly=True)
+
+        access = create_access_token(identity=user.id)
+        set_access_cookies(response,access)
+        refresh = create_refresh_token(identity=user.id)
+        set_refresh_cookies(response,access)
 
         return response
     
@@ -97,13 +135,13 @@ def register():
     
     
 @auth.route("/logout",methods=["GET"])
-@jwt_authorization_required
+@jwt_required(locations="headers")
 def logout():
 
     response = make_response()
     response.status_code = 204
-    response.delete_cookie("access")
-    response.delete_cookie("refresh")
+    
+    unset_jwt_cookies(response)
 
     return response
 

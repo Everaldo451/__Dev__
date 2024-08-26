@@ -1,9 +1,10 @@
 import styles from "./index.module.css"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import axios from "axios"
 import SearchBar from "../../Components/SearchBar"
 import SearchResults from "../../Components/SearchResults"
+import { AccessToken } from "../../main"
 
 
 
@@ -28,12 +29,13 @@ function Select ({children, attrs ,setLanguage}) {
 function CourseRoute() {
 
     const [courses, setCourses] = useState([])
+    const token = useContext(AccessToken)
     const {name} = useParams()
 
     async function GetCourse() {
         try {
 
-            const response = await axios.get(`http://localhost:5000/courses/getcourses?name=${name}`)
+            const response = await axios.get(`http://localhost:5000/courses/getcourses/${name}`)
             const array = []
 
             if (response.data) {
@@ -57,7 +59,7 @@ function CourseRoute() {
     <>
         <main className={styles.CourseRoute}>
             <div className={styles.Container}><SearchBar/></div>
-            <SearchResults courses={courses}/>
+            <SearchResults courses={courses} token={token}/>
         </main>
     </>
     )

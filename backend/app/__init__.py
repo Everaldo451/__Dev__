@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, flash
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from .models import db
 from .api.security.csrf import csrf, csrf_routes
 from .api.application.courses import courses
@@ -27,6 +28,7 @@ def create_app():
 
     csrf.init_app(app)
     db.init_app(app)
+    jwt = JWTManager(app)
 
 
     app.register_blueprint(csrf_routes)

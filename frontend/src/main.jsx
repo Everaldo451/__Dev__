@@ -1,18 +1,20 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import ReactDOM from 'react-dom/client'
 import { useState, createContext, useEffect } from 'react'
 import {App} from './App.jsx'
-import { GetCookies, GetCookie } from './GetCookies.jsx'
+import { GetCookies } from './GetCookies.jsx'
 import axios from 'axios'
 import './index.css'
 
 export const HeaderColor = createContext(null)
 export const CSRFContext = createContext(null)
 export const User = createContext(null)
+export const AccessToken = createContext(null)
 
 axios.interceptors.request.use(
   config => {
-    config.headers['Authorization'] = GetCookie("access",GetCookies()) ? `Bearer ${GetCookie("access",GetCookies())}`:null;
+    config.headers['X-CSRF-REFRESH'] = GetCookies().get('csrf_refresh_token')
+    config.headers['X-CSRF-ACCESS'] = GetCookies().get('csrf_access_token')
     return config
   },
   error => {
@@ -20,50 +22,56 @@ axios.interceptors.request.use(
   }
 )
 
-async function AccessTokenInterval(user, setUser, setLoaded, interval) {
+async function AccessTokenInterval(user, setUser, setLoaded, setToken, csrf) {
 
-  if (GetCookie("access",GetCookies())) {
-    if (!user) {
-      const userdata = await axios.get("http://localhost:5000/auth/getuser",{withCredentials: true})
+  try {
+    if (user==null) {
 
-      setUser(userdata.data.user)
-    }
+      switch(GetCookies().get("csrf_access_token")) {
+        case null || undefined: 
 
-    setLoaded(true)
-    return
-  } else {
-    try {
+        var token =  await axios.post("http://localhost:5000/auth/refresh",undefined,{
+          withCredentials: true,
+          headers: {
+            'X-CSRFToken':csrf
+          }
+        })
 
-      const accesstoken = await axios.get("http://localhost:5000/auth/gettoken",{withCredentials: true})
+        default: 
 
-      if (GetCookie("access",GetCookies())) {          
+        var token = await axios.post("http://localhost:5000/auth/access",undefined,{
+          withCredentials: true,
+          headers: {
+            'X-CSRFToken':csrf
+          }
+        })
 
-        const userdata = await axios.get("http://localhost:5000/auth/getuser",{withCredentials: true})
+      }
 
+      if (token.data) {
+
+        setToken(token.data)
+
+        const userdata = await axios.get("http://localhost:5000/auth/getuser",{
+          withCredentials: true,
+          headers: {
+            'Authorization':`Bearer ${token.data}`
+          }
+        })
         setUser(userdata.data.user)
 
-
       } else {
-
         setUser(null)
-
-        clearInterval(interval)
-      }
-
-    } catch (error) {
-
-      if (error.response.status == 401){
-
-        setUser(null)
-
-        clearInterval(interval)
       }
 
     }
+
+  } catch (error) {
+    setUser(null)
   }
   setLoaded(true)
-  
 }
+
 
 function Main() {
 
@@ -71,21 +79,34 @@ function Main() {
   const [csrf, setCSRF] = useState(null)
   const [user,setUser] = useState(null)
   const [loaded,setLoaded] = useState(false)
+  const [token, setToken] = useState(null)
+  const [count, setCount] = useState(0)
 
   useEffect(()=>{
 
-    axios.get("http://localhost:5000/csrf/get",
-      {
-        withCredentials:true
-      })
-    .then(response => {setCSRF(response.data.csrf)})
-    .catch(error => console.log(error))
-    
+    async function fetchData() {
 
-    const interv = setInterval(async () => {AccessTokenInterval(user, setUser, setLoaded, interv)}, 1000);
+      try {
 
-    return () => clearInterval(interv)
-  },[user])
+        if (csrf==null) {
+
+          var response = await axios.get("http://localhost:5000/csrf/get",
+            {
+              withCredentials:true
+            })
+          setCSRF(response.data.csrf)
+
+        }
+
+        AccessTokenInterval(user, setUser, setLoaded, setToken, response.data.csrf || csrf)
+
+      } catch(error) {setLoaded(true)}
+
+    }
+
+    fetchData()
+
+  },[count])
 
   window.addEventListener("scroll",()=> {
 
@@ -126,7 +147,9 @@ function Main() {
       <User.Provider value={user}>
         <HeaderColor.Provider value={hcolor}>
           <CSRFContext.Provider value={csrf}>
-            <App/>
+            <AccessToken.Provider value={token}>
+              <App/>
+            </AccessToken.Provider>
           </CSRFContext.Provider>
         </HeaderColor.Provider>
       </User.Provider>

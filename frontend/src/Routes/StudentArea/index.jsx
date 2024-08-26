@@ -7,6 +7,7 @@ import { Navigate } from "react-router-dom";
 function StudentArea() {
 
     const user = useContext(User)
+    console.log(user.courses)
 
     return (
         <>

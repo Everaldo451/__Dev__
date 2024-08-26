@@ -1,14 +1,20 @@
 import { useContext } from "react"
-import { HeaderColor, User } from "../../main"
+import { HeaderColor, User, AccessToken } from "../../main"
 import styles from "./index.module.css"
 import {Link} from "react-router-dom"
 import axios from "axios"
 
-async function onclick() {
+async function onclick(token) {
 
     try {
 
-        const response = await axios.get("http://localhost:5000/auth/logout",{withCredentials:true})
+        const response = await axios.get("http://localhost:5000/auth/logout",
+            {
+                withCredentials:true,
+                headers: {
+                    'Authorization':`Bearer ${token}`
+                }
+            })
 
 
         window.location.assign("/")
@@ -24,6 +30,7 @@ function Header() {
 
     const hcolor = useContext(HeaderColor)
     const user = useContext(User)
+    const token = useContext(AccessToken)
 
     return(
     <header className={styles.Main}>
@@ -37,7 +44,7 @@ function Header() {
                     <ul className={styles.options} style={hcolor=="white"?{backgroundColor:"black"}:{backgroundColor:"grey"}}>
                         <li><Link to="/configs">Configurações</Link></li>
                         <li><Link to="/area">Área do Estudante</Link></li>
-                        <li><button onClick={onclick}>Logout</button></li>
+                        <li><button onClick={(e) => {onclick(token)}}>Logout</button></li>
                     </ul>
                 </div>
                 :
