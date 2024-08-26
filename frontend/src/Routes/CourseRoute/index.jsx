@@ -7,25 +7,6 @@ import SearchResults from "../../Components/SearchResults"
 import { AccessToken } from "../../main"
 
 
-
-function Select ({children, attrs ,setLanguage}) {
-
-    const ref = useRef(null)
-
-    function onChange(e) {
-
-        const selected = ref.current.options[ref.current.options.selectedIndex]
-        
-        if (selected.value != "") {setLanguage(selected.value)}
-        else {setLanguage(null)}
-
-    }
-
-    return <select {...attrs} ref={ref} onChange={onChange}>{children}</select>
-
-}
-
-
 function CourseRoute() {
 
     const [courses, setCourses] = useState([])
@@ -59,7 +40,7 @@ function CourseRoute() {
     <>
         <main className={styles.CourseRoute}>
             <div className={styles.Container}><SearchBar/></div>
-            <SearchResults courses={courses} token={token}/>
+            <SearchResults courses={courses} token={token} subscribe={true}/>
         </main>
     </>
     )

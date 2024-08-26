@@ -18,15 +18,19 @@ function Select ({children, attrs ,setLanguage}) {
 
 
 
-function Result({course, token, csrf}) {
+function Result({course, token, csrf, subscribe}) {
 
-    const [clicked,setClick] = useState(false)
+    const [hover,setHover] = useState(false)
+
+    console.log(subscribe)
 
     async function Subscribe() {
 
+        let route = subscribe==true?"subscribe":"unsubscribe"
+
         try{
 
-        const response = await axios.post(`http://localhost:5000/courses/subscribe/${course.id}`,undefined,
+        const response = await axios.post(`http://localhost:5000/courses/${route}/${course.id}`,undefined,
             {
                 withCredentials: true,
                 headers: {
@@ -42,8 +46,8 @@ function Result({course, token, csrf}) {
     return (
         <section 
             className={styles.Course} 
-            onMouseEnter={(e) => {setClick(!clicked)}} 
-            onMouseLeave={(e) => {setClick(!clicked)}}
+            onMouseEnter={(e) => {setHover(!hover)}} 
+            onMouseLeave={(e) => {setHover(!hover)}}
         >
             <img src={course.image} width={100}></img>
             <p style={{textAlign:"center"}}>{course.name}</p>
@@ -52,8 +56,12 @@ function Result({course, token, csrf}) {
                 <span style={{textDecoration:"underline"}}>{course.language}</span>
             </p>
             <p>{course.description}</p>
-            {clicked == true && token?
-            <div><button onClick={(e) => {e.preventDefault();token?Subscribe():null}}>Se inscrever</button></div>
+            {hover == true && token?
+            <div>
+                <button onClick={(e) => {e.preventDefault();Subscribe()}}>
+                {subscribe?"Se inscrever":"Se desinscrever"}
+                </button>
+            </div>
             :null
             }
         </section>
@@ -62,12 +70,13 @@ function Result({course, token, csrf}) {
 }
 
 
-function SearchResults({courses, token}){
+function SearchResults({courses, token, subscribe}){
 
     const [language, setLanguage] = useState(null)
     const [currentCourses, setCurrentCourses] = useState(courses)
     const csrf = useContext(CSRFContext)
-    const tk = token?token:undefined
+    console.log(token)
+    const tk = token
 
     useEffect(() => {
         setCurrentCourses(language!=null?courses.filter(course => course.language == language):courses)
@@ -85,7 +94,14 @@ function SearchResults({courses, token}){
             </div>
             <section className={styles.courses}>
 
-                {currentCourses.map(course => <Result course={course} token={tk} csrf={csrf} key={course.key}/>)}
+                {currentCourses.map(course => 
+                <Result 
+                    course={course} 
+                    token={tk} 
+                    csrf={csrf} 
+                    key={course.key}
+                    subscribe={subscribe}
+                />)}
 
             </section>
         </>
