@@ -1,14 +1,17 @@
 import { useState, useContext } from "react";
-import { CSRFContext } from "../../main";
+import { CSRFContext, User } from "../../main";
 import styles from "./index.module.css"
+import { Navigate } from "react-router-dom";
 
 function Login(){
 
     const csrf = useContext(CSRFContext)
     const [action, setAction] = useState("login")
+    const user = useContext(User)
 
     return(
         <>
+            {!user?
             <main className={styles.Login}>
                 <section>
                     <ul>
@@ -36,6 +39,9 @@ function Login(){
                     
                 </section>
             </main>
+            :
+            <Navigate to={"/"}/>
+            }
         </>
     )
 }

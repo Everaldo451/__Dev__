@@ -8,7 +8,7 @@ function StudentArea() {
 
     const user = useContext(User)
     const token = useContext(AccessToken)
-    console.log(user.courses)
+    console.log(user)
 
     return (
         <>

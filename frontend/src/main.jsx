@@ -30,7 +30,7 @@ async function AccessTokenInterval(user, setUser, setLoaded, setToken, csrf) {
       switch(GetCookies().get("csrf_access_token")) {
         case null || undefined: 
 
-        var token =  await axios.post("http://localhost:5000/auth/refresh",undefined,{
+        var token =  await axios.post("http://localhost:5000/jwt/refresh",undefined,{
           withCredentials: true,
           headers: {
             'X-CSRFToken':csrf
@@ -39,7 +39,7 @@ async function AccessTokenInterval(user, setUser, setLoaded, setToken, csrf) {
 
         default: 
 
-        var token = await axios.post("http://localhost:5000/auth/access",undefined,{
+        var token = await axios.post("http://localhost:5000/jwt/access",undefined,{
           withCredentials: true,
           headers: {
             'X-CSRFToken':csrf
@@ -52,7 +52,7 @@ async function AccessTokenInterval(user, setUser, setLoaded, setToken, csrf) {
 
         setToken(token.data)
 
-        const userdata = await axios.get("http://localhost:5000/auth/getuser",{
+        const userdata = await axios.get("http://localhost:5000/jwt/getuser",{
           withCredentials: true,
           headers: {
             'Authorization':`Bearer ${token.data}`

@@ -1,6 +1,7 @@
 import { useState, useContext, useRef, useEffect } from "react"
 import { User } from "../../main"
 import style from "./index.module.css"
+import { Navigate } from "react-router-dom"
 
 function Config({children, attrs, setChange}){
 
@@ -21,6 +22,7 @@ function Config({children, attrs, setChange}){
             <input 
                 className={Onchange==true?null:style.OffChangeInput}
                 {...attrs} 
+                required
                 id={attrs.name} 
                 value={val} 
                 ref={ref} 
@@ -51,29 +53,33 @@ function Configs(){
     }
 
     return(
-        <main className={style.Configs}>
+        <>
+        {user?
+            <main className={style.Configs}>
+                <section>
 
-            <section>
+                    <h2 style={{margin: 0}}>Dados Pessoais:</h2>
 
-                <h2 style={{margin: 0}}>Dados Pessoais:</h2>
+                    <form>
+                        <Config 
+                            attrs={{value:user.email, name:"email", type:"email"}} 
+                            setChange={setInputs}>Email:
+                        </Config>
 
-                <form>
-                    <Config 
-                        attrs={{value:user.email, name:"email", type:"email"}} 
-                        setChange={setInputs}>Email:
-                    </Config>
+                        <Config 
+                            attrs={{value:user.username, name:"username", type:"text"}} 
+                            setChange={setInputs}>Username:
+                        </Config>
 
-                    <Config 
-                        attrs={{value:user.username, name:"username", type:"text"}} 
-                        setChange={setInputs}>Username:
-                    </Config>
+                        <input type="submit" value="Enviar" style={{marginTop:20}} onClick={OnClick}/>
+                    </form>
 
-                    <input type="submit" value="Enviar" style={{marginTop:20}} onClick={OnClick}/>
-                </form>
-
-            </section>
-
-        </main>
+                </section>
+            </main>
+            : 
+            <Navigate to={"/"}/>
+            }
+        </>
     )
 
 }
