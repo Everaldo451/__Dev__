@@ -51,15 +51,13 @@ def subscribe(id):
         user = User.query.get(get_jwt_identity())
         course = Course.query.get(id)
 
-        print(user.courses,course.users)
-
         if not course in user.courses:
 
             user.courses.append(course)
             current_app.db.session.flush()
             current_app.db.session.commit()
 
-    except Exception as e: print(e); pass
+    except: pass
 
     return response
 

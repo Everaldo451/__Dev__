@@ -121,6 +121,8 @@ def change_configs():
         if user.username != request.args.get("username"):
 
             user.username = request.args.get("username")
+        
+        current_app.db.session.commit()
 
         return redirect(request.origin)
     

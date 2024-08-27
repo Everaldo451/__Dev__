@@ -49,7 +49,9 @@ function Result({course, token, csrf, subscribe}) {
             onMouseEnter={(e) => {setHover(!hover)}} 
             onMouseLeave={(e) => {setHover(!hover)}}
         >
-            <img src={course.image} width={100}></img>
+            <div style={{display:"flex", justifyContent:"center"}}>
+                <img src={course.image} width={100}></img>
+            </div>
             <p style={{textAlign:"center"}}>{course.name}</p>
             <p style={{margin:0}}>
                 <span style={{color:"rgb(131, 85, 0)"}}>Language: </span>
@@ -57,7 +59,7 @@ function Result({course, token, csrf, subscribe}) {
             </p>
             <p>{course.description}</p>
             {hover == true && token?
-            <div>
+            <div style={{display:"flex",justifyContent:"center"}}>
                 <button onClick={(e) => {e.preventDefault();Subscribe()}}>
                 {subscribe?"Se inscrever":"Se desinscrever"}
                 </button>
