@@ -1,5 +1,10 @@
+from typing import List
+import enum
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import select, func, alias, and_
+from sqlalchemy import String, Boolean, Enum, LargeBinary, Integer, ForeignKey, Column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, aliased
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Base(DeclarativeBase):
     pass
@@ -7,25 +12,56 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 
 user_courses = db.Table('user_courses',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('course_id', db.Integer, db.ForeignKey('course.id'))
+    Column('user_id', ForeignKey('user.id')),
+    Column('course_id', ForeignKey('course.id'))
 )
+
+class UserTypes(enum.Enum):
+    STUDENT = "student"
+    TEACHER = "teacher"
 
 class User(db.Model):
 
-    id = db.Column(db.Integer, primary_key = True, autoincrement=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(1000), nullable=True)
-    courses = db.relationship('Course', secondary=user_courses, backref='users')
-    admin = db.Column(db.Boolean, default=False)
+    id = mapped_column(Integer, primary_key=True, autoincrement=True)
+    username = mapped_column(String(50),unique=True, nullable=False)
+    email = mapped_column(String(100),unique=True, nullable=False)
+    password = mapped_column(String(1000), nullable=False)
+    user_type: Mapped[UserTypes] = mapped_column(Enum(UserTypes, native_enum = False))
+    admin = mapped_column(Boolean(), default=False)
 
+    courses: Mapped[List["Course"]] = relationship(secondary=user_courses)
 
 
 class Course(db.Model):
 
-    id = db.Column(db.Integer, primary_key = True, autoincrement=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
-    description = db.Column(db.String(1000))
-    language = db.Column(db.String(100),nullable=False)
-    image = db.Column(db.LargeBinary(),nullable=False)
+    id = mapped_column(Integer, primary_key = True, autoincrement=True)
+    name = mapped_column(String(100), unique=True, nullable=False)
+    description = mapped_column(String(1000))
+    language = mapped_column(String(100),nullable=False)
+    image = mapped_column(LargeBinary(),nullable=False)
+
+    users: Mapped[List["User"]] = relationship(
+        secondary=user_courses, back_populates="courses"
+    )
+
+    @hybrid_property
+    def students(self):
+        user_alias = aliased(User)
+        return select(user_alias).where(
+            and_(
+                user_courses.c.course_id == self.id,
+                user_courses.c.user_id == user_alias.id,
+                user_alias.user_type == UserTypes.STUDENT
+            )
+        )
+
+    @hybrid_property
+    def teachers(self):
+        user_alias = aliased(User)
+        return select(user_alias).where(
+            and_(
+                user_courses.c.course_id == self.id,
+                user_courses.c.user_id == user_alias.id,
+                user_alias.user_type == UserTypes.TEACHER
+            )
+        )

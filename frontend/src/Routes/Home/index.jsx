@@ -25,26 +25,18 @@ function Home() {
     `Ola, ${user.username}, seja bem vindo. Se inscreva para progredir na sua jornada como programador.`
     : "Ola, seja bem vindo. Se inscreva para progredir na sua jornada como programador."
 
-    const [usertext, setUserText] = useState("Ola, seja bem vindo. Se inscreva para progredir na sua jornada como programador.")
-
-
     useEffect(()=>{
+
         const interval = setInterval(()=>{
             if (count < theText.length) {
-                if (theText != usertext) {
-                    setUserText(theText)
-                    setText("")
-                    setCount(0)
-                } else {
-                    setText(text+theText[count])
-                    setCount(count+1)
-                }
+                setText(text+theText[count])
+                setCount(count+1)
             } else {clearInterval(interval)}
         },50)
 
         return () => clearInterval(interval)
 
-    },[text,count])
+    },[count])
 
     const [box, setBox] = useState(null)
 
@@ -107,7 +99,6 @@ function Home() {
 
     function onsubmit(e) {
         const element = e.currentTarget
-        const str = ""
         const data = new FormData(element)
         navigate(element.action.replace(window.location.origin,"") + `/${data.get("course")}`)
     }

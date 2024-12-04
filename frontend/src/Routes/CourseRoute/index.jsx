@@ -40,7 +40,7 @@ function CourseRoute() {
     <>
         <main className={styles.CourseRoute}>
             <div className={styles.Container}><SearchBar/></div>
-            <SearchResults courses={courses} token={token} subscribe={true}/>
+            <SearchResults courses={courses} subscribe={true}/>
         </main>
     </>
     )

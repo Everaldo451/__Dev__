@@ -7,6 +7,7 @@ function Login(){
 
     const csrf = useContext(CSRFContext)
     const [action, setAction] = useState("login")
+    const [isTeacher, setIsTeacher] = useState(false)
     const user = useContext(User)
 
     return(
@@ -27,6 +28,10 @@ function Login(){
                         <input type="text" name="username" placeholder="Digite um nome de usuário" required/>
                         <input type="email" name="email" placeholder="Digite um email" required/>
                         <input type="password" name="password" placeholder="Digite uma senha" required/>
+                        <div className={styles.isTeacher}>
+                            <input type="checkbox" name="is_teacher" id="is_teacher"/>
+                            <label htmlFor="is_teacher">Is teacher</label>
+                        </div>
                         </>
                         : 
                         <>

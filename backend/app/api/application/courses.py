@@ -4,8 +4,6 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, current_user
 from ...models import Course, User, db
 import base64
 
-
-
 def courses_list(courses) -> list:
     list = []
 
@@ -17,13 +15,11 @@ def courses_list(courses) -> list:
                      "description":course.description,
                      "language":course.language,
                      "image":f'data:image/jpeg;base64, {image}',
-                     "users":len(course.users)
+                     "students":len(course.students),
+                     "teachers": course.teachers
                      })
 
     return list
-
-
-
 
 
 
@@ -35,9 +31,6 @@ def getcourses(name):
     courses = Course.query.filter(Course.name.ilike(f'%{name}%'))[:6]
 
     return {"courses":courses_list(courses)}
-
-
-
 
 
 @courses.route('/subscribe/<int:id>',methods=['POST'])

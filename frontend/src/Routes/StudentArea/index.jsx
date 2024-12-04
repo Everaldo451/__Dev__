@@ -14,7 +14,7 @@ function StudentArea() {
         <>
             {user?
                 <main className={styles.Area}>
-                    <SearchResults courses={user.courses?user.courses:[]} token={token} subscribe={false}/>
+                    <SearchResults courses={user.courses?user.courses:[]} subscribe={false}/>
                 </main>
             :
                 <Navigate to="/"/>

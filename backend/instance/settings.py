@@ -1,7 +1,11 @@
 from datetime import timedelta
+import os
+import secrets
+from dotenv import load_dotenv
+load_dotenv()
 
-SECRET_KEY = "fc4891f6bc93c26c4a3a106ffeca5bb2"
-SQLALCHEMY_DATABASE_URI = "sqlite:///test.db"
+SECRET_KEY = secrets.token_hex(16)
+SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI")
 SESSION_COOKIE_HTTPONLY = True
 
 JWT_SECRET_KEY = SECRET_KEY

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useContext } from "react"
 import { CSRFContext } from "../../main"
+import { AccessToken } from "../../main"
 import axios from "axios"
 import styles from "./index.module.css"
 
@@ -18,9 +19,12 @@ function Select ({children, attrs ,setLanguage}) {
 
 
 
-function Result({course, token, csrf, subscribe}) {
+function Result({course, subscribe}) {
 
     const [hover,setHover] = useState(false)
+    const csrf = useContext(CSRFContext)
+    const token = useContext(AccessToken)
+
 
     console.log(subscribe)
 
@@ -72,13 +76,10 @@ function Result({course, token, csrf, subscribe}) {
 }
 
 
-function SearchResults({courses, token, subscribe}){
+function SearchResults({courses, subscribe}){
 
     const [language, setLanguage] = useState(null)
     const [currentCourses, setCurrentCourses] = useState(courses)
-    const csrf = useContext(CSRFContext)
-    console.log(token)
-    const tk = token
 
     useEffect(() => {
         setCurrentCourses(language!=null?courses.filter(course => course.language == language):courses)
@@ -99,8 +100,6 @@ function SearchResults({courses, token, subscribe}){
                 {currentCourses.map(course => 
                 <Result 
                     course={course} 
-                    token={tk} 
-                    csrf={csrf} 
                     key={course.key}
                     subscribe={subscribe}
                 />)}

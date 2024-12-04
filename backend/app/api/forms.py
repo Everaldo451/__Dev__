@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, EmailField
+from wtforms.widgets import CheckboxInput
 from wtforms.validators import DataRequired
 
 class AuthBaseForm(FlaskForm):
@@ -13,6 +14,11 @@ class AuthBaseForm(FlaskForm):
 
 class RegisterForm(AuthBaseForm):
     pass
+
+
+class TeacherRegisterForm(RegisterForm):
+
+    is_teacher = StringField('is_teacher', widget=CheckboxInput)
 
 
 class LoginForm(AuthBaseForm):
