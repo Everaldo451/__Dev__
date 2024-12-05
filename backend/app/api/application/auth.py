@@ -5,7 +5,7 @@ from flask_jwt_extended import set_access_cookies, set_refresh_cookies
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import unset_jwt_cookies
 from flask_wtf.form import Form
-from ...models import User, UserTypes
+from ...models import User, UserTypes, db
 from ..forms import RegisterForm, LoginForm, ChangeConfigsForm, TeacherRegisterForm
 
 auth = Blueprint("auth",__name__,url_prefix="/auth")
@@ -58,13 +58,16 @@ def register():
 
     if not form.validate():
         response.status_code = 401
+        print("invalido")
         return response
 
     user = User.query.filter_by(email=request.form.get("email")).first()
 
     if user:
         response.status_code = 401
+        print("tem user")
         return response
+
     
     if teacher_form.validate():
         user_type = UserTypes.TEACHER
@@ -81,8 +84,8 @@ def register():
         )
 
         with current_app.app_context():
-            current_app.db.session.add(user)
-            current_app.db.session.commit()
+            db.session.add(user)
+            db.session.commit()
 
         access = create_access_token(identity=user.id)
         set_access_cookies(response,access)

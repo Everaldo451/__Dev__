@@ -1,6 +1,6 @@
 div.SearchBar{
     margin-top: 20px;
-    width: 40%;
+    width: clamp(200px, 35vw, 350px);
 }
 
 div.SearchBar input[type="text"]{

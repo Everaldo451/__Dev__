@@ -10,8 +10,6 @@ from .courses import courses_list
 jwt = Blueprint('jwt',__name__,url_prefix="/jwt")
 
 
-
-
 @jwt.route("/getuser",methods=["GET"])
 @jwt_required(locations="headers")
 def getuser():
@@ -20,10 +18,7 @@ def getuser():
 
     user = User.query.filter_by(id=identity).first()
 
-    return {"user":{"username":user.username,"email":user.email,"courses":courses_list(user.courses)}}
-
-
-
+    return {"user":{"username":user.username,"email":user.email,"courses":courses_list(user.courses),"user_type":user.user_type.value}}
 
 
 @jwt.route('/access',methods=["POST"])
@@ -35,8 +30,6 @@ def access():
     response.data = request.cookies.get(current_app.config.get("JWT_ACCESS_COOKIE_NAME"))
 
     return response
-
-
 
 
 @jwt.route("/refresh",methods=["POST"])

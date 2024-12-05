@@ -31,18 +31,14 @@ def create_app():
     db.init_app(app)
     JwtManager = JWTManager(app)
 
-
     app.register_blueprint(csrf_routes)
     app.register_blueprint(auth)
     app.register_blueprint(courses)
     app.register_blueprint(jwt)
 
 
-
     with app.app_context():
      
         db.create_all()
-
-    app.db = db
 
     return app

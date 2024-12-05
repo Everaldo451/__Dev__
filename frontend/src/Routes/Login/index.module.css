@@ -1,8 +1,13 @@
-main.Login {margin: auto;display: flex;flex-direction: column;}
+main.Login {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    max-width: calc(100% - 60px);
+}
 
 main.Login ul{
     padding: 0 0 10px 0;
-    font-size: 20px;
+    font-size: clamp(15px,3vw,20px);
     margin: 0;
     display: flex;
     justify-content: space-around;
@@ -29,7 +34,7 @@ main.Login form {
 
 main.Login form input:not([type="checkbox"]){
     padding: 10px 20px;
-    min-width: 400px;
+    width: clamp(200px, 80vw, 400px);
     margin-top: 10px;
 }
 

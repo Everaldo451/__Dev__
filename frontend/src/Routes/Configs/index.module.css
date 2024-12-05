@@ -16,11 +16,35 @@ main.Configs > section form {
     align-items: start;
 }
 
-main.Configs > section form > div.Config{display: flex;width: 100%;align-items: center;}
+main.Configs > section form > div.Config{
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+main.Configs > section > h2{
+    font-size: clamp(15px, 5vw, 30px);
+}
+
+main.Configs > section form > div.Config label, 
+main.Configs > section form > div.Config input{
+    font-size: clamp(12px, 2.5vw, 15px);
+}
+
+
+main.Configs > section form > div.Config button {
+    font-size: clamp(10px, 2.5vw, 15px);
+}
+
+main.Configs > section form > div.Config input {
+    width: clamp(100px, 20vw, 200px);
+
+    overflow: visible;
+}
 
 main.Configs > section form > div.Config button{margin-left: auto;}
 
-main.Configs > section form > div.Config:nth-child(n+2){margin-top: 20px;}
+main.Configs > section form > div.Config:nth-child(n+2){margin-top: clamp(10px, 2vw, 20px);}
 
 
 main.Configs .OffChangeInput {

@@ -42,13 +42,17 @@ def subscribe(id):
     try:
 
         user = User.query.get(get_jwt_identity())
+
+        if user.user_type.value == "teacher":
+            return response
+        
         course = Course.query.get(id)
 
         if not course in user.courses:
 
             user.courses.append(course)
-            current_app.db.session.flush()
-            current_app.db.session.commit()
+            db.session.flush()
+            db.session.commit()
 
     except: pass
 
@@ -64,13 +68,17 @@ def unsubscribe(id):
 
     try:
         user = User.query.get(get_jwt_identity())
+
+        if user.user_type.value == "teacher":
+            return response
+        
         course = Course.query.get(id)
 
         if course in user.courses:
 
             user.courses.remove(course)
-            current_app.db.session.flush()
-            current_app.db.session.commit()
+            db.session.flush()
+            db.session.commit()
 
     except: pass
 

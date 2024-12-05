@@ -8,6 +8,11 @@
     padding: 5px;
 }
 
+.resultsLanguage > h2 {
+    color: white;
+    font-size: clamp(15px, 4vw, 25px);
+}
+
 section.courses{
     width: 100%;
     display: grid;

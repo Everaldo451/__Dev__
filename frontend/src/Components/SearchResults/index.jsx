@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useContext } from "react"
-import { CSRFContext } from "../../main"
-import { AccessToken } from "../../main"
+import { AccessToken, User, CSRFContext } from "../../main"
 import axios from "axios"
 import styles from "./index.module.css"
 
@@ -17,14 +16,12 @@ function Select ({children, attrs ,setLanguage}) {
     return <select {...attrs} ref={ref} onChange={onChange}>{children}</select>
 }
 
-
-
 function Result({course, subscribe}) {
 
     const [hover,setHover] = useState(false)
     const csrf = useContext(CSRFContext)
     const token = useContext(AccessToken)
-
+    const user = useContext(User)
 
     console.log(subscribe)
 
@@ -64,9 +61,18 @@ function Result({course, subscribe}) {
             <p>{course.description}</p>
             {hover == true && token?
             <div style={{display:"flex",justifyContent:"center"}}>
-                <button onClick={(e) => {e.preventDefault();Subscribe()}}>
-                {subscribe?"Se inscrever":"Se desinscrever"}
-                </button>
+                {user.user_type != "teacher"?
+                    <button onClick={(e) => {e.preventDefault();Subscribe()}}>
+                        {subscribe?"Se inscrever":"Se desinscrever"}
+                    </button>
+                    :null
+                }
+                {!subscribe?
+                    <button>
+                        Acessar curso
+                    </button>
+                    :null
+                }
             </div>
             :null
             }
@@ -76,7 +82,7 @@ function Result({course, subscribe}) {
 }
 
 
-function SearchResults({courses, subscribe}){
+function SearchResults({courses, subscribe, area}){
 
     const [language, setLanguage] = useState(null)
     const [currentCourses, setCurrentCourses] = useState(courses)
@@ -88,7 +94,11 @@ function SearchResults({courses, subscribe}){
     return (
         <>
             <div className={styles.resultsLanguage}>
-                <h2 style={{color:"white"}}>Cursos:</h2>
+                {area == true?
+                    <h2 style={{color:"white"}}>Meus Cursos:</h2>
+                    :
+                    <h2 style={{color:"white"}}>Cursos:</h2>
+                }
                 <Select setLanguage={setLanguage}>
                     <option selected value="">None</option>
                     <option value="python">Python</option>
@@ -98,11 +108,8 @@ function SearchResults({courses, subscribe}){
             <section className={styles.courses}>
 
                 {currentCourses.map(course => 
-                <Result 
-                    course={course} 
-                    key={course.key}
-                    subscribe={subscribe}
-                />)}
+                    <Result course={course} key={course.key} subscribe={subscribe}/>
+                )}
 
             </section>
         </>

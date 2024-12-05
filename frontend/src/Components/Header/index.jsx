@@ -43,7 +43,12 @@ function Header() {
                     <div className={styles.img} style={user.foto?{backgroundImage:user.foto}:{backgroundColor:hcolor}}></div>
                     <ul className={styles.options} style={hcolor=="white"?{backgroundColor:"black"}:{backgroundColor:"grey"}}>
                         <li><Link to="/configs">Configurações</Link></li>
-                        <li><Link to="/area">Área do Estudante</Link></li>
+                        {user.user_type == "student"?
+                            <li><Link to="/area">Área do Estudante</Link></li>
+                            :user.user_type == "teacher"?
+                                <li><Link to="/area">Área do Professor</Link></li>
+                                :null
+                        }
                         <li><button onClick={(e) => {onclick(token)}}>Logout</button></li>
                     </ul>
                 </div>

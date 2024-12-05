@@ -4,7 +4,7 @@ header.Main nav ul.header {
     align-items: center;
     justify-content: space-between;
     margin: 0;
-    padding: 10px 30px;
+    padding: 10px clamp(15px,3vw,30px);
     backdrop-filter: blur(10px)
 }
 
