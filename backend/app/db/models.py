@@ -1,9 +1,9 @@
-from typing import List
+from typing import List, Set
 import enum
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, func, alias, and_
 from sqlalchemy import String, Boolean, Enum, LargeBinary, Integer, ForeignKey, Column
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, aliased
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, aliased, column_property
 from sqlalchemy.ext.hybrid import hybrid_property
 
 class Base(DeclarativeBase):
@@ -29,7 +29,7 @@ class User(db.Model):
     user_type: Mapped[UserTypes] = mapped_column(Enum(UserTypes, native_enum = False))
     admin = mapped_column(Boolean(), default=False)
 
-    courses: Mapped[List["Course"]] = relationship(secondary=user_courses)
+    courses: Mapped[Set["Course"]] = relationship(secondary=user_courses, back_populates="users")
 
 
 class Course(db.Model):
@@ -40,28 +40,12 @@ class Course(db.Model):
     language = mapped_column(String(100),nullable=False)
     image = mapped_column(LargeBinary(),nullable=False)
 
-    users: Mapped[List["User"]] = relationship(
-        secondary=user_courses, back_populates="courses"
-    )
+    users: Mapped[Set["User"]] = relationship(secondary=user_courses, back_populates="courses")
 
     @hybrid_property
     def students(self):
-        user_alias = aliased(User)
-        return select(user_alias).where(
-            and_(
-                user_courses.c.course_id == self.id,
-                user_courses.c.user_id == user_alias.id,
-                user_alias.user_type == UserTypes.STUDENT
-            )
-        )
+        return [user for user in filter(lambda user: user.user_type == UserTypes.STUDENT, self.users)]
 
     @hybrid_property
     def teachers(self):
-        user_alias = aliased(User)
-        return select(user_alias).where(
-            and_(
-                user_courses.c.course_id == self.id,
-                user_courses.c.user_id == user_alias.id,
-                user_alias.user_type == UserTypes.TEACHER
-            )
-        )
+        return [user for user in filter(lambda user: user.user_type == UserTypes.TEACHER, self.users)]

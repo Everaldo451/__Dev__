@@ -2,7 +2,8 @@ from flask import Blueprint, request, current_app, make_response
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import set_access_cookies
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ...models import User
+from sqlalchemy.ext.serializer import dumps
+from ...db.models import User
 from .courses import courses_list
 
 
@@ -18,7 +19,11 @@ def getuser():
 
     user = User.query.filter_by(id=identity).first()
 
-    return {"user":{"username":user.username,"email":user.email,"courses":courses_list(user.courses),"user_type":user.user_type.value}}
+    courses = courses_list(user.courses)
+
+    print(courses)
+
+    return {"user":{"username":user.username,"email":user.email,"courses": courses,"user_type":user.user_type.value}}
 
 
 @jwt.route('/access',methods=["POST"])

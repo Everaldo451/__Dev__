@@ -5,7 +5,7 @@ from flask_jwt_extended import set_access_cookies, set_refresh_cookies
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import unset_jwt_cookies
 from flask_wtf.form import Form
-from ...models import User, UserTypes, db
+from ...db.models import User, UserTypes, db
 from ..forms import RegisterForm, LoginForm, ChangeConfigsForm, TeacherRegisterForm
 
 auth = Blueprint("auth",__name__,url_prefix="/auth")
@@ -22,11 +22,11 @@ def login():
 
     form = LoginForm()
 
-    if form.validate():
+    if form.validate_on_submit():
 
         user = User.query.filter_by(email=request.form.get("email")).first()
 
-        if user and check_password_hash(user.password, request.form.get("password")):
+        if user and check_password_hash(user.password, form.password.data):
 
             try:
 
@@ -56,12 +56,12 @@ def register():
 
     response = make_response(redirect(request.origin))
 
-    if not form.validate():
-        response.status_code = 401
+    if not form.validate_on_submit():
+        response.status_code = 400
         print("invalido")
         return response
 
-    user = User.query.filter_by(email=request.form.get("email")).first()
+    user = User.query.filter_by(email=form.email.data).first()
 
     if user:
         response.status_code = 401
@@ -77,9 +77,9 @@ def register():
     try:
 
         user = User(
-            email=request.form.get("email"),
-            password=generate_password_hash(request.form.get("password")),
-            username=request.form.get("username"),
+            email=form.email.data,
+            password=generate_password_hash(form.password.data),
+            username=form.username.data,
             user_type=user_type
         )
 
@@ -116,19 +116,19 @@ def change_configs():
 
     form = ChangeConfigsForm()
 
-    if form.validate() == True:
+    if form.validate_on_submit():
 
         user = User.query.get(get_jwt_identity())
 
-        if user.email != request.args.get("email"):
+        if user.email != form.email.data:
 
-            user.email == request.args.get("email")
+            user.email == form.email.data
     
-        if user.username != request.args.get("username"):
+        if user.username != form.username.data:
 
-            user.username = request.args.get("username")
+            user.username = form.username.data
         
-        current_app.db.session.commit()
+        db.session.commit()
 
         return redirect(request.origin)
     
