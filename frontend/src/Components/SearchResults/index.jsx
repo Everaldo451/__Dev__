@@ -157,7 +157,7 @@ function Result({course, subscribe}) {
             <p className={styles.data}>{course.description}</p>
             {hover == true && token?
                 <div style={{display:"flex",justifyContent:"center"}}>
-                    {user.user_type != "teacher"?
+                    {user.user_type != "TEACHER"?
                         <button onClick={(e) => {e.preventDefault();Subscribe()}}>
                             {subscribe?"Se inscrever":"Se desinscrever"}
                         </button>
@@ -190,7 +190,7 @@ function SearchResults({courses, subscribe, area}){
 
     return (
         <>
-            {area == true && user.user_type=="teacher"?
+            {area == true && user.user_type=="TEACHER"?
                 <AddCourse/>
                 :null
             }

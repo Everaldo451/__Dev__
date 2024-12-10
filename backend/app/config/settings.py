@@ -10,7 +10,7 @@ class Config(object):
     SESSION_COOKIE_HTTPONLY = True
 
     JWT_SECRET_KEY = SECRET_KEY
-    JWT_ACCESS_TOKEN_EXPIRE = timedelta(hours=1)
+    JWT_ACCESS_TOKEN_EXPIRE = timedelta(minutes=15)
     JWT_REFRESH_TOKEN_EXPIRE = timedelta(days=1)
     JWT_TOKEN_LOCATION = ["headers","cookies"]
     JWT_SESSION_COOKIE = False

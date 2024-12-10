@@ -43,9 +43,9 @@ function Header() {
                     <div className={styles.img} style={user.foto?{backgroundImage:user.foto}:{backgroundColor:hcolor}}></div>
                     <ul className={styles.options} style={hcolor=="white"?{backgroundColor:"black"}:{backgroundColor:"grey"}}>
                         <li><Link to="/configs">Configurações</Link></li>
-                        {user.user_type == "student"?
+                        {user.user_type == "STUDENT"?
                             <li><Link to="/area">Área do Estudante</Link></li>
-                            :user.user_type == "teacher"?
+                            :user.user_type == "TEACHER"?
                                 <li><Link to="/area">Área do Professor</Link></li>
                                 :null
                         }

@@ -1,10 +1,9 @@
-from flask import Blueprint, redirect, request, current_app, make_response, flash
+from flask import Blueprint, redirect, request, current_app, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_jwt_extended import set_access_cookies, set_refresh_cookies
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import unset_jwt_cookies
-from flask_wtf.form import Form
 from ...db.models import User, UserTypes, db
 from ..forms import RegisterForm, LoginForm, ChangeConfigsForm, TeacherRegisterForm
 
@@ -12,8 +11,6 @@ auth = Blueprint("auth",__name__,url_prefix="/auth")
 
 
 ##############AUTH
-
-
 
 @auth.route("/login",methods=["POST"])
 def login():
@@ -30,11 +27,8 @@ def login():
 
             try:
 
-                access = create_access_token(identity=user.id)
-                set_access_cookies(response,access)
-                refresh = create_refresh_token(identity=user.id)
-                set_refresh_cookies(response,refresh)
-
+                refresh_token = create_refresh_token(identity=user.id)
+                set_refresh_cookies(response,refresh_token)
 
                 return response
         
@@ -87,10 +81,8 @@ def register():
             db.session.add(user)
             db.session.commit()
 
-        access = create_access_token(identity=user.id)
-        set_access_cookies(response,access)
-        refresh = create_refresh_token(identity=user.id)
-        set_refresh_cookies(response,refresh)
+        refresh_token = create_refresh_token(identity=user.id)
+        set_refresh_cookies(response,refresh_token)
 
         return response
     

@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
 import ReactDOM from 'react-dom/client'
 import { useState, createContext, useEffect } from 'react'
+import { GetCookies } from "./GetCookies.jsx"
 import {App} from './App.jsx'
-import { GetCookies } from './GetCookies.jsx'
+import AccessTokenInterval from './Token.jsx'
 import axios from 'axios'
 import './index.css'
 
@@ -22,61 +23,10 @@ axios.interceptors.request.use(
   }
 )
 
-async function AccessTokenInterval(user, setUser, setLoaded, setToken, csrf) {
-
-  try {
-    if (user==null) {
-
-      switch(GetCookies().get("csrf_access_token")) {
-        case null || undefined: 
-
-        var token =  await axios.post("http://localhost:5000/jwt/refresh",undefined,{
-          withCredentials: true,
-          headers: {
-            'X-CSRFToken':csrf
-          }
-        })
-
-        default: 
-
-        var token = await axios.post("http://localhost:5000/jwt/access",undefined,{
-          withCredentials: true,
-          headers: {
-            'X-CSRFToken':csrf
-          }
-        })
-
-      }
-
-      if (token.data) {
-
-        setToken(token.data)
-
-        const userdata = await axios.get("http://localhost:5000/jwt/getuser",{
-          withCredentials: true,
-          headers: {
-            'Authorization':`Bearer ${token.data}`
-          }
-        })
-        setUser(userdata.data.user)
-
-      } else {
-        setUser(null)
-      }
-
-    }
-
-  } catch (error) {
-    setUser(null)
-  }
-  setLoaded(true)
-}
-
-
 function Main() {
 
   const [hcolor, setHColor] = useState("white")
-  const [csrf, setCSRF] = useState(null)
+  const [csrf_token, setCSRF] = useState(null)
   const [user,setUser] = useState(null)
   const [loaded,setLoaded] = useState(false)
   const [token, setToken] = useState(null)
@@ -86,19 +36,24 @@ function Main() {
 
     async function fetchData() {
 
+      console.log("hello world")
+
       try {
+        console.log(csrf_token==null)
 
-        if (csrf==null) {
+        if (csrf_token==null) {
 
-          var response = await axios.get("http://localhost:5000/csrf/get",
+          const response = await axios.get("http://localhost:5000/csrf/get",
             {
               withCredentials:true
-            })
+            }
+          )
+          console.log(response.data.csrf)
           setCSRF(response.data.csrf)
 
-        }
+          AccessTokenInterval(user, response.data.csrf || csrf_token, setUser, setLoaded)
 
-        AccessTokenInterval(user, setUser, setLoaded, setToken, response.data.csrf || csrf)
+        }
 
       } catch(error) {setLoaded(true)}
 
@@ -106,7 +61,7 @@ function Main() {
 
     fetchData()
 
-  },[count])
+  },[])
 
   window.addEventListener("scroll",()=> {
 
@@ -146,7 +101,7 @@ function Main() {
 
       <User.Provider value={user}>
         <HeaderColor.Provider value={hcolor}>
-          <CSRFContext.Provider value={csrf}>
+          <CSRFContext.Provider value={csrf_token}>
             <AccessToken.Provider value={token}>
               <App/>
             </AccessToken.Provider>

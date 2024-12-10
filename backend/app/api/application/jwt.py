@@ -2,8 +2,8 @@ from flask import Blueprint, request, current_app, make_response
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import set_access_cookies
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from sqlalchemy.ext.serializer import dumps
 from ...db.models import User
+from ...db.serializers import UserSchema
 from .courses import courses_list
 
 
@@ -11,50 +11,34 @@ from .courses import courses_list
 jwt = Blueprint('jwt',__name__,url_prefix="/jwt")
 
 
-@jwt.route("/getuser",methods=["GET"])
-@jwt_required(locations="headers")
+@jwt.route("/getuser",methods=["POST"])
+@jwt_required(locations="cookies")
 def getuser():
 
     identity = get_jwt_identity()
 
     user = User.query.filter_by(id=identity).first()
 
-    courses = courses_list(user.courses)
+    user_schema = UserSchema()
 
-    print(courses)
+    serialized_user = user_schema.dump(user)
+
+    print(serialized_user)
+    return serialized_user
 
     return {"user":{"username":user.username,"email":user.email,"courses": courses,"user_type":user.user_type.value}}
 
 
-@jwt.route('/access',methods=["POST"])
-@jwt_required(locations="cookies")
-def access():
+@jwt.route('/refresh_token',methods=["POST"])
+@jwt_required(refresh=True, locations="cookies")
+def refresh_token():
 
     response = make_response()
+    print("ola")
 
-    response.data = request.cookies.get(current_app.config.get("JWT_ACCESS_COOKIE_NAME"))
+    identity = get_jwt_identity()
+    print(identity)
+    access_token = create_access_token(identity=identity)
+    set_access_cookies(response, access_token)
 
     return response
-
-
-@jwt.route("/refresh",methods=["POST"])
-@jwt_required(refresh=True,locations="cookies")
-def refresh():
-
-    response = make_response()
-
-    print("oi")
-
-    try:
-
-        access = create_access_token(identity=get_jwt_identity())
-
-        set_access_cookies(response,access)
-
-        response.data = access
-
-        return response
-    
-
-    except: return response
-

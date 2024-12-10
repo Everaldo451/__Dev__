@@ -4,7 +4,6 @@ from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field, fields
 
 class CourseSchema(SQLAlchemySchema):
 
-
     class Meta:
         model = Course
 
@@ -12,8 +11,8 @@ class CourseSchema(SQLAlchemySchema):
     description = auto_field()
     language = auto_field()
     image = auto_field()
-    students = auto_field()
-    teachers = auto_field()
+    #students = auto_field()
+    #teachers = auto_field()
 
 
 class UserSchema(SQLAlchemySchema):
