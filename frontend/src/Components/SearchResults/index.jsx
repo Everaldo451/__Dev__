@@ -22,7 +22,7 @@ function AddCourse() {
     const csrf = useContext(CSRFContext)
     const token = useContext(AccessToken)
 
-    if (user.user_type == "teacher") {
+    if (user.user_type == "TEACHER") {
 
         const [displayIsNone, setDisplayIsNone] = useState(true)
 
@@ -190,7 +190,7 @@ function SearchResults({courses, subscribe, area}){
 
     return (
         <>
-            {area == true && user.user_type=="TEACHER"?
+            {area == true && user.user_type == "TEACHER"?
                 <AddCourse/>
                 :null
             }

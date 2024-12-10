@@ -48,7 +48,6 @@ function Main() {
               withCredentials:true
             }
           )
-          console.log(response.data.csrf)
           setCSRF(response.data.csrf)
 
           AccessTokenInterval(user, response.data.csrf || csrf_token, setUser, setLoaded)

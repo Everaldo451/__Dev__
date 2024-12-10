@@ -12,7 +12,6 @@ function CourseRoute() {
     const [courses, setCourses] = useState([])
     const token = useContext(AccessToken)
     const user = useContext(User)
-    console.log(user)
     const {name} = useParams()
 
     async function GetCourse() {

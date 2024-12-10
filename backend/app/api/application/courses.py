@@ -2,6 +2,7 @@ from flask import Blueprint, request, make_response, current_app, redirect
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..forms import CreateCourseForm
 from ...db.models import Course, User, db, UserTypes
+from ...db.serializers import CourseSchema
 import base64
 import io
 
@@ -31,11 +32,15 @@ def getcourses(name):
 
     courses = Course.query.filter(Course.name.ilike(f'%{name}%'))[:6]
 
-    return {"courses":courses_list(courses)}
+    course_schema = CourseSchema()
+
+    response = course_schema.dump(courses, many=True)
+
+    return {"courses":response}
 
 
 @courses.route('/subscribe/<int:id>',methods=['POST'])
-@jwt_required(locations="headers")
+@jwt_required(locations="cookies")
 def subscribe(id):
 
     response = make_response(redirect(request.origin))
@@ -62,7 +67,7 @@ def subscribe(id):
 
 
 @courses.route('/unsubscribe/<int:id>',methods=["POST"])
-@jwt_required(locations='headers')
+@jwt_required(locations='cookies')
 def unsubscribe(id):
 
     response = make_response(redirect(request.origin))
@@ -87,7 +92,7 @@ def unsubscribe(id):
 
 
 @courses.route('/create',methods=["POST"])
-@jwt_required(locations='headers')
+@jwt_required(locations='cookies')
 def createCourse():
     print("oi")
 
