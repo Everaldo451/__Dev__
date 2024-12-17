@@ -1,11 +1,11 @@
 import axios from "axios"
 
-async function SetUser(csrf, setUser){
+async function SetUser(csrf_token, setUser){
 
     const response = await axios.post("http://localhost:5000/jwt/getuser",undefined,{
         withCredentials: true,
         headers: {
-          'X-CSRFToken':csrf
+          'X-CSRFToken':csrf_token
         }
       }
     )
@@ -15,40 +15,43 @@ async function SetUser(csrf, setUser){
 }
 
 
-export default async function AccessTokenInterval(user, csrf, setUser, setLoaded) {
+export default async function AccessTokenInterval(userContext, csrfContext, setLoaded) {
 
-    if (user != null|undefined) {
-      console.log(typeof(user), user)
-      setLoaded(true)
+  const [user, setUser] = userContext
+  const [csrf_token, setCRSFToken] = csrfContext
+
+  if (user != null|undefined) {
+    console.log(typeof(user), user)
+    setLoaded?setLoaded(true):null
+    return
+  }
+
+  let errorOcurred = false
+
+  try {
+    await SetUser(csrf_token, setUser)
+  } catch(error) {
+    errorOcurred = true
+  } finally {
+    if (!errorOcurred) {
+      setLoaded?setLoaded(true):null
       return
     }
-
-    let errorOcurred = false
-
-    try {
-      await SetUser(csrf, setUser)
-    } catch(error) {
-      errorOcurred = true
-    } finally {
-      if (!errorOcurred) {
-        setLoaded(true)
-        return
-      }
-    }
-
-    try {
-  
-        await axios.post("http://localhost:5000/jwt/refresh_token",undefined,{
-            withCredentials: true,
-            headers: {
-              'X-CSRFToken':csrf
-            }
-        })
-  
-        await SetUser(csrf, setUser)
-  
-    } catch (error) {}
-
-    setLoaded(true)
   }
+
+  try {
+  
+    await axios.post("http://localhost:5000/jwt/refresh_token",undefined,{
+        withCredentials: true,
+        headers: {
+          'X-CSRFToken':csrf_token
+        }
+    })
+  
+    await SetUser(csrf_token, setUser)
+  
+  } catch (error) {}
+
+  setLoaded?setLoaded(true):null
+}
   

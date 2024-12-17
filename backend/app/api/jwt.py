@@ -1,12 +1,12 @@
-from flask import Blueprint, request, current_app, make_response
+from flask import Blueprint, request, make_response
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import set_access_cookies
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ...db.models import User
-from ...db.serializers import UserSchema
-from .courses import courses_list
+from flask_jwt_extended import JWTManager
+from ..db.models import User
+from ..db.serializers import UserSchema
 
-
+JWT = JWTManager()
 
 jwt = Blueprint('jwt',__name__,url_prefix="/jwt")
 
@@ -23,10 +23,7 @@ def getuser():
 
     serialized_user = user_schema.dump(user)
 
-    print(serialized_user)
     return serialized_user
-
-    return {"user":{"username":user.username,"email":user.email,"courses": courses,"user_type":user.user_type.value}}
 
 
 @jwt.route('/refresh_token',methods=["POST"])
@@ -34,7 +31,6 @@ def getuser():
 def refresh_token():
 
     response = make_response()
-    print("ola")
 
     identity = get_jwt_identity()
     print(identity)

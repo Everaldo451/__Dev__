@@ -1,9 +1,8 @@
 from typing import List, Set
 import enum
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select, func, alias, and_
 from sqlalchemy import String, Boolean, Enum, LargeBinary, Integer, ForeignKey, Column
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, aliased, column_property
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 
 class Base(DeclarativeBase):
@@ -19,6 +18,13 @@ user_courses = db.Table('user_courses',
 class UserTypes(enum.Enum):
     STUDENT = "student"
     TEACHER = "teacher"
+
+class Languages(enum.Enum):
+    PYTHON = "python"
+    JAVASCRIPT = "javascript"
+    CSHARP = "c#"
+    JAVA = "java"
+    PHP = "php"
 
 class User(db.Model):
 
@@ -37,7 +43,7 @@ class Course(db.Model):
     id = mapped_column(Integer, primary_key = True, autoincrement=True)
     name = mapped_column(String(100), unique=True, nullable=False)
     description = mapped_column(String(1000))
-    language = mapped_column(String(100),nullable=False)
+    language: Mapped[Languages] = mapped_column(Enum(Languages, native_enum = False))
     image = mapped_column(LargeBinary(),nullable=False)
 
     users: Mapped[Set["User"]] = relationship(secondary=user_courses, back_populates="courses")

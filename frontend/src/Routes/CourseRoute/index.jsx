@@ -4,20 +4,19 @@ import { useParams } from "react-router-dom"
 import axios from "axios"
 import SearchBar from "../../Components/SearchBar"
 import SearchResults from "../../Components/SearchResults"
-import { AccessToken, User } from "../../main"
+import { User } from "../../MainContexts"
 
 
 function CourseRoute() {
 
     const [courses, setCourses] = useState([])
-    const token = useContext(AccessToken)
-    const user = useContext(User)
+    const [user, setUser] = useContext(User)
     const {name} = useParams()
 
     async function GetCourse() {
         try {
 
-            const response = await axios.get(`http://localhost:5000/courses/getcourses/${name}`)
+            const response = await axios.get(`/api/courses/getcourses/${name}`)
             const array = []
 
             if (response.data) {

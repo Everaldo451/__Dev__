@@ -4,8 +4,8 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_jwt_extended import set_access_cookies, set_refresh_cookies
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import unset_jwt_cookies
-from ...db.models import User, UserTypes, db
-from ..forms import RegisterForm, LoginForm, ChangeConfigsForm, TeacherRegisterForm
+from ..db.models import User, UserTypes, db
+from .forms import RegisterForm, LoginForm, ChangeConfigsForm, TeacherRegisterForm
 
 auth = Blueprint("auth",__name__,url_prefix="/auth")
 
@@ -14,8 +14,6 @@ auth = Blueprint("auth",__name__,url_prefix="/auth")
 
 @auth.route("/login",methods=["POST"])
 def login():
-
-    response = make_response(redirect(request.origin))
 
     form = LoginForm()
 
@@ -27,6 +25,9 @@ def login():
 
             try:
 
+                response = make_response({"message":"Login successfuly"})
+                response.status_code = 200
+
                 refresh_token = create_refresh_token(identity=user.id)
                 set_refresh_cookies(response,refresh_token)
 
@@ -34,11 +35,11 @@ def login():
         
             except Exception as e: 
             
-                return response
+                return {"message": "Internal Server Error"}, 500
     
-        return response
+        return {"message": "Invalid email or password"}, 400
     
-    return response
+    return {"message": "Invalid credentials"}, 400
 
 
 @auth.route("/register",methods=["POST"])
@@ -48,19 +49,15 @@ def register():
     form = RegisterForm()
     teacher_form = TeacherRegisterForm()
 
-    response = make_response(redirect(request.origin))
-
     if not form.validate_on_submit():
-        response.status_code = 400
         print("invalido")
-        return response
+        return {"message": "Invalid credentials."}, 400
 
     user = User.query.filter_by(email=form.email.data).first()
 
     if user:
-        response.status_code = 401
         print("tem user")
-        return response
+        return {"message": "User with current email exists"}, 401
 
     
     if teacher_form.validate():
@@ -77,21 +74,22 @@ def register():
             user_type=user_type
         )
 
-        with current_app.app_context():
-            db.session.add(user)
-            db.session.commit()
+        db.session.add(user)
+        db.session.commit()
 
+        response = make_response({"message": "User created sucessfully"})
+        response.status_code = 200
         refresh_token = create_refresh_token(identity=user.id)
         set_refresh_cookies(response,refresh_token)
 
         return response
     
     except: 
-        return response
+        return {"message": "Internal server error"}, 500
         
     
 @auth.route("/logout",methods=["GET"])
-@jwt_required(locations="headers")
+@jwt_required(locations="cookies")
 def logout():
 
     response = make_response()
@@ -103,7 +101,7 @@ def logout():
 
 
 @auth.route("/change_configs",methods=["POST"])
-@jwt_required(locations='headers')
+@jwt_required(locations='cookies')
 def change_configs():
 
     form = ChangeConfigsForm()

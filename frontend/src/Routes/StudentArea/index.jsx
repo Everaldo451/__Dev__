@@ -1,13 +1,12 @@
 import styles from "./index.module.css"
 import SearchResults from "../../Components/SearchResults";
-import { User, AccessToken } from "../../main";
+import { User } from "../../MainContexts";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 
 function StudentArea() {
 
-    const user = useContext(User)
-    const token = useContext(AccessToken)
+    const [user, setUser] = useContext(User)
     console.log(user)
 
     return (

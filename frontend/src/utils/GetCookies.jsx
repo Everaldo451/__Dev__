@@ -4,7 +4,8 @@ export const GetCookies = () => {
 
     for (const cookie of document.cookie.split(";")) {
 
-        cookie_dict.set(cookie.split("=")[0].replace(" ",""), cookie.split("=")[1])
+        const splited_cookie = cookie.split("=")
+        cookie_dict.set(splited_cookie[0].replace(" ",""), splited_cookie[1])
     }
 
     return cookie_dict

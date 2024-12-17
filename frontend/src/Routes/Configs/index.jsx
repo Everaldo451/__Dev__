@@ -1,5 +1,5 @@
 import { useState, useContext, useRef, useEffect } from "react"
-import { User } from "../../main"
+import { User } from "../../MainContexts"
 import style from "./index.module.css"
 import { Navigate } from "react-router-dom"
 
@@ -24,7 +24,8 @@ function Config({children, attrs, setChange}){
                 {...attrs} 
                 required
                 id={attrs.name} 
-                value={val} 
+                value={val}
+                size={attrs.value.length} 
                 ref={ref} 
                 onInput={onInput} 
                 readOnly={!Onchange}
@@ -42,14 +43,17 @@ function Config({children, attrs, setChange}){
 
 function Configs(){
 
-    const user = useContext(User)
+    const [user, setUser] = useContext(User)
     const [changeInputs,setInputs] = useState(0)
+
+    const formRef = useRef(null)
 
     function OnClick(e) {
         e.preventDefault()
-        const form = e.currentTarget.parentElement
-       
-        changeInputs==0?form.submit():null
+
+        if (formRef.current) {
+            changeInputs==0?formRef.current.submit():null
+        }
     }
 
     return(
@@ -60,7 +64,7 @@ function Configs(){
 
                     <h2 style={{margin: 0}}>Dados Pessoais:</h2>
 
-                    <form>
+                    <form ref={formRef}>
                         <Config 
                             attrs={{value:user.email, name:"email", type:"email"}} 
                             setChange={setInputs}>Email:

@@ -1,13 +1,23 @@
+header.Main {
+    background-color: transparent;
+    mix-blend-mode: difference;
+    backdrop-filter: blur(10px);
+}
+
 header.Main nav ul.header {
     list-style: none;
-    background-color: transparent;
     align-items: center;
     justify-content: space-between;
     margin: 0;
     padding: 10px clamp(15px,3vw,30px);
-    backdrop-filter: blur(10px)
 }
 
+header.Main nav ul.header > li > * {
+    color: white;
+    mix-blend-mode: difference;
+    z-index: 1;
+}
+    
 header.Main {z-index: 2;}
 
 header.Main nav div.foto {
@@ -16,11 +26,12 @@ header.Main nav div.foto {
 }
 
 header.Main nav div.foto div.img{
-    position: relative;
     height: 100%;
     border-radius: 50%;
     aspect-ratio: 1/1;
     transform: translate(-100%,0);
+    background-color: white;
+    mix-blend-mode: difference;
 }
 
 header.Main nav div.foto div.img::after{
@@ -33,6 +44,9 @@ header.Main nav div.foto div.img::after{
 }
 
 header.Main nav div.foto:hover ul.options {
+    background-color: black;
+    mix-blend-mode: difference;
+    opacity: 0.5;
     display: block;
 }
 
@@ -64,6 +78,8 @@ header.Main nav ul.options li a, header.Main nav ul.options li button {
     text-wrap: nowrap;
 }
 
+header.Main nav ul.options li button:hover {cursor: pointer;}
+
 
 
 header.Main {
@@ -72,7 +88,7 @@ header.Main {
 }
 
 header.Main h1 {
-    margin: 0;
+    margin: 0 auto;
 }
 
 header.Main nav > ul > li > *{

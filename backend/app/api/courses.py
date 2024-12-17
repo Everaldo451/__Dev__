@@ -1,33 +1,15 @@
-from flask import Blueprint, request, make_response, current_app, redirect
+from flask import Blueprint, request, make_response, redirect
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..forms import CreateCourseForm
-from ...db.models import Course, User, db, UserTypes
-from ...db.serializers import CourseSchema
-import base64
+from sqlalchemy.exc import IntegrityError
+from .forms import CreateCourseForm
+from ..db.models import Course, User, db, UserTypes, Languages
+from ..db.serializers import CourseSchema
 import io
 
-def courses_list(courses) -> list:
-    list = []
 
-    for course in courses:
-        image = base64.b64encode(course.image).decode('utf-8')
+course_routes = Blueprint("courses",__name__,url_prefix="/courses")
 
-        list.append({"id":course.id,
-            "name":course.name,
-            "description":course.description,
-            "language":course.language,
-            "image":f'data:image/jpeg;base64, {image}',
-            "students":course.students,
-            "teachers": course.teachers
-        })
-
-    return list
-
-
-
-courses = Blueprint("courses",__name__,url_prefix="/courses")
-
-@courses.route('/getcourses/<name>',methods=["GET"])
+@course_routes.route('/getcourses/<name>',methods=["GET"])
 def getcourses(name):
 
     courses = Course.query.filter(Course.name.ilike(f'%{name}%'))[:6]
@@ -39,7 +21,7 @@ def getcourses(name):
     return {"courses":response}
 
 
-@courses.route('/subscribe/<int:id>',methods=['POST'])
+@course_routes.route('/subscribe/<int:id>',methods=['POST'])
 @jwt_required(locations="cookies")
 def subscribe(id):
 
@@ -66,7 +48,7 @@ def subscribe(id):
 
 
 
-@courses.route('/unsubscribe/<int:id>',methods=["POST"])
+@course_routes.route('/unsubscribe/<int:id>',methods=["POST"])
 @jwt_required(locations='cookies')
 def unsubscribe(id):
 
@@ -91,28 +73,31 @@ def unsubscribe(id):
     return response
 
 
-@courses.route('/create',methods=["POST"])
+@course_routes.route('/create',methods=["POST"])
 @jwt_required(locations='cookies')
 def createCourse():
     print("oi")
 
     form = CreateCourseForm()
-    response = make_response(redirect(request.origin))
+
 
     if not form.validate_on_submit():
-        print("invalido")
-        print(request.form, request.files['image'])
-        response.status_code = 400
-        return response
+        return {"message":"Invalid credentials"}, 400
+    
+    for language in Languages: 
+        if form.language.data == language.value:
+            lang = language
+
+    if not lang:
+        return {"message":"Invalid language. Isn't possible to create a course with this language."}, 400
     
     buffer = None
     try:
         
-        user = db.session.query(User).get(get_jwt_identity())
+        user = User.query.get(get_jwt_identity())
 
         if not user.user_type == UserTypes.TEACHER:
-            response.status_code = 401
-            return response
+            return {"message":"User isn't a teacher"}, 401
         
         f = form.image.data
 
@@ -126,12 +111,10 @@ def createCourse():
         
         newCourse = Course(
             name = form.name.data,
-            language = form.language.data,
+            language = lang,
             description = form.description.data,
             image = image,
         )
-
-        user = db.session.merge(user)
             
         db.session.add(newCourse)
         newCourse.users.add(user)
@@ -139,16 +122,21 @@ def createCourse():
         
         buffer.close()
 
-        return response
+        return {"message":"Course created sucessfully"}, 200
 
 
     except Exception as e:
-        db.session.rollback()
-        if buffer is not None:
-            buffer.close()
-        print(e) 
-        response.status_code = 400
-        return response
+        response_with_exception = make_response({"message": ""})
+        response_with_exception.status_code=500
+    except IntegrityError as error:
+        response_with_exception = make_response({"message": "invalid user"})
+        response_with_exception.status_code=500
+
+    db.session.rollback()
+    if buffer is not None:
+        buffer.close()
+    print(e) 
+    return response_with_exception
 
 
 

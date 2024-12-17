@@ -1,19 +1,18 @@
 from flask import Flask, request, redirect, flash
 from dotenv import load_dotenv
 from flask_cors import CORS
+from .security.protect import CSRF, Cors
+from .security.csrf_blueprint import csrf_routes
+from .api.courses import course_routes
+from .api.auth import auth
+from .api.jwt import jwt, JWT
 import re
 import os
-from flask_jwt_extended import JWTManager
-from .db.models import db
-from .api.security.csrf import csrf, csrf_routes
-from .api.application.courses import courses
-from .api.application.auth import auth
-from .api.application.jwt import jwt
 
 
 def create_app(TESTING = False):
-    from .config import settings
     load_dotenv()
+    from .config import settings
 
     app = Flask(__name__)
 
@@ -24,13 +23,13 @@ def create_app(TESTING = False):
 
     CORS(app, origins="http://localhost:5173",supports_credentials=True)
 
-    csrf.init_app(app)
-    db.init_app(app)
-    JwtManager = JWTManager(app)
+    Cors.init_app(app)
+    CSRF.init_app(app)
+    JWT.init_app(app)
 
     app.register_blueprint(csrf_routes)
     app.register_blueprint(auth)
-    app.register_blueprint(courses)
+    app.register_blueprint(course_routes)
     app.register_blueprint(jwt)
 
     @app.before_request

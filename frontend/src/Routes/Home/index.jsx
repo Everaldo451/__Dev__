@@ -1,8 +1,6 @@
 import { useContext, useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { CSRFContext, User } from "../../main"
-import Header from "../../Components/Header"
-import Footer from "../../Components/Footer"
+import { CSRFContext, User } from "../../MainContexts"
 import Box from "../../Components/HomeBox"
 import styles from "./index.module.css"
 import Computador from "../../assets/computador.webp"
@@ -11,25 +9,21 @@ import Objective from "../../assets/alvo.png"
 import Quality from "../../assets/verificar.png"
 import SearchBar from "../../Components/SearchBar"
 
-function Home() {
+function TextInterval({text}) {
 
-    const csrf  = useContext(CSRFContext)
-    const user = useContext(User)
-    const navigate = useNavigate()
-
-    const [text, setText] = useState("")
-
+    const [paragraph, setParagraphText] = useState("")
     const [count, setCount] = useState(0)
 
-    const theText = user?
-    `Ola, ${user.username}, seja bem vindo. Se inscreva para progredir na sua jornada como programador.`
-    : "Ola, seja bem vindo. Se inscreva para progredir na sua jornada como programador."
+    useEffect(() => {
+        setCount(0)
+        setParagraphText("")
+    },[text])
 
     useEffect(()=>{
 
         const interval = setInterval(()=>{
-            if (count < theText.length) {
-                setText(text+theText[count])
+            if (count < text.length) {
+                setParagraphText(paragraph+text[count])
                 setCount(count+1)
             } else {clearInterval(interval)}
         },50)
@@ -37,6 +31,15 @@ function Home() {
         return () => clearInterval(interval)
 
     },[count])
+
+    return <p>{paragraph}</p>
+}
+
+function Home() {
+
+    const [csrf_token, setCSRFToken]  = useContext(CSRFContext)
+    const [user, setUser] = useContext(User)
+    const navigate = useNavigate()
 
     const [box, setBox] = useState(null)
 
@@ -108,7 +111,10 @@ function Home() {
         <main className={styles.Home}>
             <section className={styles.introduct}>
                 <div className={styles.hello}>
-                    <p>{text}</p>
+                    {user?
+                        <TextInterval text={`Ola, ${user.username}, seja bem vindo. Se inscreva para progredir na sua jornada como programador.`}/>
+                        :<TextInterval text={"Ola, seja bem vindo. Se inscreva para progredir na sua jornada como programador."}/>
+                    }
                     <SearchBar/>
 
                 </div>
@@ -132,7 +138,6 @@ function Home() {
                 : null}
             </section>
         </main>
-        <Footer/>
     </>)
 }
 

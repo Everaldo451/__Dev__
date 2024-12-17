@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, useContext } from "react"
-import { AccessToken, User, CSRFContext } from "../../main"
+import { User, CSRFContext } from "../../MainContexts"
+import CourseRouteCommonButton from "../CourseRouteCommonButton"
 import axios from "axios"
 import styles from "./index.module.css"
+import { useNavigate } from "react-router-dom"
 
 function Select ({children, attrs ,setLanguage}) {
 
@@ -16,65 +18,76 @@ function Select ({children, attrs ,setLanguage}) {
     return <select {...attrs} ref={ref} onChange={onChange}>{children}</select>
 }
 
+function FileInput() {
+
+    const fileInputRef = useRef(null)
+    const [fileValue, setFileValue] = useState("")
+
+    function fileValueChange(e) {
+        const regex = /\\\w+\\(.+\.\w+)/
+        const value = e.currentTarget.value.match(regex)
+        console.log(value)
+        setFileValue(value?value[1]:"")
+    }
+
+    return (
+        <div className={styles.fileDiv}>
+            <div>
+                <label htmlFor="image">Logo:</label>
+                <input type="file" name="image" required ref={fileInputRef} onInput={fileValueChange}/>
+                <button onClick={(e) => {fileInputRef.current.click()}}>Upload</button>
+            </div>
+            <span>{fileValue}</span>
+        </div>
+    )
+
+}
+
 function AddCourse() {
 
-    const user = useContext(User)
-    const csrf = useContext(CSRFContext)
-    const token = useContext(AccessToken)
+    const [user, _] = useContext(User)
+    const [csrf_token, setCSRFToken] = useContext(CSRFContext)
 
-    if (user.user_type == "TEACHER") {
+    console.log(user.user_type)
 
-        const [displayIsNone, setDisplayIsNone] = useState(true)
+    const navigate = useNavigate()
 
-        const ref = useRef(null)
+    const [formRendered, setFormRendered] = useState(false)
+    const formRef = useRef(null)
 
-        function OnClick(e) {
+    async function onSubmit(e) {
+        e.preventDefault()
+        const data = new FormData(e.target)
+        data.forEach((value,key) => {console.log(key, value)})
 
-            ref.current.style.display = displayIsNone?'block':'none'
+        try {
+            await axios({
+                url: e.target.action,
+                withCredentials: true,
+                data: data,
+                headers: {
+                    'X-CSRFToken':`${csrf_token}`,
+                },
+                method: e.target.method
+            })
 
-            setDisplayIsNone(!displayIsNone)
-        }
+            navigate("/")
+        } catch (error) {} 
+    }
 
-        async function onSubmit(e) {
-            e.preventDefault()
-
-            const data = new FormData(e.target)
-            data.forEach((value,key) => {console.log(key, value)})
-
-            try {
-                console.log(csrf, token)
-
-                const response = await axios({
-                    url: e.target.action,
-                    withCredentials: true,
-                    data: data,
-                    headers: {
-                        'Authorization':`Bearer ${token}`,
-                        'X-CSRFToken':`${csrf}`,
-                    },
-                    method: e.target.method
-                })
-
-                console.log(response.data)
-            } catch (error) {} 
-
-        }
-
-        return (
-            <>
-                <button onClick={OnClick}>add course</button>
+    return (
+        <>
+            <CourseRouteCommonButton onClick={(e) => {setFormRendered(!formRendered)}}>Add Course</CourseRouteCommonButton>
+            {formRendered==true?
                 <form 
-                    ref={ref} 
-                    enctype="multipart/form-data" 
+                    ref={formRef} 
+                    encType="multipart/form-data" 
                     className={styles.CreateCourse} 
                     action="http://localhost:5000/courses/create"
                     method="POST"
                     onSubmit={onSubmit}
                 >
-                    <div>
-                        <label htmlFor="image">Logo do curso:</label>
-                        <input type="file" name="image" required/>
-                    </div>
+                    <FileInput/>
 
                     <div>
                         <label htmlFor="name">Nome do curso:</label>
@@ -94,23 +107,19 @@ function AddCourse() {
                     <input type="submit" value={"Enter"}/>
 
                 </form>
-            </>
-        )
-    }
+                :null
+            }
+        </>
+    )
 
-    return <></>
+
 }
 
 function Result({course, subscribe}) {
 
     const [hover,setHover] = useState(false)
-    const csrf = useContext(CSRFContext)
-    const token = useContext(AccessToken)
-    const user = useContext(User)
-
-    console.log(course)
-
-    console.log(subscribe)
+    const [csrf_token, setCSRFToken] = useContext(CSRFContext)
+    const [user, setUser] = useContext(User)
 
     async function Subscribe() {
 
@@ -121,8 +130,7 @@ function Result({course, subscribe}) {
         const response = await axios.post(`http://localhost:5000/courses/${route}/${course.id}`,undefined,
             {
                 withCredentials: true,
-                'Authorization':`Bearer ${token}`,
-                'X-CSRFToken':`${csrf}`
+                'X-CSRFToken':`${csrf_token}`
             }
         )
         } catch(error) {}
@@ -155,7 +163,7 @@ function Result({course, subscribe}) {
                 <span>Descrição: </span>
             </p>
             <p className={styles.data}>{course.description}</p>
-            {hover == true && token?
+            {hover == true?
                 <div style={{display:"flex",justifyContent:"center"}}>
                     {user.user_type != "TEACHER"?
                         <button onClick={(e) => {e.preventDefault();Subscribe()}}>
@@ -164,9 +172,9 @@ function Result({course, subscribe}) {
                         :null
                     }
                     {!subscribe?
-                        <button>
+                        <CourseRouteCommonButton>
                             Acessar curso
-                        </button>
+                        </CourseRouteCommonButton>
                         :null
                     }
                 </div>
@@ -182,7 +190,7 @@ function SearchResults({courses, subscribe, area}){
 
     const [language, setLanguage] = useState(null)
     const [currentCourses, setCurrentCourses] = useState(courses)
-    const user = useContext(User)
+    const [user, setUser] = useContext(User)
 
     useEffect(() => {
         setCurrentCourses(language!=null?courses.filter(course => course.language == language):courses)
