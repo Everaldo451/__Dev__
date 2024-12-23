@@ -2,17 +2,15 @@ import sys
 import os
 import logging
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 print(os.path.dirname(os.path.abspath(__file__)))
-logging.error(os.path.dirname(os.path.abspath(__file__)))
 
 from flask import Flask
+from flask.testing import FlaskClient
 from app import create_app
+from app.db.models import db, User, Course, UserTypes
+from app.security.protect import CSRF
 import pytest
-from db.db import connect_db
-from db.models import User, Course
-
-
 
 @pytest.fixture
 def app():
@@ -27,21 +25,19 @@ def cli_runner(app:Flask):
     return app.test_cli_runner()
 
 @pytest.fixture
-def db():
-    connection = connect_db(TESTING=True)
-
-    yield connection
-
-    if connection:
-        connection.rollback()
-        connection.close()
+def db_conn(client:FlaskClient):
+    yield db
 
 
 @pytest.fixture
-def User_Model():
+def Users():
     return User
 
 @pytest.fixture
-def Course_Model():
+def Courses():
     return Course
+
+@pytest.fixture
+def UserType():
+    return UserTypes
 

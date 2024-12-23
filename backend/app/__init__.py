@@ -6,6 +6,7 @@ from .security.csrf_blueprint import csrf_routes
 from .api.courses import course_routes
 from .api.auth import auth
 from .api.jwt import jwt, JWT
+from .db.models import db
 import re
 import os
 
@@ -26,6 +27,7 @@ def create_app(TESTING = False):
     Cors.init_app(app)
     CSRF.init_app(app)
     JWT.init_app(app)
+    db.init_app(app)
 
     app.register_blueprint(csrf_routes)
     app.register_blueprint(auth)

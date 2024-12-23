@@ -80,7 +80,6 @@ def createCourse():
 
     form = CreateCourseForm()
 
-
     if not form.validate_on_submit():
         return {"message":"Invalid credentials"}, 400
     
@@ -97,7 +96,7 @@ def createCourse():
         user = User.query.get(get_jwt_identity())
 
         if not user.user_type == UserTypes.TEACHER:
-            return {"message":"User isn't a teacher"}, 401
+            return {"message":"User isn't a teacher."}, 401
         
         f = form.image.data
 
@@ -122,7 +121,7 @@ def createCourse():
         
         buffer.close()
 
-        return {"message":"Course created sucessfully"}, 200
+        return {"message":"Course created sucessfully."}, 200
 
 
     except Exception as e:

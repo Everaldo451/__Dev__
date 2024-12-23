@@ -1,7 +1,6 @@
-from flask import Blueprint, redirect, request, current_app, make_response
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, create_refresh_token
-from flask_jwt_extended import set_access_cookies, set_refresh_cookies
+from flask import Blueprint, redirect, request, make_response
+from flask_jwt_extended import create_refresh_token
+from flask_jwt_extended import set_refresh_cookies
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import unset_jwt_cookies
 from ..db.models import User, UserTypes, db
@@ -19,13 +18,13 @@ def login():
 
     if form.validate_on_submit():
 
-        user = User.query.filter_by(email=request.form.get("email")).first()
+        user = User.authenticate(email=form.email.data, password=form.password.data)
 
-        if user and check_password_hash(user.password, form.password.data):
+        if user is not None:
 
             try:
 
-                response = make_response({"message":"Login successfuly"})
+                response = make_response({"message":"Login successful."})
                 response.status_code = 200
 
                 refresh_token = create_refresh_token(identity=user.id)
@@ -35,11 +34,11 @@ def login():
         
             except Exception as e: 
             
-                return {"message": "Internal Server Error"}, 500
+                return {"message": "Internal server error."}, 500
     
-        return {"message": "Invalid email or password"}, 400
+        return {"message": "Invalid email or password."}, 400
     
-    return {"message": "Invalid credentials"}, 400
+    return {"message": "Invalid credentials."}, 400
 
 
 @auth.route("/register",methods=["POST"])
@@ -56,8 +55,14 @@ def register():
     user = User.query.filter_by(email=form.email.data).first()
 
     if user:
-        print("tem user")
-        return {"message": "User with current email exists"}, 401
+        print("tem email")
+        return {"message": "Current email already registered."}, 400
+    
+    user = User.query.filter_by(username=form.username.data).first()
+
+    if user:
+        print("tem username")
+        return {"message": "Current username already registered."}, 400
 
     
     if teacher_form.validate():
@@ -69,7 +74,7 @@ def register():
 
         user = User(
             email=form.email.data,
-            password=generate_password_hash(form.password.data),
+            password=form.password.data,
             username=form.username.data,
             user_type=user_type
         )
@@ -77,15 +82,16 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        response = make_response({"message": "User created sucessfully"})
+        response = make_response({"message": "User created successful."})
         response.status_code = 200
+        
         refresh_token = create_refresh_token(identity=user.id)
         set_refresh_cookies(response,refresh_token)
 
         return response
     
     except: 
-        return {"message": "Internal server error"}, 500
+        return {"message": "Internal server error."}, 500
         
     
 @auth.route("/logout",methods=["GET"])
