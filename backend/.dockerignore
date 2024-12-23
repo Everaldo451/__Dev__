@@ -1,0 +1,11 @@
+#Arquivos
+.env
+.env.example
+.gitignore
+
+#Pastas
+venv/
+tests/
+__pycache__/
+.pytest_cache/
+.git/
