@@ -18,7 +18,7 @@ def app():
 
 @pytest.fixture
 def client(app:Flask):
-    return app.test_client(True)
+    return app.test_client(use_cookies=True)
 
 @pytest.fixture
 def cli_runner(app:Flask):

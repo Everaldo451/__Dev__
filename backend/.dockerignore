@@ -3,7 +3,7 @@
 .env.example
 .gitignore
 
-#Pastas
+#Folders
 venv/
 tests/
 __pycache__/
