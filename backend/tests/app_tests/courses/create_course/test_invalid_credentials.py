@@ -1,6 +1,6 @@
 from flask.testing import FlaskClient
 
-def test_success(client:FlaskClient, image, create_user_and_tokens):
+def test_invalid_credentials(client:FlaskClient, create_user_and_tokens):
 
     csrf_common_token, csrf_refresh_token, csrf_access_token = create_user_and_tokens
 
@@ -8,11 +8,9 @@ def test_success(client:FlaskClient, image, create_user_and_tokens):
         "name": "Ensinando Python",
         "language": "python",
         "description": "any description to the course",
-        "image": (image, "image.png")
     }
 
     response = client.post("/courses/create",
-        content_type = "multipart/form-data",
         data = courseData,
         headers = {
             "X-CSRFToken":csrf_common_token,

@@ -1,6 +1,12 @@
+import pytest
 from flask.testing import FlaskClient
 
-def test_success(client:FlaskClient, image, create_user_and_tokens):
+@pytest.fixture
+def userData(userData):
+    userData.pop("is_teacher")
+    return userData
+
+def test_invalid_credentials(client:FlaskClient, userData, image, create_user_and_tokens):
 
     csrf_common_token, csrf_refresh_token, csrf_access_token = create_user_and_tokens
 
@@ -23,5 +29,5 @@ def test_success(client:FlaskClient, image, create_user_and_tokens):
     json = response.get_json()
     assert json
     message = json["message"]
-    assert message == "Invalid credentials"
-    assert response.status_code == 400
+    assert message == "User isn't a teacher."
+    assert response.status_code == 401
