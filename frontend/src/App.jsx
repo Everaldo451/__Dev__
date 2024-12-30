@@ -7,18 +7,6 @@ import axios from 'axios'
 import Header from './Components/Header/index.jsx'
 import Footer from './Components/Footer/index.jsx'
 
-axios.interceptors.request.use(
-  config => {
-    config.headers['X-CSRF-REFRESH'] = GetCookies().get('csrf_refresh_token')
-    config.headers['X-CSRF-ACCESS'] = GetCookies().get('csrf_access_token')
-    return config
-  },
-  error => {
-    return Promise.reject(error)
-  }
-)
-
-
 export default function App() {
 
   const [csrf_token, setCSRFToken] = useState(null)

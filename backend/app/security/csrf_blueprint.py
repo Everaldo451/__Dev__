@@ -6,7 +6,7 @@ csrf_routes = Blueprint("csrf",__name__,url_prefix="/csrf")
 @csrf_routes.errorhandler(CSRFError)
 def error(e):
     
-    return {"error":"error"}
+    return {"message":"error"}
 
 
 @csrf_routes.route("/get",methods=["GET"])

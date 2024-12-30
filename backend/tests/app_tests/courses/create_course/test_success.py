@@ -1,27 +1,24 @@
 from flask.testing import FlaskClient
 
-def test_success(client:FlaskClient, image, create_user_and_tokens):
-
-    csrf_common_token, csrf_refresh_token, csrf_access_token = create_user_and_tokens
+def test_success(client:FlaskClient, image, csrf_token, teacherData, register_user_and_log_in):
 
     courseData = {
         "name": "Ensinando Python",
         "language": "python",
         "description": "any description to the course",
-        "image": (image, "image.png")
+        "image": image
     }
 
     response = client.post("/courses/create",
         content_type = "multipart/form-data",
         data = courseData,
         headers = {
-            "X-CSRFToken":csrf_common_token,
-            "X-CSRF-ACCESS": csrf_access_token.value,
+            "X-CSRFToken":csrf_token,
         }
     )
 
     json = response.get_json()
     assert json
     message = json["message"]
-    assert message == "Invalid credentials"
-    assert response.status_code == 400
+    assert message == "Course created sucessfully."
+    assert response.status_code == 200

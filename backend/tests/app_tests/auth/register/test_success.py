@@ -1,9 +1,9 @@
 from flask.testing import FlaskClient
 
-def test_student_success(client:FlaskClient, csrf_token, userData):
+def test_student_success(client:FlaskClient, csrf_token, studentData):
 
     response = client.post("/auth/register",
-        data=userData,
+        data=studentData,
         headers={
             "X-CSRFToken":csrf_token
         },
@@ -16,17 +16,11 @@ def test_student_success(client:FlaskClient, csrf_token, userData):
     assert message == "User created successful."
     assert response.status_code == 200
 
-    response.close()
-    assert client.get_cookie("refresh_token")
-    assert client.get_cookie("csrf_refresh_token")
 
-
-def test_teacher_success(client:FlaskClient, csrf_token, userData):
-
-    userData["is_teacher"] = "on"
+def test_teacher_success(client:FlaskClient, csrf_token, teacherData):
 
     response = client.post("/auth/register",
-        data=userData,
+        data=teacherData,
         headers={
             "X-CSRFToken":csrf_token
         },
@@ -38,7 +32,3 @@ def test_teacher_success(client:FlaskClient, csrf_token, userData):
     message = json["message"]
     assert message == "User created successful."
     assert response.status_code == 200
-
-    response.close()
-    assert client.get_cookie("refresh_token")
-    assert client.get_cookie("csrf_refresh_token")

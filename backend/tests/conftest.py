@@ -7,7 +7,7 @@ print(os.path.dirname(os.path.abspath(__file__)))
 
 from flask import Flask
 from flask.testing import FlaskClient
-from app import create_app
+from app.app import create_app
 from app.db.models import db, User, Course, UserTypes
 from app.security.protect import CSRF
 import pytest

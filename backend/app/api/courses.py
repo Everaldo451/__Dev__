@@ -5,6 +5,7 @@ from .forms import CreateCourseForm
 from ..db.models import Course, User, db, UserTypes, Languages
 from ..db.serializers import CourseSchema
 import io
+import logging
 
 
 course_routes = Blueprint("courses",__name__,url_prefix="/courses")
@@ -29,7 +30,7 @@ def subscribe(id):
 
     try:
 
-        user = User.query.get(get_jwt_identity())
+        user = db.session.get(User,get_jwt_identity())
 
         if user.user_type == UserTypes.TEACHER:
             return response
@@ -76,12 +77,11 @@ def unsubscribe(id):
 @course_routes.route('/create',methods=["POST"])
 @jwt_required(locations='cookies')
 def createCourse():
-    print("oi")
 
     form = CreateCourseForm()
 
     if not form.validate_on_submit():
-        return {"message":"Invalid credentials"}, 400
+        return {"message":"Invalid credentials", "errors": dict(form.errors)}, 400
     
     for language in Languages: 
         if form.language.data == language.value:
@@ -93,7 +93,7 @@ def createCourse():
     buffer = None
     try:
         
-        user = User.query.get(get_jwt_identity())
+        user = db.session.get(User,get_jwt_identity())
 
         if not user.user_type == UserTypes.TEACHER:
             return {"message":"User isn't a teacher."}, 401
@@ -128,7 +128,7 @@ def createCourse():
         response_with_exception = make_response({"message": ""})
         response_with_exception.status_code=500
     except IntegrityError as error:
-        response_with_exception = make_response({"message": "invalid user"})
+        response_with_exception = make_response({"message": "Invalid user"})
         response_with_exception.status_code=500
 
     db.session.rollback()

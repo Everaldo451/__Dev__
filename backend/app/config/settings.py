@@ -14,10 +14,9 @@ class Config(object):
     JWT_REFRESH_TOKEN_EXPIRE = timedelta(days=1)
     JWT_TOKEN_LOCATION = ["headers","cookies"]
     JWT_SESSION_COOKIE = False
+    JWT_COOKIE_CSRF_PROTECT = False
     JWT_ACCESS_COOKIE_NAME = "access_token"
     JWT_REFRESH_COOKIE_NAME = "refresh_token"
-    JWT_REFRESH_CSRF_HEADER_NAME = "X-CSRF-REFRESH"
-    JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-ACCESS"
 
 class GeneralConfig(Config):
 

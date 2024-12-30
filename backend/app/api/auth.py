@@ -5,6 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import unset_jwt_cookies
 from ..db.models import User, UserTypes, db
 from .forms import RegisterForm, LoginForm, ChangeConfigsForm, TeacherRegisterForm
+import logging
 
 auth = Blueprint("auth",__name__,url_prefix="/auth")
 
@@ -43,6 +44,7 @@ def login():
 
 @auth.route("/register",methods=["POST"])
 def register():
+    logging.basicConfig(level="DEBUG")
 
     user_type = UserTypes.STUDENT
     form = RegisterForm()
@@ -65,10 +67,8 @@ def register():
         return {"message": "Current username already registered."}, 400
 
     
-    if teacher_form.validate():
+    if teacher_form.validate_on_submit():
         user_type = UserTypes.TEACHER
-
-    print(user_type)
     
     try:
 

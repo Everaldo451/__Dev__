@@ -4,13 +4,21 @@ from flask.testing import FlaskClient
 from werkzeug.security import generate_password_hash
 
 @pytest.fixture
-def userData(client):
+def userData():
     return {
         "email": "algum@email.com",
         "password": "algumasenha",
         "username": "algumUsername",
     }
 
+@pytest.fixture
+def teacherData(userData):
+    userData["is_teacher"] = "on"
+    return userData
+
+@pytest.fixture
+def studentData(userData):
+    return userData
 
 @pytest.fixture
 def create_user(client, db_conn, Users, userData):

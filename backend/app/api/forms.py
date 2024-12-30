@@ -17,7 +17,7 @@ class RegisterForm(AuthBaseForm):
 
 class TeacherRegisterForm(RegisterForm):
 
-    is_teacher = StringField('is_teacher', widget=CheckboxInput)
+    is_teacher = StringField('is_teacher', validators=[DataRequired()], widget=CheckboxInput)
 
 
 class LoginForm(AuthBaseForm):

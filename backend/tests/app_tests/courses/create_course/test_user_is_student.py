@@ -1,28 +1,20 @@
 import pytest
 from flask.testing import FlaskClient
 
-@pytest.fixture
-def userData(userData):
-    userData.pop("is_teacher")
-    return userData
-
-def test_invalid_credentials(client:FlaskClient, userData, image, create_user_and_tokens):
-
-    csrf_common_token, csrf_refresh_token, csrf_access_token = create_user_and_tokens
+def test_user_is_student(client:FlaskClient, userData, image, csrf_token, register_user_and_log_in):
 
     courseData = {
         "name": "Ensinando Python",
         "language": "python",
         "description": "any description to the course",
-        "image": (image, "image.png")
+        "image": image
     }
 
     response = client.post("/courses/create",
         content_type = "multipart/form-data",
         data = courseData,
         headers = {
-            "X-CSRFToken":csrf_common_token,
-            "X-CSRF-ACCESS": csrf_access_token.value,
+            "X-CSRFToken":csrf_token,
         }
     )
 
