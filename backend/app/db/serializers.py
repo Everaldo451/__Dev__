@@ -1,18 +1,24 @@
 from .models import User, Course
 from marshmallow import fields
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
 import base64
 
 
-class CourseSchema(SQLAlchemySchema):
+class CourseSchema(SQLAlchemyAutoSchema):
 
     class Meta:
         model = Course
+        load_instance = True
+        exclude = ("users",)
 
-    name = auto_field()
-    description = auto_field()
-    language = auto_field()
     image = fields.Method("get_image")
+    student_count = fields.Integer()
+    teachers = fields.Method("get_teachers")
+
+    def get_teachers(self, obj):
+        if isinstance(obj.teachers,str):
+            return [obj.teachers]
+        return obj.teachers
 
     def get_image(self, obj):
         if obj.image:
@@ -23,12 +29,11 @@ class CourseSchema(SQLAlchemySchema):
     #teachers = auto_field()
 
 
-class UserSchema(SQLAlchemySchema):
+class UserSchema(SQLAlchemyAutoSchema):
 
     class Meta:
         model = User
-    
-    username = auto_field()
-    email = auto_field()
-    user_type = auto_field()
-    courses = fields.Nested(CourseSchema, many=True)
+        load_instance = True
+        exclude = ("password",)
+
+    courses = fields.Nested("CourseSchema", many=True)

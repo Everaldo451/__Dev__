@@ -1,14 +1,7 @@
 import pytest
 from flask.testing import FlaskClient
 
-def test_user_is_student(client:FlaskClient, userData, image, csrf_token, register_user_and_log_in):
-
-    courseData = {
-        "name": "Ensinando Python",
-        "language": "python",
-        "description": "any description to the course",
-        "image": image
-    }
+def test_user_is_student(client:FlaskClient, csrf_token, courseData, userData, register_user_and_log_in):
 
     response = client.post("/courses/create",
         content_type = "multipart/form-data",

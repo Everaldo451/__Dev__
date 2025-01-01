@@ -1,5 +1,4 @@
 import pytest
-import logging
 from flask.testing import FlaskClient
 from werkzeug.security import generate_password_hash
 
@@ -52,4 +51,42 @@ def csrf_token(client:FlaskClient):
     assert json
 
     yield json["csrf"]
+
+
+@pytest.fixture
+def register_user_and_log_in(client:FlaskClient, userData, csrf_token):
+
+    response = client.post("/auth/register",
+        data=userData,
+        headers={
+            "X-CSRFToken":csrf_token
+        },
+    )
+
+    response.close()
+
+    response = client.post("/jwt/refresh_token",
+        headers = {
+            "X-CSRFToken":csrf_token,
+        }
+    )
+
+    response.close()
+
+    response = client.post("/jwt/getuser",
+        headers = {
+            "X-CSRFToken":csrf_token,
+        }
+    )
+
+    json = response.get_json()
+    assert json
+    user_type = json["user_type"]
+    
+    if userData.get("is_teacher"):
+        assert user_type == "TEACHER"
+    else:
+        assert user_type == "STUDENT"
+
+    yield
     

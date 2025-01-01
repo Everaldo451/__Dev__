@@ -1,12 +1,8 @@
 from flask.testing import FlaskClient
 
-def test_invalid_credentials(client:FlaskClient, csrf_token, teacherData, register_user_and_log_in):
+def test_invalid_credentials(client:FlaskClient, csrf_token, courseData, teacherData, register_user_and_log_in):
 
-    courseData = {
-        "name": "Ensinando Python",
-        "language": "python",
-        "description": "any description to the course",
-    }
+    courseData.pop("name")
 
     response = client.post("/courses/create",
         data = courseData,

@@ -3,10 +3,10 @@ from flask_wtf.csrf import CSRFError, generate_csrf
 
 csrf_routes = Blueprint("csrf",__name__,url_prefix="/csrf")
 
-@csrf_routes.errorhandler(CSRFError)
+@csrf_routes.app_errorhandler(CSRFError)
 def error(e):
     
-    return {"message":"error"}
+    return {"message":"error"}, 400
 
 
 @csrf_routes.route("/get",methods=["GET"])

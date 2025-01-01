@@ -2,7 +2,8 @@ from typing import List, Set
 import enum
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, Boolean, Enum, LargeBinary, Integer, ForeignKey, Column
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, declared_attr
+from sqlalchemy import select, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, declared_attr, column_property
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -29,12 +30,11 @@ class UserTypes(enum.Enum):
     TEACHER = "teacher"
 
 class Languages(enum.Enum):
-    PYTHON = "python"
-    JAVASCRIPT = "javascript"
-    CSHARP = "c#"
-    JAVA = "java"
-    PHP = "php"
-
+    PYTHON = "Python"
+    JAVASCRIPT = "JavaScript"
+    CSHARP = "C#"
+    JAVA = "Java"
+    PHP = "PHP"
 
 class User(db.Model):
 
@@ -74,10 +74,15 @@ class Course(db.Model):
 
     users: Mapped[Set["User"]] = relationship(secondary=user_courses, back_populates="courses")
 
-    @hybrid_property
-    def students(self):
-        return [user for user in filter(lambda user: user.user_type == UserTypes.STUDENT, self.users)]
+    student_count = column_property(
+        select(func.count(User.id))
+        .where(User.user_type == UserTypes.STUDENT)
+        .scalar_subquery()
+    )
 
-    @hybrid_property
-    def teachers(self):
-        return [user for user in filter(lambda user: user.user_type == UserTypes.TEACHER, self.users)]
+    teachers = column_property(
+        select(User.username)
+        .where(User.user_type == UserTypes.TEACHER)
+        .correlate_except(User)
+        .scalar_subquery()
+    )

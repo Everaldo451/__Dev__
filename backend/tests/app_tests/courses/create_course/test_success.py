@@ -1,13 +1,6 @@
 from flask.testing import FlaskClient
 
-def test_success(client:FlaskClient, image, csrf_token, teacherData, register_user_and_log_in):
-
-    courseData = {
-        "name": "Ensinando Python",
-        "language": "python",
-        "description": "any description to the course",
-        "image": image
-    }
+def test_success(client:FlaskClient, csrf_token, courseData, teacherData, register_user_and_log_in):
 
     response = client.post("/courses/create",
         content_type = "multipart/form-data",
@@ -22,3 +15,33 @@ def test_success(client:FlaskClient, image, csrf_token, teacherData, register_us
     message = json["message"]
     assert message == "Course created sucessfully."
     assert response.status_code == 200
+
+    response.close()
+
+
+    response = client.post("/jwt/getuser",
+        headers = {
+            "X-CSRFToken": csrf_token
+        }
+    )
+
+    json = response.get_json()
+
+    courses = json["courses"]
+    assert isinstance(courses, list)
+
+    course = courses[0]
+    assert isinstance(course, dict)
+    assert course.get("name") is not None
+    assert course.get("language") is not None
+    assert course.get("image") is not None
+    assert course.get("users") is None
+    assert course.get("student_count") == 0
+
+    teachers = course.get("teachers")
+    assert isinstance(teachers, list)
+
+    current_teacher_user = teachers[0]
+    assert current_teacher_user == teacherData["username"]
+
+
