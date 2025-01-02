@@ -5,6 +5,7 @@ def test_invalid_credentials(client:FlaskClient, csrf_token, courseData, teacher
     courseData.pop("name")
 
     response = client.post("/courses/create",
+        content_type = "multipart/form-data",
         data = courseData,
         headers = {
             "X-CSRFToken":csrf_token,
@@ -14,5 +15,5 @@ def test_invalid_credentials(client:FlaskClient, csrf_token, courseData, teacher
     json = response.get_json()
     assert json
     message = json["message"]
-    assert message == "Invalid credentials"
+    assert message == "Invalid credentials."
     assert response.status_code == 400

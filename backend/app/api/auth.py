@@ -51,20 +51,17 @@ def register():
     teacher_form = TeacherRegisterForm()
 
     if not form.validate_on_submit():
-        print("invalido")
         return {"message": "Invalid credentials."}, 400
 
     user = User.query.filter_by(email=form.email.data).first()
 
     if user:
-        print("tem email")
-        return {"message": "Current email already registered."}, 400
+        return {"message": "Current email is already registered."}, 400
     
     user = User.query.filter_by(username=form.username.data).first()
 
     if user:
-        print("tem username")
-        return {"message": "Current username already registered."}, 400
+        return {"message": "Current username is already registered."}, 400
 
     
     if teacher_form.validate_on_submit():

@@ -14,7 +14,7 @@ def test_existing_email(client:FlaskClient, csrf_token, create_user, userData):
 
     assert json
     message = json["message"]
-    assert message == "Current email already registered."
+    assert message == "Current email is already registered."
     assert response.status_code == 400
 
 
@@ -33,5 +33,5 @@ def test_existing_username(client:FlaskClient, csrf_token, create_user, userData
 
     assert json
     message = json["message"]
-    assert message == "Current username already registered."
+    assert message == "Current username is already registered."
     assert response.status_code == 400

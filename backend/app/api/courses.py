@@ -25,27 +25,31 @@ def getcourses(name):
 @course_routes.route('/subscribe/<int:id>',methods=['POST'])
 @jwt_required(locations="cookies")
 def subscribe(id):
-
-    response = make_response(redirect(request.origin))
+    logging.basicConfig(level="DEBUG")
 
     try:
 
-        user = db.session.get(User,get_jwt_identity())
-
+        user = db.session.get(User, get_jwt_identity())
+    
         if user.user_type == UserTypes.TEACHER:
-            return response
+            return {"message":"Teachers cannot register in course"}, 403
         
-        course = Course.query.get(id)
+        course = db.session.get(Course, id)
 
-        if not course in user.courses:
+        if course is None:
+            return {"message": "Invalid course id."}, 404
+        
+        if course in user.courses:
+            return {"message": "User has been already registered."}, 403
 
-            user.courses.add(course)
-            db.session.flush()
-            db.session.commit()
+        user.courses.add(course)
+        db.session.commit()
 
-    except: pass
+    except Exception as error: 
+        logging.error(error)
+        return {"message": "Internal server error."}, 500
 
-    return response
+    return {"message":"User registered sucessfull."}, 200
 
 
 
@@ -56,33 +60,58 @@ def unsubscribe(id):
     response = make_response(redirect(request.origin))
 
     try:
-        user = User.query.get(get_jwt_identity())
+        user = db.session.get(User,get_jwt_identity())
 
         if user.user_type == UserTypes.TEACHER:
-            return response
+            return {"message":"Teachers cannot unsubscribe in course"}, 403
         
-        course = Course.query.get(id)
+        course = db.session.get(Course, id)
+
+        if not course:
+            return {"message": "Invalid course id."}, 404
 
         if course in user.courses:
 
             user.courses.remove(course)
-            db.session.flush()
             db.session.commit()
 
-    except: pass
+            return {"message": "User unsubscribed sucessfull"}, 200
 
-    return response
+    except KeyError:
+        return {"message": "User isn't registered in the course."}, 403
 
 
 @course_routes.route('/create',methods=["POST"])
 @jwt_required(locations='cookies')
 def createCourse():
+    logging.basicConfig(level="DEBUG")
+
+    try:
+
+        user = db.session.get(User,get_jwt_identity())
+
+        if not user.user_type == UserTypes.TEACHER:
+            return {"message":"Students cannot create a course."}, 403
+
+    except:
+        return {"message":"Internal server error."}, 500
 
     form = CreateCourseForm()
 
     if not form.validate_on_submit():
-        return {"message":"Invalid credentials", "errors": dict(form.errors)}, 400
+        logging.error(dict(form.errors))
+        return {"message":"Invalid credentials.", "errors": dict(form.errors)}, 400
     
+    try:
+        course = Course.query.filter_by(name=form.name.data).first()
+
+        if course is not None:
+            return {"message":"Course with the current name already exists."}, 400
+    except Exception as error:
+        logging.error(error)
+        return {"message":"Internal server error to found course"}, 500
+    
+
     for language in Languages: 
         if form.language.data == language.value:
             lang = language
@@ -92,16 +121,9 @@ def createCourse():
     
     buffer = None
     try:
-        
-        user = db.session.get(User,get_jwt_identity())
-
-        if not user.user_type == UserTypes.TEACHER:
-            return {"message":"User isn't a teacher."}, 401
+        buffer = io.BytesIO()
         
         f = form.image.data
-
-        buffer = io.BytesIO()
-
         f.save(buffer)
 
         buffer.seek(0)
@@ -118,24 +140,22 @@ def createCourse():
         db.session.add(newCourse)
         newCourse.users.add(user)
         db.session.commit()
-        
-        buffer.close()
 
+        buffer.close()
         return {"message":"Course created sucessfully."}, 200
 
-
     except Exception as e:
-        response_with_exception = make_response({"message": ""})
-        response_with_exception.status_code=500
+        response = {"message": "Ola"}
+        status = 500
     except IntegrityError as error:
-        response_with_exception = make_response({"message": "Invalid user"})
-        response_with_exception.status_code=500
+        response = {"message": "Invalid user"} 
+        status = 500
 
     db.session.rollback()
     if buffer is not None:
         buffer.close()
-    print(e) 
-    return response_with_exception
+    
+    return response, status
 
 
 

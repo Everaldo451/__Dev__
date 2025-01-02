@@ -8,7 +8,7 @@ print(os.path.dirname(os.path.abspath(__file__)))
 from flask import Flask
 from flask.testing import FlaskClient
 from app.app import create_app
-from app.db.models import db, User, Course, UserTypes
+from app.db.models import db, User, Course, UserTypes, Languages
 from app.security.protect import CSRF
 import pytest
 
@@ -40,4 +40,8 @@ def Courses():
 @pytest.fixture
 def UserType():
     return UserTypes
+
+@pytest.fixture
+def Language():
+    return Languages
 
