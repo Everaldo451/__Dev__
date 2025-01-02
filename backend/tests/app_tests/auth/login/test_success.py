@@ -2,7 +2,7 @@ from flask.testing import FlaskClient
 
 def test_success(client:FlaskClient, csrf_token, create_user, userData):
 
-    userData.pop("username")
+    userData.pop("full_name")
 
     response = client.post("/auth/login",
         data=userData,

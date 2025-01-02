@@ -44,7 +44,7 @@ function Config({children, attrs, setChange}){
 function Configs(){
 
     const [user, setUser] = useContext(User)
-    const [changeInputs,setInputs] = useState(0)
+    const [changingInputs,setInputs] = useState(0)
 
     const formRef = useRef(null)
 
@@ -52,7 +52,7 @@ function Configs(){
         e.preventDefault()
 
         if (formRef.current) {
-            changeInputs==0?formRef.current.submit():null
+            changingInputs==0?formRef.current.submit():null
         }
     }
 
@@ -71,8 +71,13 @@ function Configs(){
                         </Config>
 
                         <Config 
-                            attrs={{value:user.username, name:"username", type:"text"}} 
-                            setChange={setInputs}>Username:
+                            attrs={{value:user.first_name, name:"first_name", type:"text"}} 
+                            setChange={setInputs}>First name:
+                        </Config>
+
+                        <Config 
+                            attrs={{value:user.last_name, name:"last_name", type:"text"}} 
+                            setChange={setInputs}>Last name:
                         </Config>
 
                         <input type="submit" value="Enviar" style={{marginTop:20}} onClick={OnClick}/>

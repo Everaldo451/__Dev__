@@ -3,7 +3,7 @@ from flask.testing import FlaskClient
 
 def test_invalid_email(client:FlaskClient, csrf_token, create_user, userData):
 
-    userData.pop("username")
+    userData.pop("full_name")
     userData["email"] = "email@inexistente"
 
     response = client.post("/auth/login",

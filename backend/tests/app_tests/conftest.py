@@ -7,7 +7,7 @@ def userData():
     return {
         "email": "algum@email.com",
         "password": "algumasenha",
-        "username": "algumUsername",
+        "full_name": "Everaldo Veloso Cavalcanti Junior",
     }
 
 @pytest.fixture
@@ -24,15 +24,24 @@ def create_user(client, db_conn, Users, userData):
 
     userData["password"] = generate_password_hash(userData.get("password"))
 
+    splitted_name = userData["full_name"].split(maxsplit=1)
+    first_name = splitted_name[0]
+    last_name = splitted_name[1]
+
     with client.application.app_context():
 
         try: 
-            new_user = Users(**userData)
+            new_user = Users(
+                email=userData["email"],
+                password=userData["password"],
+                first_name=first_name,
+                last_name=last_name
+            )
             
             db_conn.session.add(new_user)
             db_conn.session.commit()
         except Exception as e:
-            assert False
+            assert e is None
 
         assert new_user is not None
 
@@ -84,9 +93,9 @@ def register_user_and_log_in(client:FlaskClient, userData, csrf_token):
     user_type = json["user_type"]
     
     if userData.get("is_teacher"):
-        assert user_type == "TEACHER"
+        assert user_type == "teacher"
     else:
-        assert user_type == "STUDENT"
+        assert user_type == "student"
 
     yield
     

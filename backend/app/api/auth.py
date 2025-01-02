@@ -58,21 +58,22 @@ def register():
     if user:
         return {"message": "Current email is already registered."}, 400
     
-    user = User.query.filter_by(username=form.username.data).first()
-
-    if user:
-        return {"message": "Current username is already registered."}, 400
-
-    
     if teacher_form.validate_on_submit():
         user_type = UserTypes.TEACHER
     
     try:
 
+        full_name = form.full_name.data
+        splitted_name = full_name.split(maxsplit=1)
+
+        first_name = splitted_name[0]
+        last_name = splitted_name[1]
+
         user = User(
             email=form.email.data,
             password=form.password.data,
-            username=form.username.data,
+            first_name=first_name,
+            last_name = last_name,
             user_type=user_type
         )
 
@@ -87,9 +88,10 @@ def register():
 
         return response
     
-    except: 
+    except IndexError: 
+        return {"message": "Last name isn't present."}, 500
+    except:
         return {"message": "Internal server error."}, 500
-        
     
 @auth.route("/logout",methods=["GET"])
 @jwt_required(locations="cookies")
@@ -117,9 +119,9 @@ def change_configs():
 
             user.email == form.email.data
     
-        if user.username != form.username.data:
+        if user.first_name != form.first_name.data:
 
-            user.username = form.username.data
+            user.first_name = form.first_name.data
         
         db.session.commit()
 

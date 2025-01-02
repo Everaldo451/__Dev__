@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired
 
 class AuthBaseForm(FlaskForm):
 
-    username = StringField('username', validators=[DataRequired()])
+    full_name = StringField('full_name', validators=[DataRequired()])
     email = EmailField('email', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
 
@@ -21,7 +21,7 @@ class TeacherRegisterForm(RegisterForm):
 
 
 class LoginForm(AuthBaseForm):
-    username = None
+    full_name = None
 
 
 

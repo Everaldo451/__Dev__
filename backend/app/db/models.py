@@ -2,13 +2,13 @@ from typing import List, Set
 import enum
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, Boolean, Enum, LargeBinary, Integer, ForeignKey, Column
-from sqlalchemy import select, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, declared_attr, column_property
+from sqlalchemy import select, func, and_
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, declared_attr, column_property, aliased
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Base(DeclarativeBase):
-    @declared_attr.cascading
+    @declared_attr
     @classmethod
     def id(cls):
         for base in cls.__mro__[1:-1]:
@@ -16,6 +16,8 @@ class Base(DeclarativeBase):
                 return mapped_column(ForeignKey(base.id), primary_key=True)
             else:
                 return mapped_column(Integer, primary_key=True, autoincrement=True)
+    
+    
     
 
 db = SQLAlchemy(model_class=Base)
@@ -38,13 +40,18 @@ class Languages(enum.Enum):
 
 class User(db.Model):
 
-    username = mapped_column(String(50),unique=True, nullable=False)
+    first_name = mapped_column(String(50), nullable=False)
+    last_name = mapped_column(String(100), nullable=False)
     email = mapped_column(String(100),unique=True, nullable=False)
     password = mapped_column(String(50), nullable=False)
     user_type: Mapped[UserTypes] = mapped_column(Enum(UserTypes, native_enum = False), default=UserTypes.STUDENT)
     admin = mapped_column(Boolean(), default=False)
 
     courses: Mapped[Set["Course"]] = relationship(secondary=user_courses, back_populates="users")
+
+    @hybrid_property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
 
     @classmethod
     def authenticate(cls, email:str, password:str):
@@ -67,6 +74,7 @@ class User(db.Model):
 
 class Course(db.Model):
 
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = mapped_column(String(100), unique=True, nullable=False)
     description = mapped_column(String(1000))
     language: Mapped[Languages] = mapped_column(Enum(Languages, native_enum = False))
@@ -76,13 +84,26 @@ class Course(db.Model):
 
     student_count = column_property(
         select(func.count(User.id))
-        .where(User.user_type == UserTypes.STUDENT)
+        .where(
+            and_(
+                User.user_type == UserTypes.STUDENT,
+                user_courses.c.user_id == User.id,
+                user_courses.c.course_id == id
+            )
+        )
+        .correlate_except(User)
         .scalar_subquery()
     )
 
     teachers = column_property(
-        select(User.username)
-        .where(User.user_type == UserTypes.TEACHER)
+        select(func.concat(User.first_name + " " + User.last_name))
+        .where(
+            and_(
+                User.user_type == UserTypes.TEACHER,
+                user_courses.c.user_id == User.id,
+                user_courses.c.course_id == id
+            )
+        )
         .correlate_except(User)
         .scalar_subquery()
     )

@@ -37,9 +37,9 @@ function Header() {
                     <div className={styles.img}></div>
                     <ul className={styles.options}>
                         <li><Link to="/configs">Configurações</Link></li>
-                        {user.user_type == "STUDENT"?
+                        {user.user_type == "student"?
                             <li><Link to="/area">Área do Estudante</Link></li>
-                            :user.user_type == "TEACHER"?
+                            :user.user_type == "teacher"?
                                 <li><Link to="/area">Área do Professor</Link></li>
                                 :null
                         }

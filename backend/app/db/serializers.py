@@ -14,6 +14,11 @@ class CourseSchema(SQLAlchemyAutoSchema):
     image = fields.Method("get_image")
     student_count = fields.Integer()
     teachers = fields.Method("get_teachers")
+    language = fields.Method("get_language")
+    
+    def get_language(self, obj):
+        if obj.language:
+            return obj.language.value
 
     def get_teachers(self, obj):
         if isinstance(obj.teachers,str):
@@ -34,6 +39,11 @@ class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
-        exclude = ("password",)
+        exclude = ("password","id")
 
     courses = fields.Nested("CourseSchema", many=True)
+    user_type = fields.Method("get_user_type")
+    
+    def get_user_type(self, obj):
+        if obj.user_type:
+            return obj.user_type.value

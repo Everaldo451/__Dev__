@@ -120,6 +120,9 @@ function Result({course, subscribe}) {
     const [hover,setHover] = useState(false)
     const [csrf_token, setCSRFToken] = useContext(CSRFContext)
     const [user, setUser] = useContext(User)
+    const navigate = useNavigate()
+
+    console.log(csrf_token)
 
     async function Subscribe() {
 
@@ -127,14 +130,18 @@ function Result({course, subscribe}) {
 
         try{
 
-        const response = await axios.post(`http://localhost:5000/courses/${route}/${course.id}`,undefined,
-            {
-                withCredentials: true,
-                'X-CSRFToken':`${csrf_token}`
-            }
-        )
-        } catch(error) {}
-        window.location.assign('/')
+            await axios.post(`http://localhost:5000/courses/${route}/${course.id}`,undefined,
+                {
+                    withCredentials: true,
+                    headers: {
+                        'X-CSRFToken':`${csrf_token}`
+                    }
+                }
+            )
+            navigate("/")
+        } catch(error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -157,7 +164,7 @@ function Result({course, subscribe}) {
             </p>
             <p className={styles.data}>
                 <span>Alunos: </span>
-                {course.students}
+                {course.student_count}
             </p>
             <p className={styles.data} style={{marginTop:10}}>
                 <span>Descrição: </span>
@@ -166,9 +173,9 @@ function Result({course, subscribe}) {
             {hover == true?
                 <div style={{display:"flex",justifyContent:"center"}}>
                     {user.user_type != "TEACHER"?
-                        <button onClick={(e) => {e.preventDefault();Subscribe()}}>
+                        <CourseRouteCommonButton onClick={(e) => {e.preventDefault();Subscribe()}}>
                             {subscribe?"Se inscrever":"Se desinscrever"}
-                        </button>
+                        </CourseRouteCommonButton>
                         :null
                     }
                     {!subscribe?
@@ -198,7 +205,7 @@ function SearchResults({courses, subscribe, area}){
 
     return (
         <>
-            {area == true && user.user_type == "TEACHER"?
+            {area == true && user.user_type == "teacher"?
                 <AddCourse/>
                 :null
             }
@@ -210,8 +217,8 @@ function SearchResults({courses, subscribe, area}){
                 }
                 <Select setLanguage={setLanguage}>
                     <option selected value="">None</option>
-                    <option value="python">Python</option>
-                    <option value="javascript">JavaScript</option>
+                    <option value="Python">Python</option>
+                    <option value="JavaScript">JavaScript</option>
                 </Select>
             </div>
             <section className={styles.courses}>

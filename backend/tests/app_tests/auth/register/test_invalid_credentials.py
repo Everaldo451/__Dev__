@@ -2,7 +2,7 @@ from flask.testing import FlaskClient
 
 def test_invalid_credentials(client:FlaskClient, csrf_token, userData):
 
-    userData.pop("username")
+    userData.pop("full_name")
 
     response = client.post("/auth/register",
         data=userData,

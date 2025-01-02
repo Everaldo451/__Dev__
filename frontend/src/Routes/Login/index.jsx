@@ -11,6 +11,7 @@ function Login(){
     const [csrf_token, setCSRFToken] = useContext(CSRFContext)
     const [action, setAction] = useState("login")
     const [user, setUser] = useContext(User)
+    const [errorMessage, setErrorMessage] = useState(null)
     const navigate = useNavigate()
 
     async function onSubmit(e) {
@@ -36,7 +37,9 @@ function Login(){
                 navigate('/')
             }
         } catch(e) {
-            console.log(e.response.data)
+            const errorData = e.response.data
+
+            errorData["message"]?setErrorMessage(errorData["message"]):null
         }
 
     }
@@ -55,7 +58,7 @@ function Login(){
                     <form action={action?`http://localhost:5000/auth/${action}`:""} method="POST" onSubmit={onSubmit}>
                         {action == "register"?
                         <>
-                            <input type="text" name="username" placeholder="Digite um nome de usuário" required/>
+                            <input type="text" name="full_name" placeholder="Digite seu nome completo" required/>
                             <input type="email" name="email" placeholder="Digite um email" required/>
                             <input type="password" name="password" placeholder="Digite uma senha" required/>
                             <div className={styles.isTeacher}>
@@ -68,6 +71,10 @@ function Login(){
                             <input type="email" name="email" placeholder="Digite seu email" required/>
                             <input type="password" name="password" placeholder="Digite sua senha" required/>
                         </>
+                        }
+                        {errorMessage?
+                            <p className={styles.errorMessage}>{errorMessage}</p>
+                            :null
                         }
                         <input type="submit"/>
                     </form>

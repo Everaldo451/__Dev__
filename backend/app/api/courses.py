@@ -57,8 +57,6 @@ def subscribe(id):
 @jwt_required(locations='cookies')
 def unsubscribe(id):
 
-    response = make_response(redirect(request.origin))
-
     try:
         user = db.session.get(User,get_jwt_identity())
 

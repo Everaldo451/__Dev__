@@ -42,6 +42,6 @@ def test_success(client:FlaskClient, csrf_token, courseData, teacherData, regist
     assert isinstance(teachers, list)
 
     current_teacher_user = teachers[0]
-    assert current_teacher_user == teacherData["username"]
+    assert current_teacher_user == teacherData["full_name"]
 
 

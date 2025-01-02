@@ -11,7 +11,8 @@ def test_user(client, db_conn, Users, UserType):
             new_user = Users(
                 email = "algum@email.com",
                 password = "algumasenha",
-                username = "algumUsername",
+                first_name = "Everaldo",
+                last_name = "Veloso Cavalcanti Junior"
             )
             
             db_conn.session.add(new_user)
@@ -23,4 +24,4 @@ def test_user(client, db_conn, Users, UserType):
         user = Users.query.filter_by(email="algum@email.com").first()
 
         assert user.password != "algumasenha"
-        assert user.username == "algumUsername"
+        assert user.first_name == "Everaldo"

@@ -112,7 +112,7 @@ function Home() {
             <section className={styles.introduct}>
                 <div className={styles.hello}>
                     {user?
-                        <TextInterval text={`Ola, ${user.username}, seja bem vindo. Se inscreva para progredir na sua jornada como programador.`}/>
+                        <TextInterval text={`Ola, ${user.first_name}, seja bem vindo. Se inscreva para progredir na sua jornada como programador.`}/>
                         :<TextInterval text={"Ola, seja bem vindo. Se inscreva para progredir na sua jornada como programador."}/>
                     }
                     <SearchBar/>
