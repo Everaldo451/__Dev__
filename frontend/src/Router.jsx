@@ -1,8 +1,8 @@
 import Home from './Routes/Home'
 import Login from './Routes/Login'
-import CourseRoute from './Routes/CourseRoute'
+import CourseSearch from './Routes/CourseSearch'
 import Configs from './Routes/Configs'
-import StudentArea from './Routes/StudentArea'
+import UserCoursesArea from './Routes/UserCoursesArea'
 import {BrowserRouter, Route, Routes} from "react-router-dom"
 import App from './App'
 import './App.css'
@@ -15,9 +15,9 @@ export const Router = () => {
             <Route path='/' element={<App/>}>
                 <Route index element={<Home/>}/>
                 <Route path='login' element={<Login/>}/>
-                <Route path='courses/:name' element={<CourseRoute/>}/>
+                <Route path='courses/:name' element={<CourseSearch/>}/>
                 <Route path='configs' element={<Configs/>}/>
-                <Route path='area' element={<StudentArea/>}/>
+                <Route path='area' element={<UserCoursesArea/>}/>
             </Route>
         </Routes>
     </BrowserRouter>

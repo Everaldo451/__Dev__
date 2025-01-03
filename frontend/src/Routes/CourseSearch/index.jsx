@@ -1,16 +1,17 @@
 import styles from "./index.module.css"
-import { useContext, useEffect, useMemo, useRef, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import axios from "axios"
 import SearchBar from "../../Components/SearchBar"
-import SearchResults from "../../Components/SearchResults"
-import { User } from "../../MainContexts"
+import CourseCatalog from "../../Components/CourseCatalog"
+import { User, Courses } from "../../MainContexts"
 
 
-function CourseRoute() {
+export default function CourseSearch() {
 
-    const [courses, setCourses] = useState([])
+    const [searchCourses, setSearchCourses] = useState([])
     const [user, setUser] = useContext(User)
+    const [courses, setCourses] = useContext(Courses)
     const {name} = useParams()
 
     async function GetCourse() {
@@ -22,17 +23,16 @@ function CourseRoute() {
             if (response.data) {
 
                 for (const course of response.data.courses) {
-                    array.push({...course, key:courses.length + array.length + 1})
+                    array.push({...course, key:searchCourses.length + array.length + 1})
                 }
 
-                setCourses(prevCourses => [
+                setSearchCourses(prevCourses => [
                     ...prevCourses,
-                    ...array.filter((course, index) => 
+                    ...array
+                    .filter((course, index) => 
                         user?
-                            !user.courses.find((courseValue, courseIndex) => 
-                                courseValue.id == course.id
-                            )
-                        :true
+                            !courses.find((courseValue, courseIndex) => courseValue.id == course.id)
+                            :true
                     )
                 ])
 
@@ -42,7 +42,7 @@ function CourseRoute() {
     }
 
     useEffect(() => {
-        setCourses([])
+        setSearchCourses([])
         GetCourse()
     },[name])
 
@@ -50,12 +50,9 @@ function CourseRoute() {
     <>
         <main className={styles.CourseRoute}>
             <div className={styles.Container}><SearchBar/></div>
-            <SearchResults courses={courses} subscribe={true} area={false}/>
+            <CourseCatalog courses={searchCourses} subscribe={true} area={false}/>
         </main>
     </>
     )
 
 }
-
-
-export default CourseRoute

@@ -1,0 +1,20 @@
+section.Course{
+    padding: 15px;
+    border-radius: 20px;
+    background-color: rgb(128, 133, 150);
+    color: rgb(80, 91, 97);
+}
+
+section.Course p.data {
+    margin: 2px 0;
+    font-size: 14px;
+}
+
+section.Course > div.imageContainer {
+    display: flex;
+    justify-content: center
+}
+
+section.Course span{
+    color: rgb(131, 85, 0);
+}

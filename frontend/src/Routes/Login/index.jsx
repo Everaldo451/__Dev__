@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { CSRFContext, User } from "../../MainContexts";
+import { CSRFContext, User, Courses } from "../../MainContexts";
 import { Navigate } from "react-router-dom";
 import AccessTokenInterval from "../../Token";
 import axios from "axios";
@@ -8,9 +8,10 @@ import styles from "./index.module.css"
 
 function Login(){
 
+    const [user, setUser] = useContext(User)
     const [csrf_token, setCSRFToken] = useContext(CSRFContext)
     const [action, setAction] = useState("login")
-    const [user, setUser] = useContext(User)
+    const [courses, setCourses] = useContext(Courses)
     const [errorMessage, setErrorMessage] = useState(null)
     const navigate = useNavigate()
 
@@ -33,7 +34,11 @@ function Login(){
             console.log(response.data)
 
             if (response.status == 200) {
-                await AccessTokenInterval([user,setUser], [csrf_token,setCSRFToken])
+                await AccessTokenInterval(
+                    [user,setUser], 
+                    [csrf_token,setCSRFToken], 
+                    [courses, setCourses]
+                )
                 navigate('/')
             }
         } catch(e) {
@@ -44,47 +49,43 @@ function Login(){
 
     }
 
-    return(
-        <>
-            {!user?
-            <main className={styles.Login}>
-                <section>
-                    <ul>
-                        <li id="login" onClick={(e) => setAction(e.target.id)}>Login</li>
-                        <li id="register" onClick={(e) => {setAction(e.target.id)}}>Registro</li>
-                    </ul>
+    if (user) {return <Navigate to={"/"}/>}
+
+    return (
+        <main className={styles.Login}>
+            <section>
+                <ul>
+                    <li id="login" onClick={(e) => setAction(e.target.id)}>Login</li>
+                    <li id="register" onClick={(e) => {setAction(e.target.id)}}>Registro</li>
+                </ul>
 
                     
-                    <form action={action?`http://localhost:5000/auth/${action}`:""} method="POST" onSubmit={onSubmit}>
-                        {action == "register"?
-                        <>
-                            <input type="text" name="full_name" placeholder="Digite seu nome completo" required/>
-                            <input type="email" name="email" placeholder="Digite um email" required/>
-                            <input type="password" name="password" placeholder="Digite uma senha" required/>
-                            <div className={styles.isTeacher}>
-                                <input type="checkbox" name="is_teacher" id="is_teacher"/>
-                                <label htmlFor="is_teacher">Is teacher</label>
-                            </div>
-                        </>
-                        : 
-                        <>
-                            <input type="email" name="email" placeholder="Digite seu email" required/>
-                            <input type="password" name="password" placeholder="Digite sua senha" required/>
-                        </>
-                        }
-                        {errorMessage?
-                            <p className={styles.errorMessage}>{errorMessage}</p>
-                            :null
-                        }
-                        <input type="submit"/>
-                    </form>
+                <form action={action?`http://localhost:5000/auth/${action}`:""} method="POST" onSubmit={onSubmit}>
+                    {action == "register"?
+                    <>
+                        <input type="text" name="full_name" placeholder="Digite seu nome completo" required/>
+                        <input type="email" name="email" placeholder="Digite um email" required/>
+                        <input type="password" name="password" placeholder="Digite uma senha" required/>
+                        <div className={styles.isTeacher}>
+                            <input type="checkbox" name="is_teacher" id="is_teacher"/>
+                            <label htmlFor="is_teacher">Is teacher</label>
+                        </div>
+                    </>
+                    : 
+                    <>
+                        <input type="email" name="email" placeholder="Digite seu email" required/>
+                        <input type="password" name="password" placeholder="Digite sua senha" required/>
+                    </>
+                    }
+                    {errorMessage?
+                        <p className={styles.errorMessage}>{errorMessage}</p>
+                        :null
+                    }
+                    <input type="submit"/>
+                </form>
                     
-                </section>
-            </main>
-            :
-            <Navigate to={"/"}/>
-            }
-        </>
+            </section>
+        </main>
     )
 }
 

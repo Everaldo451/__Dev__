@@ -9,14 +9,14 @@ import axios from "axios"
 function Header() {
 
     const [user, setUser] = useContext(User)
-    const navigate = useNavigate('/')
+    const navigate = useNavigate()
 
     console.log(user)
     
     async function onclick() {
 
         try {
-            const response = await axios.get("http://localhost:5000/auth/logout",{withCredentials:true,})
+            const response = await axios.get("/api/auth/logout",{withCredentials:true,})
             if (response.status==204){
                 setUser(null)
                 navigate("/")

@@ -13,7 +13,7 @@ course_routes = Blueprint("courses",__name__,url_prefix="/courses")
 @course_routes.route('/getcourses/<name>',methods=["GET"])
 def getcourses(name):
 
-    courses = Course.query.filter(Course.name.ilike(f'%{name}%'))[:6]
+    courses = Course.query.filter(Course.name.ilike(f'%{name}%')).order_by(Course.id.desc())[:6]
 
     course_schema = CourseSchema()
 

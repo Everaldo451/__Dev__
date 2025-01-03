@@ -11,6 +11,7 @@ export default function App() {
 
   const [csrf_token, setCSRFToken] = useState(null)
   const [user,setUser] = useState(null)
+  const [courses, setCourses] = useState(null)
   const [loaded,setLoaded] = useState(false)
 
   useEffect(()=>{
@@ -30,7 +31,7 @@ export default function App() {
           const token = response.data.csrf
           console.log(token)
           setCSRFToken(token)
-          AccessTokenInterval([user, setUser], [token, setCSRFToken], setLoaded)
+          AccessTokenInterval([user, setUser], [token, setCSRFToken], [courses, setCourses], setLoaded)
         }
       } catch(error) {setLoaded(true)}
     }
@@ -43,7 +44,8 @@ export default function App() {
     return (
       <LoadContexts contextValues={{
         csrf_token: [csrf_token, setCSRFToken],
-        user: [user, setUser]
+        user: [user, setUser],
+        courses: [courses, setCourses]
       }}>
         <Header/>
         <Outlet/>

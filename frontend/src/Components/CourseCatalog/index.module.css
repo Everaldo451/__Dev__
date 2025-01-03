@@ -1,0 +1,22 @@
+.resultsLanguage {
+    display: flex;
+    align-items: center;
+}
+
+.resultsLanguage > select {
+    margin-left: auto;
+    padding: 5px;
+}
+
+.resultsLanguage > h2 {
+    color: white;
+    font-size: clamp(15px, 4vw, 25px);
+}
+
+section.courses{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-auto-rows: auto;
+    gap: 10px;
+}
