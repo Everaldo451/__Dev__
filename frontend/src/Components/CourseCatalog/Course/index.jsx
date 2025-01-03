@@ -73,10 +73,16 @@ export default function Course({course, subscribe}) {
             <p className={styles.data}>{course.description}</p>
             {hover == true?
                 <div style={{display:"flex",justifyContent:"center"}}>
-                    {user.user_type == "student"?
-                        <CourseRouteCommonButton onClick={(e) => {e.preventDefault();Subscribe()}}>
-                            {subscribe?"Se inscrever":"Se desinscrever"}
-                        </CourseRouteCommonButton>
+                    {subscribe?
+                        !user?
+                            <CourseRouteCommonButton onClick={(e) => {e.preventDefault();navigate("/login")}}>
+                                Se inscrever
+                            </CourseRouteCommonButton>
+                            :user.user_type == "student"?
+                                <CourseRouteCommonButton onClick={(e) => {e.preventDefault();Subscribe()}}>
+                                    Se inscrever
+                                </CourseRouteCommonButton>
+                                :null
                         :null
                     }
                     {!subscribe?

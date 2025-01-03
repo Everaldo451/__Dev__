@@ -33,7 +33,6 @@ def refresh_token():
     response = make_response()
 
     identity = get_jwt_identity()
-    print(identity)
     access_token = create_access_token(identity=identity)
     set_access_cookies(response, access_token)
 

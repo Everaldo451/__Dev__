@@ -1,4 +1,4 @@
-from flask import Blueprint, request, make_response, redirect
+from flask import Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import IntegrityError
 from .forms import CreateCourseForm

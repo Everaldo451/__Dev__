@@ -1,6 +1,6 @@
 from .models import User, Course
 from marshmallow import fields
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 import base64
 
 
@@ -29,9 +29,6 @@ class CourseSchema(SQLAlchemyAutoSchema):
         if obj.image:
             return 'data:image/jpeg;base64,' + base64.b64encode(obj.image).decode("utf-8")
         return None
-    
-    #students = auto_field()
-    #teachers = auto_field()
 
 
 class UserSchema(SQLAlchemyAutoSchema):

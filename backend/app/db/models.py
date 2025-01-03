@@ -86,12 +86,11 @@ class Course(db.Model):
         select(func.count(User.id))
         .where(
             and_(
-                User.user_type == UserTypes.STUDENT,
                 user_courses.c.user_id == User.id,
-                user_courses.c.course_id == id
+                user_courses.c.course_id == id,
+                User.user_type == UserTypes.STUDENT,
             )
         )
-        .correlate_except(User)
         .scalar_subquery()
     )
 
@@ -99,11 +98,10 @@ class Course(db.Model):
         select(func.concat(User.first_name + " " + User.last_name))
         .where(
             and_(
-                User.user_type == UserTypes.TEACHER,
                 user_courses.c.user_id == User.id,
-                user_courses.c.course_id == id
+                user_courses.c.course_id == id,
+                User.user_type == UserTypes.TEACHER,
             )
         )
-        .correlate_except(User)
         .scalar_subquery()
     )
