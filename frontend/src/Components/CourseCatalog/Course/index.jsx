@@ -14,7 +14,7 @@ export default function Course({course, subscribe}) {
     const [courses, setCourses] = useContext(Courses)
     const navigate = useNavigate()
 
-    console.log(course)
+    console.log("courseAdded")
 
     async function Subscribe() {
 

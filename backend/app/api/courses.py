@@ -14,37 +14,49 @@ course_routes = Blueprint("courses",__name__,url_prefix="/courses")
 @jwt_required(locations="cookies", optional=True)
 def getcourses():
     logging.basicConfig(level="DEBUG")
+    
+    query_form = GetCourseQuery(meta={'csrf':False},formdata=request.args)
 
-    query_form = GetCourseQuery(request.args)
-
-    if not query_form.validate_on_submit():
-        print(query_form.errors)
-        return {"message": "Invalid credentials"}, 400
+    if not query_form.validate():
+        print(query_form.data)
+        return {"message": "Invalid credentials."}, 400
+    print(query_form.data)
 
     name = query_form.name.data
 
-    condition2 = True
     identity = get_jwt_identity()
 
-
+    def notUserCourse(): return True
     if identity:
         user = db.session.get(User, identity)
-        condition2 = ~Course.users.any(User.id == user.id)
+        def notUserCourse(): return not Course.users.any(User.id == user.id)
+
+    def validLanguage(): return True
+    lang = None
+
+    for language in Languages: 
+        if query_form.lang.data == language.value:
+            lang = language
+            def validLanguage(): return Course.language == lang
+
+    print(lang)
+    if lang is None and query_form.lang.data is not None:
+        return {"message":"Invalid Language."},400
     
     try:
-        condition1 = Course.name.ilike(f'%{name}%')
+        def includesName(): return Course.name.ilike(f'%{name}%')
 
-        bigher_than = (query_form.times.data-1)*6
-        condition3 = Course.id >= bigher_than
+        value = (query_form.times.data-1)*6
+        def bigherThan(): return Course.id >= value
 
-        courses = Course.query.filter(condition1, condition2, condition3).order_by(Course.id.desc()).limit(6).all()
+        courses = Course.query.filter(notUserCourse(), validLanguage(), includesName(), bigherThan()).order_by(Course.id.desc()).limit(6).all()
+
+        course_schema = CourseSchema()
+        response = course_schema.dump(courses, many=True)
+
+        return {"courses":response}
     except:
         return {"message":"Internal server error."}, 500
-
-    course_schema = CourseSchema()
-    response = course_schema.dump(courses, many=True)
-
-    return {"courses":response}
     
 
 

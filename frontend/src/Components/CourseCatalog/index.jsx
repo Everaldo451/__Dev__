@@ -10,26 +10,24 @@ export default function CourseCatalog({params, subscribe, area, repeatFunction})
 
     const [language, setLanguage] = useState(null)
     const [currentCourses, setCurrentCourses] = useState([])
-    const [times, setTimes] = useState(1)
+    const [currentTimes, setCurrentTimes] = useState(1)
     const [user, setUser] = useContext(User)
 
     useEffect(() => {
+        console.log("language Changed:")
         const courses = language!=null?currentCourses.filter(course => course.language == language):currentCourses
         setCurrentCourses(courses)
-        setTimes(Math.ceil(courses.length/courseListLength))
-    },[language])
-
-    useEffect(() => {
+        const times = Math.ceil(courses.length/courseListLength)
+        setCurrentTimes(times)
+        console.log("time changed")
+        console.log("changing")
 
         if (currentCourses.length != 0 && currentCourses.length%courseListLength == 0) {return}
 
-        const lang = language!=null?language:"null"
-        const parameters = `times=${times+1}${lang?"&lang="+lang:""}&` + params
-
+        const parameters = `times=${times+1}${language!=null?"&lang="+language:""}&` + params
         console.log(parameters)
-
-        repeatFunction(parameters)
-    },[times])
+        repeatFunction(parameters, [currentCourses, setCurrentCourses])
+    },[language, params])
 
     return (
         <>

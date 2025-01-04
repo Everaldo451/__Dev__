@@ -9,12 +9,13 @@ import { User, Courses } from "../../MainContexts"
 
 export default function CourseSearch() {
 
-    const [searchCourses, setSearchCourses] = useState([])
     const [user, setUser] = useContext(User)
-    const [times, setTimes] = useState(0)
     const {name} = useParams()
 
-    async function GetCourse(params) {
+    async function GetCourse(params, courseState) {
+
+        const [courseList, setCourseList] = courseState
+
         try {
 
             //const params = `name=${name}&times=${times}`
@@ -23,16 +24,18 @@ export default function CourseSearch() {
 
             if (response.data && response.data.courses instanceof Object) {
 
-                setSearchCourses(prevCourses => [
+                setCourseList(prevCourses => [
                     ...prevCourses,
                     ...courses.map((course, index, array) => {
-                        return {...course, key:searchCourses.length + array.length + 1}
+                        return {...course, key:courseList.length + array.length + 1}
                     })
                 ])
 
             }
 
-        } catch(error) {}
+        } catch(error) {
+            console.log(error)
+        }
     }
 
     /*useEffect(() => {
