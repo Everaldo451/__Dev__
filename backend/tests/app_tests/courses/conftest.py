@@ -59,6 +59,7 @@ def create_course(client:FlaskClient, db_conn, Courses, commonCourseData, imageB
             assert False
 
         assert new_course is not None
+        assert new_course.image is not None
 
         yield new_course
 

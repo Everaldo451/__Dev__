@@ -1,7 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import IntegrityError
-from .forms import CreateCourseForm
+from .forms import CreateCourseForm, GetCourseQuery
 from ..db.models import Course, User, db, UserTypes, Languages
 from ..db.serializers import CourseSchema
 import io
@@ -10,16 +10,42 @@ import logging
 
 course_routes = Blueprint("courses",__name__,url_prefix="/courses")
 
-@course_routes.route('/getcourses/<name>',methods=["GET"])
-def getcourses(name):
+@course_routes.route('/getcourses',methods=["GET"])
+@jwt_required(locations="cookies", optional=True)
+def getcourses():
+    logging.basicConfig(level="DEBUG")
 
-    courses = Course.query.filter(Course.name.ilike(f'%{name}%')).order_by(Course.id.desc())[:6]
+    query_form = GetCourseQuery(request.args)
+
+    if not query_form.validate_on_submit():
+        print(query_form.errors)
+        return {"message": "Invalid credentials"}, 400
+
+    name = query_form.name.data
+
+    condition2 = True
+    identity = get_jwt_identity()
+
+
+    if identity:
+        user = db.session.get(User, identity)
+        condition2 = ~Course.users.any(User.id == user.id)
+    
+    try:
+        condition1 = Course.name.ilike(f'%{name}%')
+
+        bigher_than = (query_form.times.data-1)*6
+        condition3 = Course.id >= bigher_than
+
+        courses = Course.query.filter(condition1, condition2, condition3).order_by(Course.id.desc()).limit(6).all()
+    except:
+        return {"message":"Internal server error."}, 500
 
     course_schema = CourseSchema()
-
     response = course_schema.dump(courses, many=True)
 
     return {"courses":response}
+    
 
 
 @course_routes.route('/subscribe/<int:id>',methods=['POST'])

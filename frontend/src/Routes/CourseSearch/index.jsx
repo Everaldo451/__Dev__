@@ -11,29 +11,23 @@ export default function CourseSearch() {
 
     const [searchCourses, setSearchCourses] = useState([])
     const [user, setUser] = useContext(User)
-    const [courses, setCourses] = useContext(Courses)
+    const [times, setTimes] = useState(0)
     const {name} = useParams()
 
-    async function GetCourse() {
+    async function GetCourse(params) {
         try {
 
-            const response = await axios.get(`/api/courses/getcourses/${name}`)
-            const array = []
+            //const params = `name=${name}&times=${times}`
+            const response = await axios.get(`/api/courses/getcourses?${params}`)
+            const courses = response.data.courses
 
-            if (response.data) {
-
-                for (const course of response.data.courses) {
-                    array.push({...course, key:searchCourses.length + array.length + 1})
-                }
+            if (response.data && response.data.courses instanceof Object) {
 
                 setSearchCourses(prevCourses => [
                     ...prevCourses,
-                    ...array
-                    .filter((course, index) => 
-                        user?
-                            !courses.find((courseValue, courseIndex) => courseValue.id == course.id)
-                            :true
-                    )
+                    ...courses.map((course, index, array) => {
+                        return {...course, key:searchCourses.length + array.length + 1}
+                    })
                 ])
 
             }
@@ -41,16 +35,16 @@ export default function CourseSearch() {
         } catch(error) {}
     }
 
-    useEffect(() => {
+    /*useEffect(() => {
         setSearchCourses([])
-        GetCourse()
-    },[name])
+        GetCourse(0, 0)
+    },[name])*/
 
     return (
     <>
         <main className={styles.CourseRoute}>
             <div className={styles.Container}><SearchBar/></div>
-            <CourseCatalog courses={searchCourses} subscribe={true} area={false}/>
+            <CourseCatalog params={`name=${name}`} subscribe={true} area={false} repeatFunction={GetCourse}/>
         </main>
     </>
     )

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired, FileField, FileAllowed
-from wtforms import StringField, PasswordField, EmailField
+from wtforms import StringField, PasswordField, EmailField, IntegerField
 from wtforms.widgets import CheckboxInput, TextArea
 from wtforms.validators import DataRequired
 
@@ -38,3 +38,9 @@ class CreateCourseForm(FlaskForm):
         FileRequired(),
         FileAllowed(["jpeg", "png", "jpg"])
     ],)
+
+class GetCourseQuery(FlaskForm):
+    name = StringField('name')
+    language = StringField('lang')
+    lastId = IntegerField("lastId")
+    times = IntegerField("times")

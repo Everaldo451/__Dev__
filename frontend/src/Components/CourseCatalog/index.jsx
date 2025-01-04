@@ -1,19 +1,35 @@
 import { useState, useEffect, useContext } from "react"
 import { User } from "../../MainContexts"
-import styles from "./index.module.css"
 import Course from "./Course"
 import AddCourse from "./AddCourse"
 import LanguageSelector from "./LanguageSelector"
+import styles from "./index.module.css"
+import { courseListLength } from "../../CourseListLength"
 
-export default function CourseCatalog({courses, subscribe, area}){
+export default function CourseCatalog({params, subscribe, area, repeatFunction}){
 
     const [language, setLanguage] = useState(null)
-    const [currentCourses, setCurrentCourses] = useState(courses)
+    const [currentCourses, setCurrentCourses] = useState([])
+    const [times, setTimes] = useState(1)
     const [user, setUser] = useContext(User)
 
     useEffect(() => {
-        setCurrentCourses(language!=null?courses.filter(course => course.language == language):courses)
-    },[language,courses])
+        const courses = language!=null?currentCourses.filter(course => course.language == language):currentCourses
+        setCurrentCourses(courses)
+        setTimes(Math.ceil(courses.length/courseListLength))
+    },[language])
+
+    useEffect(() => {
+
+        if (currentCourses.length != 0 && currentCourses.length%courseListLength == 0) {return}
+
+        const lang = language!=null?language:"null"
+        const parameters = `times=${times+1}${lang?"&lang="+lang:""}&` + params
+
+        console.log(parameters)
+
+        repeatFunction(parameters)
+    },[times])
 
     return (
         <>
@@ -27,11 +43,7 @@ export default function CourseCatalog({courses, subscribe, area}){
                     :
                     <h2 style={{color:"white"}}>Cursos:</h2>
                 }
-                <LanguageSelector setLanguage={setLanguage}>
-                    <option selected value="">None</option>
-                    <option value="Python">Python</option>
-                    <option value="JavaScript">JavaScript</option>
-                </LanguageSelector>
+                <LanguageSelector setLanguage={setLanguage}/>
             </div>
             <section className={styles.courses}>
 
