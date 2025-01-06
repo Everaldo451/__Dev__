@@ -2,7 +2,9 @@ from flask_wtf import FlaskForm, Form
 from flask_wtf.file import FileRequired, FileField, FileAllowed
 from wtforms import StringField, PasswordField, EmailField, IntegerField
 from wtforms.widgets import CheckboxInput, TextArea
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, AnyOf, Optional, NumberRange
+from wtforms import ValidationError
+from ..db.models import Languages
 
 class AuthBaseForm(FlaskForm):
 
@@ -32,7 +34,13 @@ class ChangeConfigsForm(AuthBaseForm):
 
 class CreateCourseForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
-    language = StringField('language', validators=[DataRequired()])
+    language = StringField(
+        'language', 
+        validators=[
+            DataRequired(), 
+            AnyOf([language.value for language in Languages],"Invalid language.")
+        ]
+    )
     description = StringField('description', validators=[DataRequired()], widget=TextArea)
     image = FileField('image', validators=[
         FileRequired(),
@@ -41,5 +49,8 @@ class CreateCourseForm(FlaskForm):
 
 class GetCourseQuery(FlaskForm):
     name = StringField('name')
-    lang = StringField("lang")
-    times = IntegerField("times", validators=[DataRequired()])
+    lang = StringField(
+        'lang',
+        validators=[Optional(), AnyOf([language.value for language in Languages],"Invalid language.")]
+    )
+    length = IntegerField('length', validators=[NumberRange(min=0)])

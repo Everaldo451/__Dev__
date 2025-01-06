@@ -12,14 +12,13 @@ export default function CourseSearch() {
     const [user, setUser] = useContext(User)
     const {name} = useParams()
 
-    async function GetCourse(params, courseState) {
+    async function GetCourse(filters, courseState) {
 
         const [courseList, setCourseList] = courseState
 
         try {
 
-            //const params = `name=${name}&times=${times}`
-            const response = await axios.get(`/api/courses/getcourses?${params}`)
+            const response = await axios.get(`/api/courses/getcourses${filters}`)
             const courses = response.data.courses
 
             if (response.data && response.data.courses instanceof Object) {
@@ -38,16 +37,11 @@ export default function CourseSearch() {
         }
     }
 
-    /*useEffect(() => {
-        setSearchCourses([])
-        GetCourse(0, 0)
-    },[name])*/
-
     return (
     <>
         <main className={styles.CourseRoute}>
             <div className={styles.Container}><SearchBar/></div>
-            <CourseCatalog params={`name=${name}`} subscribe={true} area={false} repeatFunction={GetCourse}/>
+            <CourseCatalog filters={[["name", name]]} subscribe={true} area={false} repeatFunction={GetCourse}/>
         </main>
     </>
     )

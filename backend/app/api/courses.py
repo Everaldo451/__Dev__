@@ -5,6 +5,7 @@ from .forms import CreateCourseForm, GetCourseQuery
 from ..db.models import Course, User, db, UserTypes, Languages
 from ..db.serializers import CourseSchema
 import io
+import math
 import logging
 
 
@@ -19,6 +20,7 @@ def getcourses():
 
     if not query_form.validate():
         print(query_form.data)
+        print(query_form.errors)
         return {"message": "Invalid credentials."}, 400
     print(query_form.data)
 
@@ -31,25 +33,42 @@ def getcourses():
         user = db.session.get(User, identity)
         def notUserCourse(): return not Course.users.any(User.id == user.id)
 
+    """
     def validLanguage(): return True
     lang = None
 
     for language in Languages: 
         if query_form.lang.data == language.value:
             lang = language
-            def validLanguage(): return Course.language == lang
+    """
+    try:
+        lang = Languages(query_form.lang.data)
+        def validLanguage(): return Course.language == lang
+    except ValueError as error:
+        lang = None
+        def validLanguage(): return True
 
     print(lang)
+    """
     if lang is None and query_form.lang.data is not None:
         return {"message":"Invalid Language."},400
+    """
     
     try:
         def includesName(): return Course.name.ilike(f'%{name}%')
 
-        value = (query_form.times.data-1)*6
-        def bigherThan(): return Course.id >= value
+        length = query_form.length.data
+        lenDividedBy6 = length/6
 
-        courses = Course.query.filter(notUserCourse(), validLanguage(), includesName(), bigherThan()).order_by(Course.id.desc()).limit(6).all()
+        if lenDividedBy6.is_integer():
+            limit = 6
+        else:
+            nextSixMultiple = math.ceil(lenDividedBy6) * 6
+            limit = nextSixMultiple - length
+
+        courses = Course.query.filter(
+            notUserCourse(), validLanguage(), includesName()
+        ).order_by(Course.id.desc()).offset(length).limit(limit).all()
 
         course_schema = CourseSchema()
         response = course_schema.dump(courses, many=True)
