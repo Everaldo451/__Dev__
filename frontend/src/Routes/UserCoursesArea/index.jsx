@@ -8,14 +8,24 @@ import CourseCatalog from "../../Components/CourseCatalog";
 export default function UserCoursesArea() {
 
     const [user, setUser] = useContext(User)
-    const [courses, setCourses] = useContext(Courses)
+    const [userCourses, setUserCourses] = useContext(Courses)
     console.log(user)
+
+    async function GetUserCourses(filters, courseState) {
+
+    }
 
     if (user) {
 
         return (
             <main className={styles.Area}>
-                <CourseCatalog courses={courses?courses:[]} subscribe={false} area={true}/>
+                <CourseCatalog 
+                    filters={[]} 
+                    subscribe={false} 
+                    area={true}
+                    repeatFunction={GetUserCourses}
+                    courseStateOrContext={[userCourses, setUserCourses]} 
+                />
             </main>
         )
 

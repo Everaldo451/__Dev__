@@ -5,60 +5,42 @@ import AddCourse from "./AddCourse"
 import LanguageSelector from "./LanguageSelector"
 import styles from "./index.module.css"
 import { courseListLength } from "../../CourseListLength"
-import { getFnIfCache, setFnIfCache, getFnIfState, setFnIfState } from "./coursesInCacheFunctions"
+import { getState, setState } from "./coursesInCacheFunctions"
+import CourseListLoader from "../../CourseListLoader"
 
-export default function CourseCatalog({filters, subscribe, area, storeInSession=false, repeatFunction}){
+export default function CourseCatalog({filters, subscribe, area, courseStateOrContext, repeatFunction}){
 
     const [language, setLanguage] = useState(null)
     const [currentCourses, setCurrentCourses] = useState([])
-    const [coursesInState, setCoursesInState] = useState(storeInSession?null:new Set([]))
+    const [coursesInState, setCoursesInState] = courseStateOrContext
+    const [toCacheCourses, setToCacheCourses] = useState(new Set(coursesInState))
     const [user, setUser] = useContext(User)
 
-    let getCoursesInCache;
-    let setCoursesInCache;
-
-    if (storeInSession === true) {
-        getCoursesInCache = getFnIfCache
-        setCoursesInCache = setFnIfCache
-    } else if (storeInSession === false) {
-        getCoursesInCache = () => getFnIfState(coursesInState)
-        setCoursesInCache = (courses) => setFnIfState(courses, coursesInState, setCoursesInState)
-    }
-
+    const getCoursesInCache = () => getState(toCacheCourses)
+    const setCoursesInCache = (courses) => setState(courses, toCacheCourses, setToCacheCourses)
+    
     function languageModified() {
         console.log("language Changed:")
-
         const coursesInCache = getCoursesInCache()
         console.log(coursesInCache)
 
         const courses = language!=null?
             coursesInCache.filter(course => course.language == language)
-            :
-            coursesInCache
-
+            :coursesInCache
         setCurrentCourses(courses)
 
         if (courses.length != 0 && courses.length%courseListLength == 0) {return}
 
-        const parameters = [
-            ["length", courses.length],
-            ...filters
-        ]
-        language?parameters.push(["lang", language]):null
+        const filtersList = [["length", courses.length],...filters]
+        language?filtersList.push(["lang", language]):null
 
-        parameters.forEach((value, index) => {
-            const joined =  value.join("=")
-            parameters[index] = joined
+        filtersList.forEach((value, index) => {
+            const joined = value.join("=")
+            filtersList[index] = joined
         })
-
-        const stringParameters = "?"+parameters.join("&")
-
-        repeatFunction(stringParameters, [courses, setCurrentCourses])
+        const stringfiedFilters = "?"+filtersList.join("&")
+        repeatFunction(stringfiedFilters, [courses, setCurrentCourses])
     }
-
-    useEffect(() => {
-        setCoursesInCache([])
-    },[])
 
     useEffect(() => {
         languageModified()
@@ -66,10 +48,16 @@ export default function CourseCatalog({filters, subscribe, area, storeInSession=
 
     useEffect(() => {
         if (language == null && currentCourses.length > 0) {
-            console.log(currentCourses, language)
             setCoursesInCache(currentCourses)
         }
     },[currentCourses])
+
+    useEffect(() => {
+
+        return () => {
+            setCoursesInState(toCacheCourses)
+        }
+    },[])
 
     return (
         <>

@@ -2,6 +2,7 @@ from .models import User, Course
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 import base64
+import numpy as np
 
 
 class CourseSchema(SQLAlchemyAutoSchema):
@@ -27,7 +28,7 @@ class CourseSchema(SQLAlchemyAutoSchema):
 
     def get_image(self, obj):
         if obj.image:
-            return 'data:image/jpeg;base64,' + base64.b64encode(obj.image).decode("utf-8")
+            return base64.b64encode(obj.image).decode("utf-8")
         return None
 
 

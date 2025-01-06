@@ -1,4 +1,5 @@
 import axios from "axios"
+import CourseListLoader from "./CourseListLoader"
 
 async function SetUser(csrf_token, setUser, setCourses){
 
@@ -13,8 +14,9 @@ async function SetUser(csrf_token, setUser, setCourses){
     const courses = response.data.courses 
     courses.sort((course1, course2) => course2.id - course1.id)
 
-    console.log(courses)
-    setCourses(courses)
+    const coursesBlobImage = new Set(CourseListLoader(courses))
+    console.log(coursesBlobImage)
+    setCourses(coursesBlobImage)
 
     delete response.data.courses
 
