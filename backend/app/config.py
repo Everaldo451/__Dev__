@@ -18,10 +18,14 @@ class Config(object):
     JWT_ACCESS_COOKIE_NAME = "access_token"
     JWT_REFRESH_COOKIE_NAME = "refresh_token"
 
-class GeneralConfig(Config):
-
+class ProductionConfig(Config):
+    DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI")
 
-class TestingConfig(Config):
+class DevelopmentConfig(Config):
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI", "sqlite:///dev.db")
 
+class TestingConfig(Config):
+    TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"

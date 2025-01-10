@@ -1,0 +1,22 @@
+services:
+  backend:
+    container_name: app_backend
+    build:
+      context: ./backend
+    ports:
+      - 5000:5000
+    depends_on:
+      - db
+  
+  frontend:
+    container_name: app_frontend
+    build:
+      context: ./frontend
+    ports:
+      - 3000:80
+    depends_on:
+      - backend
+
+  db:
+    image: mysql:latest
+    container_name: app_db

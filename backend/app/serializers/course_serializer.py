@@ -1,9 +1,7 @@
-from .models import User, Course
+from ..models.course_model import Course
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 import base64
-import numpy as np
-
 
 class CourseSchema(SQLAlchemyAutoSchema):
 
@@ -28,20 +26,5 @@ class CourseSchema(SQLAlchemyAutoSchema):
 
     def get_image(self, obj):
         if obj.image:
-            return base64.b64encode(obj.image).decode("utf-8")
+            return "data:image/jpeg;base64," + base64.b64encode(obj.image).decode("utf-8")
         return None
-
-
-class UserSchema(SQLAlchemyAutoSchema):
-
-    class Meta:
-        model = User
-        load_instance = True
-        exclude = ("password","id")
-
-    courses = fields.Nested("CourseSchema", many=True)
-    user_type = fields.Method("get_user_type")
-    
-    def get_user_type(self, obj):
-        if obj.user_type:
-            return obj.user_type.value

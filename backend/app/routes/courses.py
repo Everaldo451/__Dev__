@@ -1,14 +1,16 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import IntegrityError
-from .forms import CreateCourseForm, GetCourseQuery
-from ..db.models import Course, User, db, UserTypes, Languages
-from ..db.serializers import CourseSchema
 import io
 import math
 import logging
+from ..db import db
+from ..forms.courses import GetCourseQuery, CreateCourseForm
+from ..models.course_model import Course, Languages
+from ..models.user_model import User, UserTypes
+from ..serializers.course_serializer import CourseSchema
 
-
+#Course Blueprint
 course_routes = Blueprint("courses",__name__,url_prefix="/courses")
 
 @course_routes.route('/getcourses',methods=["GET"])
@@ -19,55 +21,38 @@ def getcourses():
     query_form = GetCourseQuery(meta={'csrf':False},formdata=request.args)
 
     if not query_form.validate():
-        print(query_form.data)
-        print(query_form.errors)
         return {"message": "Invalid credentials."}, 400
-    print(query_form.data)
 
     name = query_form.name.data
 
     identity = get_jwt_identity()
 
-    def notUserCourse(): return True
+    def not_user_course(): return True
     if identity:
         user = db.session.get(User, identity)
-        def notUserCourse(): return not Course.users.any(User.id == user.id)
+        def not_user_course(): return not Course.users.any(User.id == user.id)
 
-    """
-    def validLanguage(): return True
-    lang = None
-
-    for language in Languages: 
-        if query_form.lang.data == language.value:
-            lang = language
-    """
     try:
         lang = Languages(query_form.lang.data)
-        def validLanguage(): return Course.language == lang
+        def valid_language(): return Course.language == lang
     except ValueError as error:
         lang = None
-        def validLanguage(): return True
-
-    print(lang)
-    """
-    if lang is None and query_form.lang.data is not None:
-        return {"message":"Invalid Language."},400
-    """
+        def valid_language(): return True
     
     try:
-        def includesName(): return Course.name.ilike(f'%{name}%')
+        def includes_name(): return Course.name.ilike(f'%{name}%')
 
         length = query_form.length.data
-        lenDividedBy6 = length/6
+        len_divided_by_six = length/6
 
-        if lenDividedBy6.is_integer():
+        if len_divided_by_six.is_integer():
             limit = 6
         else:
-            nextSixMultiple = math.ceil(lenDividedBy6) * 6
+            nextSixMultiple = math.ceil(len_divided_by_six) * 6
             limit = nextSixMultiple - length
 
         courses = Course.query.filter(
-            notUserCourse(), validLanguage(), includesName()
+            not_user_course(), valid_language(), includes_name()
         ).order_by(Course.id.desc()).offset(length).limit(limit).all()
 
         course_schema = CourseSchema()

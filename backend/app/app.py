@@ -2,22 +2,29 @@ from flask import Flask
 from dotenv import load_dotenv
 from .security.protect import CSRF, Cors
 from .security.csrf_blueprint import csrf_routes
-from .api.courses import course_routes
-from .api.auth import auth
-from .api.jwt import jwt, JWT
-from .db.models import db
+from .routes.courses import course_routes
+from .routes.auth import auth
+from .routes.jwt import jwt, JWT
+from .db import db
 import os
 
-def create_app(TESTING = False):
+def create_app():
     load_dotenv()
-    from .config import settings
-
     app = Flask(__name__)
 
-    if os.getenv("FLASK_ENV") == "development" and TESTING:
-        app.config.from_object(settings.TestingConfig)
+    from . import config
+    flask_env = os.getenv("FLASK_ENV")
+    if flask_env == "production":
+        print("production Env")
+        app.config.from_object(config.ProductionConfig)
+    elif flask_env == "testing":
+        print("test Env")
+        app.config.from_object(config.TestingConfig)
     else:
-        app.config.from_object(settings.GeneralConfig)
+        print("dev Env")
+        app.config.from_object(config.DevelopmentConfig)
+
+    print(app.config['DEBUG'])
 
     Cors.init_app(app)
     CSRF.init_app(app)

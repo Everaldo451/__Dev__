@@ -6,7 +6,6 @@ import LanguageSelector from "./LanguageSelector"
 import styles from "./index.module.css"
 import { courseListLength } from "../../CourseListLength"
 import { getState, setState } from "./coursesInCacheFunctions"
-import CourseListLoader from "../../CourseListLoader"
 
 export default function CourseCatalog({filters, subscribe, area, courseStateOrContext, repeatFunction}){
 
@@ -15,9 +14,23 @@ export default function CourseCatalog({filters, subscribe, area, courseStateOrCo
     const [coursesInState, setCoursesInState] = courseStateOrContext
     const [toCacheCourses, setToCacheCourses] = useState(new Set(coursesInState))
     const [user, setUser] = useContext(User)
+    const [page, setPage] = useState(1)
 
     const getCoursesInCache = () => getState(toCacheCourses)
     const setCoursesInCache = (courses) => setState(courses, toCacheCourses, setToCacheCourses)
+
+    function getFilters(courses) {
+        const filtersList = [["length", courses.length],...filters]
+        language?filtersList.push(["lang", language]):null
+
+        filtersList.forEach((value, index) => {
+            const joined = value.join("=")
+            filtersList[index] = joined
+        })
+        const stringfiedFilters = "?"+filtersList.join("&")
+
+        return stringfiedFilters
+    }
     
     function languageModified() {
         console.log("language Changed:")
@@ -31,15 +44,7 @@ export default function CourseCatalog({filters, subscribe, area, courseStateOrCo
 
         if (courses.length != 0 && courses.length%courseListLength == 0) {return}
 
-        const filtersList = [["length", courses.length],...filters]
-        language?filtersList.push(["lang", language]):null
-
-        filtersList.forEach((value, index) => {
-            const joined = value.join("=")
-            filtersList[index] = joined
-        })
-        const stringfiedFilters = "?"+filtersList.join("&")
-        repeatFunction(stringfiedFilters, [courses, setCurrentCourses])
+        repeatFunction(getFilters(courses), [courses, setCurrentCourses])
     }
 
     useEffect(() => {
@@ -48,6 +53,7 @@ export default function CourseCatalog({filters, subscribe, area, courseStateOrCo
 
     useEffect(() => {
         if (language == null && currentCourses.length > 0) {
+            console.log(currentCourses.length, currentCourses, page)
             setCoursesInCache(currentCourses)
         }
     },[currentCourses])
@@ -75,10 +81,17 @@ export default function CourseCatalog({filters, subscribe, area, courseStateOrCo
             </div>
             <section className={styles.courses}>
 
-                {currentCourses.map(course => 
+                {currentCourses.filter((value, index, array) => 
+                        index >= 6*(page-1) && page*6 >= index
+                    ).map(course => 
                     <Course course={course} key={course.key} subscribe={subscribe}/>
                 )}
 
+            </section>
+            <section className={styles.PageButtons}>
+                <button>Prev</button>
+                <span>{page}</span>
+                <button>Next</button>
             </section>
         </>
     )

@@ -1,16 +1,15 @@
-from flask import Blueprint, redirect, request, make_response
+from flask import Blueprint, make_response
 from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import set_refresh_cookies
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 from flask_jwt_extended import unset_jwt_cookies
-from ..db.models import User, UserTypes, db
-from .forms import RegisterForm, LoginForm, ChangeConfigsForm, TeacherRegisterForm
+from ..db import db
+from ..models.user_model import User, UserTypes
+from ..forms.authentication import RegisterForm, LoginForm, TeacherRegisterForm
 import logging
 
+#Authentication Blueprint
 auth = Blueprint("auth",__name__,url_prefix="/auth")
-
-
-##############AUTH
 
 @auth.route("/login",methods=["POST"])
 def login():
@@ -18,25 +17,18 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-
         user = User.authenticate(email=form.email.data, password=form.password.data)
 
         if user is not None:
-
             try:
-
                 response = make_response({"message":"Login successful."})
                 response.status_code = 200
-
                 refresh_token = create_refresh_token(identity=user.id)
                 set_refresh_cookies(response,refresh_token)
-
                 return response
-        
             except Exception as e: 
-            
                 return {"message": "Internal server error."}, 500
-    
+            
         return {"message": "Invalid email or password."}, 400
     
     return {"message": "Invalid credentials."}, 400
@@ -54,7 +46,6 @@ def register():
         return {"message": "Invalid credentials."}, 400
 
     user = User.query.filter_by(email=form.email.data).first()
-
     if user:
         return {"message": "Current email is already registered."}, 400
     
@@ -62,18 +53,16 @@ def register():
         user_type = UserTypes.TEACHER
     
     try:
-
         full_name = form.full_name.data
         splitted_name = full_name.split(maxsplit=1)
-
         first_name = splitted_name[0]
         last_name = splitted_name[1]
 
         user = User(
             email=form.email.data,
-            password=form.password.data,
-            first_name=first_name,
-            last_name = last_name,
+            password=form.password.data, 
+            first_name=first_name, 
+            last_name=last_name, 
             user_type=user_type
         )
 
@@ -82,12 +71,10 @@ def register():
 
         response = make_response({"message": "User created successful."})
         response.status_code = 200
-        
         refresh_token = create_refresh_token(identity=user.id)
         set_refresh_cookies(response,refresh_token)
 
         return response
-    
     except IndexError: 
         return {"message": "Last name isn't present."}, 500
     except:
@@ -96,20 +83,16 @@ def register():
 @auth.route("/logout",methods=["GET"])
 @jwt_required(locations="cookies")
 def logout():
-
     response = make_response()
     response.status_code = 204
-    
     unset_jwt_cookies(response)
-
     return response
 
 
+"""
 @auth.route("/change_configs",methods=["POST"])
 @jwt_required(locations='cookies')
 def change_configs():
-
-    form = ChangeConfigsForm()
 
     if form.validate_on_submit():
 
@@ -128,3 +111,4 @@ def change_configs():
         return redirect(request.origin)
     
     else: return redirect(request.origin)
+"""

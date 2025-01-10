@@ -1,3 +1,6 @@
+from flask import Flask
+from flask.testing import FlaskClient
+import pytest
 import sys
 import os
 import logging
@@ -5,16 +8,15 @@ import logging
 sys.path.append(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 print(os.path.dirname(os.path.abspath(__file__)))
 
-from flask import Flask
-from flask.testing import FlaskClient
-from app.app import create_app
-from app.db.models import db, User, Course, UserTypes, Languages
+from backend.app.app import create_app
+from app.db import db
+from app.models.user_model import User, UserTypes
+from app.models.course_model import Course, Languages
 from app.security.protect import CSRF
-import pytest
 
 @pytest.fixture
 def app():
-    return create_app(TESTING=True)
+    return create_app()
 
 @pytest.fixture
 def client(app:Flask):
@@ -27,7 +29,6 @@ def cli_runner(app:Flask):
 @pytest.fixture
 def db_conn(client:FlaskClient):
     yield db
-
 
 @pytest.fixture
 def Users():

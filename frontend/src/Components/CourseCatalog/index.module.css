@@ -20,3 +20,15 @@ section.courses{
     grid-auto-rows: auto;
     gap: 10px;
 }
+
+section.PageButtons{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+section.PageButtons span{
+    color: white;
+    margin: 0 10px;
+}

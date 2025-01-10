@@ -1,35 +1,9 @@
-from flask_wtf import FlaskForm, Form
+from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired, FileField, FileAllowed
-from wtforms import StringField, PasswordField, EmailField, IntegerField
-from wtforms.widgets import CheckboxInput, TextArea
+from wtforms import StringField, IntegerField
+from wtforms.widgets import TextArea
 from wtforms.validators import DataRequired, AnyOf, Optional, NumberRange
-from wtforms import ValidationError
-from ..db.models import Languages
-
-class AuthBaseForm(FlaskForm):
-
-    full_name = StringField('full_name', validators=[DataRequired()])
-    email = EmailField('email', validators=[DataRequired()])
-    password = PasswordField('password', validators=[DataRequired()])
-
-
-class RegisterForm(AuthBaseForm):
-    pass
-
-
-class TeacherRegisterForm(RegisterForm):
-
-    is_teacher = StringField('is_teacher', validators=[DataRequired()], widget=CheckboxInput)
-
-
-class LoginForm(AuthBaseForm):
-    full_name = None
-
-
-
-class ChangeConfigsForm(AuthBaseForm):
-    password = None
-
+from ..models.course_model import Languages
 
 
 class CreateCourseForm(FlaskForm):

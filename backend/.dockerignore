@@ -1,6 +1,5 @@
 #Files
-.env
-.env.example
+*.env
 .gitignore
 
 #Folders
