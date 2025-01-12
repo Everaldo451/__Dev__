@@ -19,18 +19,19 @@ def getcourses():
     logging.basicConfig(level="DEBUG")
     
     query_form = GetCourseQuery(meta={'csrf':False},formdata=request.args)
+    name = query_form.name.data
+    identity = get_jwt_identity()
 
     if not query_form.validate():
         return {"message": "Invalid credentials."}, 400
-
-    name = query_form.name.data
-
-    identity = get_jwt_identity()
+    
+    def includes_name(): return Course.name.ilike(f'%{name}%')
 
     def not_user_course(): return True
     if identity:
         user = db.session.get(User, identity)
-        def not_user_course(): return not Course.users.any(User.id == user.id)
+        if user is not None:
+            def not_user_course(): return not Course.users.any(User.id == user.id)
 
     try:
         lang = Languages(query_form.lang.data)
@@ -38,30 +39,26 @@ def getcourses():
     except ValueError as error:
         lang = None
         def valid_language(): return True
-    
+
+    length = query_form.length.data
+    len_divided_by_six = length/6
+
+    if len_divided_by_six.is_integer():
+        limit = 6
+    else:
+        next_six_multiple = math.ceil(len_divided_by_six) * 6
+        limit = next_six_multiple - length
+
     try:
-        def includes_name(): return Course.name.ilike(f'%{name}%')
-
-        length = query_form.length.data
-        len_divided_by_six = length/6
-
-        if len_divided_by_six.is_integer():
-            limit = 6
-        else:
-            nextSixMultiple = math.ceil(len_divided_by_six) * 6
-            limit = nextSixMultiple - length
-
         courses = Course.query.filter(
             not_user_course(), valid_language(), includes_name()
         ).order_by(Course.id.desc()).offset(length).limit(limit).all()
 
         course_schema = CourseSchema()
         response = course_schema.dump(courses, many=True)
-
         return {"courses":response}
     except:
         return {"message":"Internal server error."}, 500
-    
 
 
 @course_routes.route('/subscribe/<int:id>',methods=['POST'])
@@ -69,30 +66,29 @@ def getcourses():
 def subscribe(id):
     logging.basicConfig(level="DEBUG")
 
-    try:
-
+    try:   
         user = db.session.get(User, get_jwt_identity())
-    
-        if user.user_type == UserTypes.TEACHER:
-            return {"message":"Teachers cannot register in course"}, 403
-        
         course = db.session.get(Course, id)
-
-        if course is None:
-            return {"message": "Invalid course id."}, 404
-        
-        if course in user.courses:
-            return {"message": "User has been already registered."}, 403
-
+    except Exception as error:
+        return {"message":"Internal server Error"}, 500
+    
+    if user is None:
+        return {"message":"Invalid user."}, 401
+    if user.user_type == UserTypes.TEACHER:
+        return {"message":"Teachers cannot register in course"}, 403
+    
+    if course is None:
+        return {"message": "Invalid course id."}, 404   
+    if course in user.courses:
+        return {"message": "User has been already registered in this course."}, 403
+    
+    try:
         user.courses.add(course)
         db.session.commit()
-
+        return {"message":"User registered sucessfull."}, 200
     except Exception as error: 
         logging.error(error)
         return {"message": "Internal server error."}, 500
-
-    return {"message":"User registered sucessfull."}, 200
-
 
 
 @course_routes.route('/unsubscribe/<int:id>',methods=["POST"])
@@ -101,23 +97,25 @@ def unsubscribe(id):
 
     try:
         user = db.session.get(User,get_jwt_identity())
-
-        if user.user_type == UserTypes.TEACHER:
-            return {"message":"Teachers cannot unsubscribe in course"}, 403
-        
         course = db.session.get(Course, id)
+    except Exception as error:
+        return {"message":"Internal server Error"}, 500
+    
+    if user is None:
+        return {"message":"Invalid user."}, 401
+    if user.user_type == UserTypes.TEACHER:
+        return {"message":"Teachers cannot unsubscribe in course"}, 403
 
-        if not course:
-            return {"message": "Invalid course id."}, 404
-
-        if course in user.courses:
-
-            user.courses.remove(course)
-            db.session.commit()
-
-            return {"message": "User unsubscribed sucessfull"}, 200
-
-    except KeyError:
+    if course is None:
+        return {"message": "Invalid course id."}, 404
+    if not course in user.courses:
+        return {"message": "User isn't registered in the course."}, 403
+    
+    try:
+        user.courses.remove(course)
+        db.session.commit()
+        return {"message": "User unsubscribed sucessfull"}, 200
+    except Exception as error:
         return {"message": "User isn't registered in the course."}, 403
 
 
@@ -126,75 +124,58 @@ def unsubscribe(id):
 def createCourse():
     logging.basicConfig(level="DEBUG")
 
-    try:
-
-        user = db.session.get(User,get_jwt_identity())
-
-        if not user.user_type == UserTypes.TEACHER:
-            return {"message":"Students cannot create a course."}, 403
-
-    except:
-        return {"message":"Internal server error."}, 500
-
     form = CreateCourseForm()
-
     if not form.validate_on_submit():
         logging.error(dict(form.errors))
         return {"message":"Invalid credentials.", "errors": dict(form.errors)}, 400
     
     try:
+        user = db.session.get(User,get_jwt_identity())
         course = Course.query.filter_by(name=form.name.data).first()
-
-        if course is not None:
-            return {"message":"Course with the current name already exists."}, 400
     except Exception as error:
-        logging.error(error)
-        return {"message":"Internal server error to found course"}, 500
+        return {"message":"Internal server Error"}, 500
     
-
-    for language in Languages: 
-        if form.language.data == language.value:
-            lang = language
-
-    if not lang:
-        return {"message":"Invalid language. Isn't possible to create a course with this language."}, 400
+    if user is None:
+        return {"message":"Invalid user."}, 401
+    if user.user_type == UserTypes.STUDENT:
+        return {"message":"Students cannot create a course."}, 403
     
-    buffer = None
+    if course is not None:
+        return {"message":"Course with the current name already exists."}, 400
+    
+    lang = Languages(form.language.data)
+    error = None
+    buffer = io.BytesIO()
+    f = form.image.data
+    
     try:
-        buffer = io.BytesIO()
-        
-        f = form.image.data
         f.save(buffer)
-
         buffer.seek(0)
-
         image = buffer.getvalue()
-        
+
         newCourse = Course(
             name = form.name.data,
             language = lang,
             description = form.description.data,
             image = image,
         )
-            
+
         db.session.add(newCourse)
         newCourse.users.add(user)
         db.session.commit()
 
-        buffer.close()
-        return {"message":"Course created sucessfully."}, 200
-
-    except Exception as e:
+        response = {"message":"Course created sucessfully."}
+        status = 200
+    except Exception as error:
         response = {"message": "Ola"}
         status = 500
     except IntegrityError as error:
         response = {"message": "Invalid user"} 
         status = 500
 
-    db.session.rollback()
-    if buffer is not None:
-        buffer.close()
-    
+    if error is not None:
+        db.session.rollback()
+    buffer.close()
     return response, status
 
 
