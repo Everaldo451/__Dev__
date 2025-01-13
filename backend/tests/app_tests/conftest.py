@@ -44,21 +44,17 @@ def create_user(client, db_conn, Users, userData):
             assert e is None
 
         assert new_user is not None
-
         yield new_user
 
         db_conn.session.close()
     
 @pytest.fixture
 def csrf_token(client:FlaskClient):
-
     response = client.get("/csrf/get")
 
     json = response.get_json()
-
     assert response.status_code == 200
     assert json
-
     yield json["csrf"]
 
 
@@ -71,17 +67,13 @@ def register_user_and_log_in(client:FlaskClient, userData, csrf_token):
             "X-CSRFToken":csrf_token
         },
     )
-
     response.close()
-
     response = client.post("/jwt/refresh_token",
         headers = {
             "X-CSRFToken":csrf_token,
         }
     )
-
     response.close()
-
     response = client.post("/jwt/getuser",
         headers = {
             "X-CSRFToken":csrf_token,
@@ -94,8 +86,10 @@ def register_user_and_log_in(client:FlaskClient, userData, csrf_token):
     
     if userData.get("is_teacher"):
         assert user_type == "teacher"
+        print("is_teacher")
     else:
         assert user_type == "student"
+        print("is_student")
 
     yield
     

@@ -7,21 +7,22 @@ def test_with_user(client:FlaskClient, csrf_token, create_course, commonCourseDa
             "X-CSRFToken": csrf_token
         }
     )
-
+    response.close()
     courseName = commonCourseData["name"][:4]
-
-    response = client.get(f"/courses/getcourses/{courseName}")
+    response = client.get(f"/courses/getcourses?length=0&name={courseName}")
 
     json = response.get_json()
     assert json
     courses = json["courses"]
+    assert isinstance(courses, list)
 
 def test_without_user(client:FlaskClient, csrf_token, create_course, commonCourseData):
 
     courseName = commonCourseData["name"][:4]
-
-    response = client.get(f"/courses/getcourses/{courseName}")
+    response = client.get(f"/courses/getcourses?length=0&name={courseName}",)
 
     json = response.get_json()
     assert json
     courses = json["courses"]
+    assert isinstance(courses, list)
+    assert len(courses) == 1

@@ -31,7 +31,7 @@ def getcourses():
     if identity:
         user = db.session.get(User, identity)
         if user is not None:
-            def not_user_course(): return not Course.users.any(User.id == user.id)
+            def not_user_course(): return ~Course.users.any(User.id == user.id)
 
     try:
         lang = Languages(query_form.lang.data)
@@ -57,7 +57,8 @@ def getcourses():
         course_schema = CourseSchema()
         response = course_schema.dump(courses, many=True)
         return {"courses":response}
-    except:
+    except Exception as error:
+        print(error)
         return {"message":"Internal server error."}, 500
 
 

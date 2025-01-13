@@ -8,7 +8,7 @@ import logging
 sys.path.append(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 print(os.path.dirname(os.path.abspath(__file__)))
 
-from backend.app.app import create_app
+from app.app import create_app
 from app.db import db
 from app.models.user_model import User, UserTypes
 from app.models.course_model import Course, Languages

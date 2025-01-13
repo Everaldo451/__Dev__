@@ -52,10 +52,11 @@ def register():
         user_type = UserTypes.TEACHER
     
     try:
-        first_name, last_name = form.data.pop("full_name").split(maxsplit=1)
+        first_name, last_name = form.full_name.data.split(maxsplit=1)
 
         user = User(
-            **form.data,
+            email=form.email.data,
+            password=form.password.data,
             first_name=first_name, 
             last_name=last_name, 
             user_type=user_type
@@ -71,7 +72,9 @@ def register():
         return response
     except ValueError as error: 
         return {"message": "Last name isn't present."}, 400
-    except:
+    except KeyError as error:
+        return {"message": "Last name isn't present."}, 400
+    except Exception as error:
         return {"message": "Internal server error."}, 500
     
 @auth.route("/logout",methods=["GET"])
