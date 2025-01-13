@@ -67,12 +67,14 @@ def register_user_and_log_in(client:FlaskClient, userData, csrf_token):
             "X-CSRFToken":csrf_token
         },
     )
+    assert response.status_code == 200
     response.close()
     response = client.post("/jwt/refresh_token",
         headers = {
             "X-CSRFToken":csrf_token,
         }
     )
+    assert response.status_code == 200
     response.close()
     response = client.post("/jwt/getuser",
         headers = {

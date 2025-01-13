@@ -20,14 +20,8 @@ export default function App() {
       try {
         console.log(csrf_token==null)
 
-        if (csrf_token==null) {
-
-          const response = await axios.get("/api/csrf/get",
-            {
-              withCredentials:true
-            }
-          )
-
+        if (!csrf_token) {
+          const response = await axios.get("/api/csrf/get",{withCredentials:true})
           const token = response.data.csrf
           console.log(token)
           setCSRFToken(token)

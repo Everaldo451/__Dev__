@@ -15,6 +15,7 @@ def test_with_user(client:FlaskClient, csrf_token, create_course, commonCourseDa
     assert json
     courses = json["courses"]
     assert isinstance(courses, list)
+    assert len(courses) == 0
 
 def test_without_user(client:FlaskClient, csrf_token, create_course, commonCourseData):
 

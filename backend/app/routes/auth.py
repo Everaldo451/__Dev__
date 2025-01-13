@@ -23,8 +23,7 @@ def login():
         return {"message":"Invalid email or password."}, 400
     
     try: 
-        response = make_response({"message":"Login successful."})
-        response.status_code = 200
+        response = make_response({"message":"Login successful."}, 200)
         refresh_token = create_refresh_token(identity=user.id)
         set_refresh_cookies(response,refresh_token)
         return response
@@ -61,13 +60,12 @@ def register():
             last_name=last_name, 
             user_type=user_type
         )
-
         db.session.add(user)
         db.session.commit()
 
-        response = make_response({"message": "User created successful."})
-        response.status_code = 200
+        response = make_response({"message": "User created successful."}, 200)
         refresh_token = create_refresh_token(identity=user.id)
+        print(refresh_token)
         set_refresh_cookies(response,refresh_token)
         return response
     except ValueError as error: 
