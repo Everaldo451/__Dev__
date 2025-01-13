@@ -4,24 +4,28 @@ import styles from "./index.module.css"
 
 export default function LanguageSelector ({attrs ,setLanguage}) {
 
-    const [options, setOptions] = useState([])
+    const [options, setOptions] = useState([<option value="" key={0}>None</option>])
+
+    function LanguageOptions(length) {
+        const optionsList = []
+        Languages.forEach((value, key) => {
+            optionsList.push(<option value={value} key={length+1}>{value}</option>)
+        })
+        return optionsList
+    }
 
     useEffect(() => {
-        Languages.forEach((value,key,map) => 
-            {setOptions(prev => [...prev, <option value={value} key={prev.length+1}>{value}</option>])}
-        )
+        setOptions(prev => [...prev, ...LanguageOptions(prev.length)])
     },[])
 
     const ref = useRef(null)
 
     function onChange(e) {
         const selected = ref.current.options[ref.current.options.selectedIndex]
-        
         setLanguage(selected.value!=""?selected.value:null)
     }
 
-    return (<select {...attrs} ref={ref} onChange={onChange}>
-        <option selected value="">None</option>
+    return (<select {...attrs} ref={ref} defaultValue={""} onChange={onChange}>
         {options}
     </select>)
 }

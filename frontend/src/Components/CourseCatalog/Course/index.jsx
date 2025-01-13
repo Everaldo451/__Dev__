@@ -14,12 +14,14 @@ export default function Course({course, subscribe}) {
     const [courses, setCourses] = useContext(Courses)
     const navigate = useNavigate()
 
-    console.log("courseAdded")
+    async function onclickIfNotUser(e) {
+        e.preventDefault()
+        navigate("/login")
+    }
 
-    async function Subscribe() {
-
-        let route = subscribe==true?"subscribe":"unsubscribe"
-
+    async function onclickIfUserIsStudent(e) {
+        e.preventDefault()
+        const route = subscribe?"subscribe":"unsubscribe"
         try{
 
             const response = await axios.post(`/api/courses/${route}/${course.id}`,undefined,
@@ -28,21 +30,24 @@ export default function Course({course, subscribe}) {
                     headers: {
                         'X-CSRFToken':`${csrf_token}`
                     }
-                }
-            )
+                })
 
             if (response.status == 200) {
                 if (subscribe) {
-                    setCourses(prev => [course, ...prev])
-                } else {
-                    setCourses(prev => [...prev.filter((value) => value.id != course.id)])
-                }
+                    const courseToAdd = {...course}
+                    courseToAdd.student_count += 1
+                    setCourses(prev => [courseToAdd, ...prev])
+                } 
+                else {setCourses(prev => [...prev.filter((value) => value.id != course.id)])}
                 navigate("/")
             }
 
-        } catch(error) {
-            console.log(error)
-        }
+        } catch(error) {console.log(error)}
+    }
+
+    function onSubscribeButtonClick() {
+        if (!user) {return onclickIfNotUser}
+        if (user.user_type == "student") {return onclickIfUserIsStudent}
     }
 
     return (
@@ -74,22 +79,13 @@ export default function Course({course, subscribe}) {
             {hover == true?
                 <div style={{display:"flex",justifyContent:"center"}}>
                     {subscribe?
-                        !user?
-                            <CourseRouteCommonButton onClick={(e) => {e.preventDefault();navigate("/login")}}>
-                                Se inscrever
-                            </CourseRouteCommonButton>
-                            :user.user_type == "student"?
-                                <CourseRouteCommonButton onClick={(e) => {e.preventDefault();Subscribe()}}>
-                                    Se inscrever
-                                </CourseRouteCommonButton>
-                                :null
-                        :null
-                    }
-                    {!subscribe?
+                        <CourseRouteCommonButton onClick={onSubscribeButtonClick()}>
+                            Se inscrever
+                        </CourseRouteCommonButton>
+                        :
                         <CourseRouteCommonButton>
                             Acessar curso
                         </CourseRouteCommonButton>
-                        :null
                     }
                 </div>
                 :null
