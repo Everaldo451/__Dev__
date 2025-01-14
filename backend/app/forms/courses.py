@@ -21,10 +21,12 @@ class CreateCourseForm(FlaskForm):
         FileAllowed(["jpeg", "png", "jpg"])
     ],)
 
-class GetCourseQuery(FlaskForm):
-    name = StringField('name')
+class CourseQueryStringBase(FlaskForm):
     lang = StringField(
         'lang',
         validators=[Optional(), AnyOf([language.value for language in Languages],"Invalid language.")]
     )
     length = IntegerField('length', validators=[NumberRange(min=0)])
+
+class CourseQueryStringFilters(CourseQueryStringBase):
+    name = StringField('name')

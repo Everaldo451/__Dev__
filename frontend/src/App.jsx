@@ -11,7 +11,7 @@ export default function App() {
 
   const [csrf_token, setCSRFToken] = useState(null)
   const [user,setUser] = useState(null)
-  const [courses, setCourses] = useState(null)
+  const [courses, setCourses] = useState(new Set([]))
   const [loaded,setLoaded] = useState(false)
 
   useEffect(()=>{

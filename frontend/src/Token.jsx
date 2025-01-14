@@ -1,5 +1,5 @@
 import axios from "axios"
-import CourseListLoader from "./CourseListLoader"
+import { courseListImagesToBlobURL, courseListSortByDateTime } from "./utils/courseListModifiers"
 
 async function SetUser(csrf_token, setUser, setCourses){
 
@@ -9,16 +9,17 @@ async function SetUser(csrf_token, setUser, setCourses){
           'X-CSRFToken':csrf_token
         }
     })
-
+    /*
     const courses = response.data.courses 
-    courses.sort((course1, course2) => course2.id - course1.id)
+    courseListSortByDateTime(courses)
 
-    const coursesBlobImage = new Set(CourseListLoader(courses))
+    const coursesBlobImage = new Set(courseListImagesToBlobURL(courses))
     console.log(coursesBlobImage)
     setCourses(coursesBlobImage)
 
     delete response.data.courses
     console.log(response.data)
+    */
     setUser(response.data)
 }
 

@@ -19,7 +19,7 @@ def test_success(client:FlaskClient, csrf_token, courseData, teacherData, regist
     response.close()
 
 
-    response = client.post("/jwt/getuser",
+    response = client.get("/courses/getusercourses?length=0",
         headers = {
             "X-CSRFToken": csrf_token
         }

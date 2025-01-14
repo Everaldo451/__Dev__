@@ -5,7 +5,7 @@ import axios from "axios"
 import SearchBar from "../../Components/SearchBar"
 import CourseCatalog from "../../Components/CourseCatalog"
 import { User, Courses } from "../../MainContexts"
-import CourseListLoader from "../../CourseListLoader"
+import { courseListImagesToBlobURL } from "../../utils/courseListModifiers"
 
 
 export default function CourseSearch() {
@@ -21,22 +21,19 @@ export default function CourseSearch() {
         try {
 
             const response = await axios.get(`/api/courses/getcourses${filters}`)
-            const courses = response.data.courses
 
             if (response.data && response.data.courses instanceof Object) {
+                const courses = response.data.courses
 
                 setCourseList(prevCourses => [
                     ...prevCourses,
-                    ...CourseListLoader(courses).map((course, index, array) => {
+                    ...courseListImagesToBlobURL(courses).map((course, index, array) => {
                         return {...course, key:courseList.length + array.length + 1}
                     })
                 ])
 
             }
-
-        } catch(error) {
-            console.log(error)
-        }
+        } catch(error) {console.log(error)}
     }
 
     return (

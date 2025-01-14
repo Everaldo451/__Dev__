@@ -5,7 +5,7 @@ import io
 import math
 import logging
 from ..db import db
-from ..forms.courses import GetCourseQuery, CreateCourseForm
+from ..forms.courses import CourseQueryStringBase, CourseQueryStringFilters, CreateCourseForm
 from ..models.course_model import Course, Languages
 from ..models.user_model import User, UserTypes
 from ..serializers.course_serializer import CourseSchema
@@ -15,13 +15,13 @@ course_routes = Blueprint("courses",__name__,url_prefix="/courses")
 
 @course_routes.route('/getcourses',methods=["GET"])
 @jwt_required(locations="cookies", optional=True)
-def getcourses():
+def get_courses():
     logging.basicConfig(level="DEBUG")
-    query_form = GetCourseQuery(meta={'csrf':False},formdata=request.args)
-    name = query_form.name.data
+    query_string = CourseQueryStringFilters(meta={'csrf':False},formdata=request.args)
+    name = query_string.name.data
     filters = []
 
-    if not query_form.validate():
+    if not query_string.validate():
         return {"message": "Invalid credentials."}, 400
     
     filters.append(Course.name.ilike(f'%{name}%'))
@@ -29,16 +29,45 @@ def getcourses():
         filters.append(~Course.users.any(User.id == current_user.id))
 
     try:
-        filters.append(Course.language == Languages(query_form.lang.data))
+        filters.append(Course.language == Languages(query_string.lang.data))
     except ValueError as error: pass
 
-    length = query_form.length.data
+    length = query_string.length.data
     limit = math.ceil(length/6)*6 - length if length > 0 else 6
     try:
-        courses = Course.query.filter(*filters).order_by(Course.id.desc()).offset(length).limit(limit).all()
+        courses = Course.query.filter(*filters).order_by(Course.date_created.desc()).offset(length).limit(limit).all()
         course_schema = CourseSchema()
         response = course_schema.dump(courses, many=True)
         return {"courses":response}
+    except Exception as error:
+        print(error)
+        return {"message":"Internal server error."}, 500
+    
+
+@course_routes.route("/getusercourses", methods=["GET"])
+@jwt_required(locations="cookies")
+def get_user_courses():
+    logging.basicConfig(level="DEBUG")
+    query_string = CourseQueryStringBase(meta={'csrf':False},formdata=request.args)
+    filters = []
+
+    if not query_string.validate():
+        return {"message": "Invalid credentials."}, 400
+
+    filters.append(Course.users.any(User.id == current_user.id))
+
+    try:
+        filters.append(Course.language == Languages(query_string.lang.data))
+    except ValueError as error: pass
+
+    length = query_string.length.data
+    limit = math.ceil(length/6)*6 - length if length > 0 else 6
+
+    try:
+        courses = Course.query.filter(*filters).order_by(Course.date_created.desc()).offset(length).limit(limit).all()
+        course_schema = CourseSchema()
+        response = course_schema.dump(courses, many=True)
+        return {"courses":response}, 200
     except Exception as error:
         print(error)
         return {"message":"Internal server error."}, 500

@@ -10,7 +10,6 @@ class UserSchema(SQLAlchemyAutoSchema):
         load_instance = True
         exclude = ("password","id")
 
-    courses = fields.Nested("CourseSchema", many=True)
     user_type = fields.Method("get_user_type")
     
     def get_user_type(self, obj):

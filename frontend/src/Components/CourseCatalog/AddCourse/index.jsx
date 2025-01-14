@@ -95,7 +95,7 @@ export default function AddCourse() {
                 const imageURL = await fileToBlob(image, image.type)
                 courseData["image"] = imageURL
 
-                setCourses(prev => [courseData, ...prev])
+                setCourses(prev => new Set([courseData, ...prev]))
                 setFormRendered(false)
             }
         } catch (error) {} 

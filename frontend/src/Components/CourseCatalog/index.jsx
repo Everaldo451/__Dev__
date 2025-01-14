@@ -57,7 +57,7 @@ export default function CourseCatalog({filters, subscribe, area, courseStateOrCo
     },[currentCourses])
 
     useEffect(() => {
-        return () => {setCoursesInState(toCacheCourses)}
+        return () => {setCoursesInState(unFilteredCourses)}
     },[])
 
     return (

@@ -1,4 +1,4 @@
-export default function CourseListLoader(courses) {
+export const courseListImagesToBlobURL = (courses) => {
     return courses.map(value => {
 
         let decodedBase64;
@@ -18,5 +18,16 @@ export default function CourseListLoader(courses) {
         }
 
         return {...value, image: URL.createObjectURL(new Blob(uint8Array))}
+    })
+}
+
+export const courseListSortByDateTime = (courses) => {
+    courses.sort((course1, course2) => {
+        const [course1Timestamp, course2Timestamp] = [
+            Date.parse(course1.date_created), 
+            Date.parse(course2.date_created)
+        ]
+
+        return course2Timestamp - course1Timestamp
     })
 }

@@ -1,9 +1,11 @@
+import axios from "axios";
 import { useContext, useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { User, Courses } from "../../MainContexts";
-import axios from "axios";
-import styles from "./index.module.css"
 import CourseCatalog from "../../Components/CourseCatalog";
+import { courseListImagesToBlobURL } from "../../utils/courseListModifiers";
+import styles from "./index.module.css"
+
 
 export default function UserCoursesArea() {
 
@@ -13,6 +15,23 @@ export default function UserCoursesArea() {
 
     async function GetUserCourses(filters, courseState) {
 
+        const [courseList, setCourseList] = courseState
+
+        try {
+            const response = await axios.get(`/api/courses/getusercourses${filters}`)
+
+            if (response.data && response.data.courses instanceof Object) {
+                const courses = response.data.courses
+            
+                setCourseList(prevCourses => [
+                    ...prevCourses,
+                    ...courseListImagesToBlobURL(courses).map((course, index, array) => {
+                        return {...course, key:courseList.length + array.length + 1}
+                    })
+                ])
+            
+            }
+        } catch(error) {console.log(error)}
     }
 
     if (user) {

@@ -1,7 +1,8 @@
-from typing import Set, TYPE_CHECKING
-from sqlalchemy import String, Enum, LargeBinary, Integer, Column
+from typing import Set
+from sqlalchemy import String, Enum, LargeBinary, Integer, Column, DateTime
 from sqlalchemy import select, func, and_
 from sqlalchemy.orm import Mapped, mapped_column, relationship, column_property
+import datetime
 from .user_courses_table import user_courses
 from .user_model import User, UserTypes
 from ..db import db
@@ -15,6 +16,7 @@ class Course(db.Model):
     description = mapped_column(String(1000))
     language: Mapped[Languages] = mapped_column(Enum(Languages, native_enum = False))
     image = mapped_column(LargeBinary(),nullable=False)
+    date_created = mapped_column(DateTime(False), default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     users: Mapped[Set["User"]] = relationship("User", secondary=user_courses, back_populates="courses")
 

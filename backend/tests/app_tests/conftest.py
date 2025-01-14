@@ -20,7 +20,7 @@ def studentData(userData):
     return userData
 
 @pytest.fixture
-def create_user(client, db_conn, Users, userData):
+def create_user(client:FlaskClient, db_conn, Users, userData):
 
     userData["password"] = generate_password_hash(userData.get("password"))
 
@@ -45,8 +45,6 @@ def create_user(client, db_conn, Users, userData):
 
         assert new_user is not None
         yield new_user
-
-        db_conn.session.close()
     
 @pytest.fixture
 def csrf_token(client:FlaskClient):

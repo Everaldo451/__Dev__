@@ -19,16 +19,20 @@ def app():
     return create_app()
 
 @pytest.fixture
-def client(app:Flask):
+def db_conn(app:Flask):
+    with app.app_context():
+        db.create_all()
+        yield db
+        db.session.remove()
+        db.drop_all()
+
+@pytest.fixture
+def client(app:Flask, db_conn):
     return app.test_client(use_cookies=True)
 
 @pytest.fixture
-def cli_runner(app:Flask):
+def cli_runner(app:Flask, db_conn):
     return app.test_cli_runner()
-
-@pytest.fixture
-def db_conn(client:FlaskClient):
-    yield db
 
 @pytest.fixture
 def Users():
