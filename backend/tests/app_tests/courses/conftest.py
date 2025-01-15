@@ -1,8 +1,9 @@
 import pytest
 import os
+import io
+import magic
 from flask.testing import FlaskClient
 from werkzeug.datastructures import FileStorage
-import io
 
 @pytest.fixture
 def imageFileStorage():
@@ -26,6 +27,11 @@ def imageBytes():
 
     with open(os.path.join(path,"image.png"), "rb") as file:
         return file.read()
+    
+@pytest.fixture
+def image_mime_type(imageBytes):
+    mime = magic.Magic(True)
+    return mime.from_buffer(imageBytes)
 
 @pytest.fixture
 def commonCourseData(Language):
@@ -43,9 +49,10 @@ def courseData(commonCourseData, imageFileStorage):
     return commonCourseData
 
 @pytest.fixture
-def create_course(client:FlaskClient, db_conn, Courses, commonCourseData, imageBytes):
+def create_course(client:FlaskClient, db_conn, Courses, commonCourseData, imageBytes, image_mime_type):
 
     commonCourseData["image"] = imageBytes
+    commonCourseData["image_mime_type"] = image_mime_type
 
     with client.application.app_context():
 

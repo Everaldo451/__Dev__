@@ -16,6 +16,7 @@ class Course(db.Model):
     description = mapped_column(String(1000))
     language: Mapped[Languages] = mapped_column(Enum(Languages, native_enum = False))
     image = mapped_column(LargeBinary(),nullable=False)
+    image_mime_type = mapped_column(String(50),nullable=False)
     date_created = mapped_column(DateTime(False), default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     users: Mapped[Set["User"]] = relationship("User", secondary=user_courses, back_populates="courses")

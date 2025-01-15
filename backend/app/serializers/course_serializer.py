@@ -2,6 +2,8 @@ from ..models.course_model import Course
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 import base64
+import magic
+import io
 
 class CourseSchema(SQLAlchemyAutoSchema):
 
@@ -25,6 +27,6 @@ class CourseSchema(SQLAlchemyAutoSchema):
         return obj.teachers
 
     def get_image(self, obj):
-        if obj.image:
-            return "data:image/jpeg;base64," + base64.b64encode(obj.image).decode("utf-8")
+        if obj.image and obj.image_mime_type:
+            return f"data:{obj.image_mime_type};base64," + base64.b64encode(obj.image).decode("utf-8")
         return None

@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 import io
 import math
 import logging
+import magic
 from ..db import db
 from ..forms.courses import CourseQueryStringBase, CourseQueryStringFilters, CreateCourseForm
 from ..models.course_model import Course, Languages
@@ -37,8 +38,8 @@ def get_courses():
     try:
         courses = Course.query.filter(*filters).order_by(Course.date_created.desc()).offset(length).limit(limit).all()
         course_schema = CourseSchema()
-        response = course_schema.dump(courses, many=True)
-        return {"courses":response}
+        serialized_courses = course_schema.dump(courses, many=True)
+        return {"courses":serialized_courses}
     except Exception as error:
         print(error)
         return {"message":"Internal server error."}, 500
@@ -66,8 +67,8 @@ def get_user_courses():
     try:
         courses = Course.query.filter(*filters).order_by(Course.date_created.desc()).offset(length).limit(limit).all()
         course_schema = CourseSchema()
-        response = course_schema.dump(courses, many=True)
-        return {"courses":response}, 200
+        serialized_courses = course_schema.dump(courses, many=True)
+        return {"courses":serialized_courses}, 200
     except Exception as error:
         print(error)
         return {"message":"Internal server error."}, 500
@@ -155,14 +156,22 @@ def createCourse():
         f.save(buffer)
         buffer.seek(0)
         image = buffer.getvalue()
+        mime = magic.Magic(True)
+        mime_type = mime.from_buffer(image)
 
-        newCourse = Course(name=form.name.data, language=lang, description=form.description.data, image=image)
+        newCourse = Course(
+            name=form.name.data, 
+            language=lang, 
+            description=form.description.data, 
+            image=image,
+            image_mime_type=mime_type
+        )
 
         db.session.add(newCourse)
         newCourse.users.add(current_user)
         db.session.commit()
 
-        response, status = {"message":"Course created sucessfully."}, 200
+        status = 200
     except Exception as error:
         response, status = {"message": "Ola"}, 500
     except IntegrityError as error:
@@ -170,6 +179,14 @@ def createCourse():
 
     if error is not None:
         db.session.rollback()
+    if status == 200:
+        try:
+            course_schema = CourseSchema()
+            serialized_course = course_schema.dump(newCourse)
+            response = {"message":"Course created sucessfully.","course":serialized_course}
+        except:
+            response = {"message":"Course created but don't possible send it."}
+
     buffer.close()
     return response, status
 

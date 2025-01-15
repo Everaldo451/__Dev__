@@ -1,6 +1,7 @@
 import { useState, useRef, useContext } from "react"
 import { User, CSRFContext, Courses } from "../../../MainContexts"
 import CourseRouteCommonButton from "../../CourseRouteCommonButton"
+import { courseImageToBlobURL } from "../../../utils/courseListModifiers"
 import axios from "axios"
 import styles from "./index.module.css"
 import { useNavigate } from "react-router-dom"
@@ -36,47 +37,14 @@ export default function AddCourse() {
     const [courses, setCourses] = useContext(Courses)
     const [csrf_token, setCSRFToken] = useContext(CSRFContext)
 
-    const navigate = useNavigate()
-
     const [formRendered, setFormRendered] = useState(false)
     const formRef = useRef(null)
-
-    function readFile(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader()
-
-            reader.onload = (ev) => {
-                resolve(ev.target.result)
-            }
-
-            reader.onerror = (ev) => {
-                reject(ev.target.error)
-            }
-
-            reader.readAsArrayBuffer(file)
-        })
-    }
-
-    async function fileToBlob(file, type) {
-
-        const arrayBuffer = await readFile(file)
-        const uint8Array = new Uint8Array(arrayBuffer)
-        const blob = new Blob([uint8Array], {type: type})
-        const url = URL.createObjectURL(blob)        
-
-        return url
-    }
 
     async function onSubmit(e) {
         e.preventDefault()
         const data = new FormData(e.target)
 
-        const courseData = {
-            student_count: 0,
-            teachers: [user.first_name+" "+user.last_name]
-        }
-
-        data.forEach((value,key) => {console.log(key, value);courseData[key] = value})
+        data.forEach((value,key) => {console.log(key, value)})
         
         try {
             const response = await axios({
@@ -89,13 +57,12 @@ export default function AddCourse() {
                 method: e.target.method
             })
 
-            if (response.status == 200) {
-
-                const image = data.get("image")
-                const imageURL = await fileToBlob(image, image.type)
-                courseData["image"] = imageURL
-
-                setCourses(prev => new Set([courseData, ...prev]))
+            if (response.status == 200 && response.data.course) {
+                setCourses(prev => {
+                    const set = new Set([courseImageToBlobURL({...response.data.course}), ...prev])
+                    console.log(set)
+                    return set
+                })
                 setFormRendered(false)
             }
         } catch (error) {} 

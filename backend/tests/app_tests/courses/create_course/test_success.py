@@ -14,10 +14,11 @@ def test_success(client:FlaskClient, csrf_token, courseData, teacherData, regist
     assert json
     message = json["message"]
     assert message == "Course created sucessfully."
+    course = json["course"]
+    assert course
     assert response.status_code == 200
 
     response.close()
-
 
     response = client.get("/courses/getusercourses?length=0",
         headers = {
@@ -34,7 +35,9 @@ def test_success(client:FlaskClient, csrf_token, courseData, teacherData, regist
     assert isinstance(course, dict)
     assert course.get("name") is not None
     assert course.get("language") is not None
+    image = course.get("image") 
     assert course.get("image") is not None
+    assert "image/png" in image
     assert course.get("users") is None
     assert course.get("student_count") == 0
 
