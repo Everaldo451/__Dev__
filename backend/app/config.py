@@ -9,9 +9,9 @@ class Config(object):
     SECRET_KEY = secrets.token_hex(16)
     SESSION_COOKIE_HTTPONLY = True
 
-    JWT_SECRET_KEY = SECRET_KEY
-    JWT_ACCESS_TOKEN_EXPIRE = timedelta(minutes=15)
-    JWT_REFRESH_TOKEN_EXPIRE = timedelta(days=1)
+    JWT_SECRET_KEY = secrets.token_hex(16)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)
     JWT_TOKEN_LOCATION = ["headers","cookies"]
     JWT_SESSION_COOKIE = False
     JWT_COOKIE_CSRF_PROTECT = False

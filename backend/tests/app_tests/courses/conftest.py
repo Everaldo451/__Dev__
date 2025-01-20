@@ -8,7 +8,7 @@ from werkzeug.datastructures import FileStorage
 @pytest.fixture
 def imageFileStorage():
 
-    path = f"{os.path.dirname(os.path.abspath(__file__))}\\images"
+    path = f"{os.path.dirname(os.path.abspath(__file__))}/images"
 
     with open(os.path.join(path,"image.png"), "rb") as file:
         data = file.read()
@@ -23,7 +23,7 @@ def imageFileStorage():
 @pytest.fixture
 def imageBytes():
 
-    path = f"{os.path.dirname(os.path.abspath(__file__))}\\images"
+    path = f"{os.path.dirname(os.path.abspath(__file__))}/images"
 
     with open(os.path.join(path,"image.png"), "rb") as file:
         return file.read()

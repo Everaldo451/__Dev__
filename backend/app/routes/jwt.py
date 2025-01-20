@@ -20,7 +20,7 @@ def user_loader(jwt_header:dict, jwt_payload:dict) -> User|None:
     return None
 
 @jwt.route("/getuser",methods=["POST"])
-@jwt_required(locations="cookies")
+@jwt_required(locations=["cookies"])
 def getuser():
     user_schema = UserSchema()
     serialized_user = user_schema.dump(current_user)
@@ -28,7 +28,7 @@ def getuser():
 
 
 @jwt.route('/refresh_token',methods=["POST"])
-@jwt_required(refresh=True, locations="cookies")
+@jwt_required(refresh=True, locations=["cookies"])
 def refresh_token():
     response = make_response()
     access_token = create_access_token(identity=current_user.id)

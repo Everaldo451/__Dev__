@@ -20,7 +20,7 @@ def create_app():
     if flask_env == "production":
         print("production Env")
         app.config.from_object(config.ProductionConfig)
-    elif flask_env == "testing":
+    elif flask_env == "test":
         print("test Env")
         app.config.from_object(config.TestingConfig)
     else:
