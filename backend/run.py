@@ -1,6 +1,6 @@
 from app.app import create_app
-import os
 from dotenv import load_dotenv
+import os
 
 if __name__ == "main":
     load_dotenv()
@@ -9,4 +9,3 @@ if __name__ == "main":
     PORT = os.getenv("PORT")
 
     app = create_app()
-    app.run(host=HOST, port=PORT)

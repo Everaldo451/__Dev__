@@ -6,4 +6,4 @@ COPY . .
 EXPOSE 5000
 ENV FLASK_ENV=production
 ENV PORT=5000
-CMD ["flask", "--app", "run.py", "run"]
+CMD ["gunicorn", "-c", "gunicorn_config.py", "run:app"]
