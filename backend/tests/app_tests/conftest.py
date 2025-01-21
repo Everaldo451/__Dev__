@@ -67,7 +67,7 @@ def register_user_and_log_in(client:FlaskClient, userData, csrf_token):
     )
     assert response.status_code == 200
     response.close()
-    response = client.post("/jwt/refresh_token",
+    response = client.post("/jwt/refresh",
         headers = {
             "X-CSRFToken":csrf_token,
         }

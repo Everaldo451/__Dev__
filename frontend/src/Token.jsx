@@ -49,7 +49,7 @@ export default async function AccessTokenInterval(userContext, csrfContext, cour
 
   try {
 
-    await axios.post("http://localhost:5000/jwt/refresh_token",undefined,{
+    await axios.post("http://localhost:5000/jwt/refresh",undefined,{
         withCredentials: true,
         headers: {
           'X-CSRFToken':csrf_token

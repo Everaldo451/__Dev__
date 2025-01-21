@@ -27,7 +27,7 @@ def getuser():
     return serialized_user
 
 
-@jwt.route('/refresh_token',methods=["POST"])
+@jwt.route('/refresh',methods=["POST"])
 @jwt_required(refresh=True, locations=["cookies"])
 def refresh_token():
     response = make_response()
