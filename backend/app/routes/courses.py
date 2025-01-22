@@ -6,7 +6,7 @@ import math
 import logging
 import magic
 from ..db import db
-from ..forms.courses import CourseQueryStringBase, CourseQueryStringFilters, CreateCourseForm
+from ..forms.courses import CourseQueryStringFilters, CreateCourseForm
 from ..models.course_model import Course, Languages
 from ..models.user_model import User, UserTypes
 from ..serializers.course_serializer import CourseSchema
@@ -14,9 +14,9 @@ from ..serializers.course_serializer import CourseSchema
 #Course Blueprint
 course_routes = Blueprint("courses",__name__,url_prefix="/courses")
 
-@course_routes.route('/getcourses',methods=["GET"])
+@course_routes.route('/search',methods=["GET"])
 @jwt_required(locations="cookies", optional=True)
-def get_courses():
+def search_courses():
     logging.basicConfig(level="DEBUG")
     query_string = CourseQueryStringFilters(meta={'csrf':False},formdata=request.args)
     name = query_string.name.data
@@ -40,35 +40,6 @@ def get_courses():
         course_schema = CourseSchema()
         serialized_courses = course_schema.dump(courses, many=True)
         return {"courses":serialized_courses}
-    except Exception as error:
-        print(error)
-        return {"message":"Internal server error."}, 500
-    
-
-@course_routes.route("/getusercourses", methods=["GET"])
-@jwt_required(locations="cookies")
-def get_user_courses():
-    logging.basicConfig(level="DEBUG")
-    query_string = CourseQueryStringBase(meta={'csrf':False},formdata=request.args)
-    filters = []
-
-    if not query_string.validate():
-        return {"message": "Invalid credentials."}, 400
-
-    filters.append(Course.users.any(User.id == current_user.id))
-
-    try:
-        filters.append(Course.language == Languages(query_string.lang.data))
-    except ValueError as error: pass
-
-    length = query_string.length.data
-    limit = math.ceil(length/6)*6 - length if length > 0 else 6
-
-    try:
-        courses = Course.query.filter(*filters).order_by(Course.date_created.desc()).offset(length).limit(limit).all()
-        course_schema = CourseSchema()
-        serialized_courses = course_schema.dump(courses, many=True)
-        return {"courses":serialized_courses}, 200
     except Exception as error:
         print(error)
         return {"message":"Internal server error."}, 500

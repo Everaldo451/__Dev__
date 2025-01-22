@@ -22,13 +22,6 @@ def user_loader(jwt_header:dict, jwt_payload:dict) -> User|None:
         except Exception as error: pass
     return None
 
-@jwt.route("/getuser",methods=["POST"])
-@jwt_required(locations=["cookies"])
-def getuser():
-    user_schema = UserSchema()
-    serialized_user = user_schema.dump(current_user)
-    return serialized_user
-
 
 @jwt.route('/refresh',methods=["POST"])
 @jwt_required(refresh=True, locations=["cookies"])

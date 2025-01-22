@@ -18,7 +18,7 @@ export default function UserCoursesArea() {
         const [courseList, setCourseList] = courseState
 
         try {
-            const response = await axios.get(`/api/courses/getusercourses${filters}`)
+            const response = await axios.get(`/api/user/courses${filters}`)
 
             if (response.data && response.data.courses instanceof Object) {
                 const courses = response.data.courses

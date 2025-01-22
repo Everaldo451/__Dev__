@@ -20,7 +20,10 @@ def test_success(client:FlaskClient, csrf_token, courseData, teacherData, regist
 
     response.close()
 
-    response = client.get("/courses/getusercourses?length=0",
+    response = client.get("/auth/logout")
+    response.close()
+
+    response = client.get(f"/courses/search?length=0&name={courseData.get("name")}",
         headers = {
             "X-CSRFToken": csrf_token
         }

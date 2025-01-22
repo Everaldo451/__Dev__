@@ -3,7 +3,7 @@ import { courseListImagesToBlobURL, courseListSortByDateTime } from "./utils/cou
 
 async function SetUser(csrf_token, setUser, setCourses){
 
-    const response = await axios.post("http://localhost:5000/jwt/getuser",undefined,{
+    const response = await axios.post("http://localhost:5000/user/",undefined,{
         withCredentials: true,
         headers: {
           'X-CSRFToken':csrf_token

@@ -20,7 +20,7 @@ export default function CourseSearch() {
 
         try {
 
-            const response = await axios.get(`/api/courses/getcourses${filters}`)
+            const response = await axios.get(`/api/courses/search${filters}`)
 
             if (response.data && response.data.courses instanceof Object) {
                 const courses = response.data.courses

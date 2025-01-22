@@ -42,6 +42,14 @@ $ pip install -r requirements.txt
 
 1. Create a `.env` file in the backend folder with the variables present in `.env.example`.
 
+## Database Configuration
+
+1. Use Flask-Migrate commands to configure your database:
+
+```bash
+flask db upgrade
+```
+
 ## Running
 
 ### Windows

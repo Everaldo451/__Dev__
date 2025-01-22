@@ -6,6 +6,7 @@ from .security.csrf_blueprint import csrf_routes
 from .routes.courses import course_routes
 from .routes.auth import auth
 from .routes.jwt import jwt, JWT
+from .routes.user import user_routes
 from .db import db
 import os
 
@@ -37,5 +38,6 @@ def create_app():
     app.register_blueprint(jwt)
     app.register_blueprint(auth)
     app.register_blueprint(course_routes)
+    app.register_blueprint(user_routes)
 
     return app
