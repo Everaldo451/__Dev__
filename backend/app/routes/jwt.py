@@ -12,7 +12,10 @@ jwt = Blueprint('jwt',__name__,url_prefix="/jwt")
 
 @JWT.user_lookup_loader
 def user_loader(jwt_header:dict, jwt_payload:dict) -> User|None:
-    id = jwt_payload.get("sub")
+    sub = jwt_payload.get("sub")
+    id = None
+    if isinstance(sub, str) and sub.isdigit():
+        id = int(sub)
     if isinstance(id, int):
         try:
             return db.session.get(User, jwt_payload.get("sub"))
@@ -31,6 +34,6 @@ def getuser():
 @jwt_required(refresh=True, locations=["cookies"])
 def refresh_token():
     response = make_response()
-    access_token = create_access_token(identity=current_user.id)
+    access_token = create_access_token(identity=str(current_user.id))
     set_access_cookies(response, access_token)
     return response

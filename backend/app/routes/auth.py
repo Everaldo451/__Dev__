@@ -24,7 +24,7 @@ def login():
     
     try: 
         response = make_response({"message":"Login successful."}, 200)
-        refresh_token = create_refresh_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=str(user.id))
         set_refresh_cookies(response,refresh_token)
         return response
     except Exception as e: 
@@ -64,8 +64,7 @@ def register():
         db.session.commit()
 
         response = make_response({"message": "User created successful."}, 200)
-        refresh_token = create_refresh_token(identity=user.id)
-        print(refresh_token)
+        refresh_token = create_refresh_token(identity=str(user.id))
         set_refresh_cookies(response,refresh_token)
         return response
     except ValueError as error: 

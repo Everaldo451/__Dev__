@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 from .security.protect import CSRF, Cors
@@ -27,17 +27,15 @@ def create_app():
         print("dev Env")
         app.config.from_object(config.DevelopmentConfig)
 
-    print(app.config['DEBUG'])
-
+    db.init_app(app)
+    migrate.init_app(app, db)
     Cors.init_app(app)
     CSRF.init_app(app)
     JWT.init_app(app)
-    db.init_app(app)
-    migrate.init_app(app, db)
 
     app.register_blueprint(csrf_routes)
+    app.register_blueprint(jwt)
     app.register_blueprint(auth)
     app.register_blueprint(course_routes)
-    app.register_blueprint(jwt)
 
     return app
