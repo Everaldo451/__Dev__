@@ -3,7 +3,7 @@ from flask.testing import FlaskClient
 
 def test_success(client:FlaskClient, csrf_token, create_course, courseData, register_user_and_log_in):
 
-    response = client.post(f"/courses/subscribe/1",
+    response = client.patch(f"/me/courses/1",
         headers = {
             "X-CSRFToken": csrf_token
         }
@@ -12,5 +12,5 @@ def test_success(client:FlaskClient, csrf_token, create_course, courseData, regi
     json = response.get_json()
     assert json
     message = json["message"]
-    assert message == "User registered sucessfull."
+    assert message == "User subscribed successful."
     assert response.status_code == 200

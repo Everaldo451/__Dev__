@@ -3,7 +3,7 @@ from flask.testing import FlaskClient
 
 def test_without_csrf_token(client:FlaskClient, userData):
 
-    response = client.post("/auth/register",
+    response = client.post("/users",
         data = userData
     )
 

@@ -4,7 +4,7 @@ def test_invalid_credentials(client:FlaskClient, csrf_token, userData):
 
     userData.pop("full_name")
 
-    response = client.post("/auth/register",
+    response = client.post("/users",
         data=userData,
         headers={
             "X-CSRFToken":csrf_token

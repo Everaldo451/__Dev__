@@ -14,7 +14,7 @@ from app.app import create_app
 from app.db import db
 from app.models.user_model import User, UserTypes
 from app.models.course_model import Course, Languages
-from app.security.protect import CSRF
+from app.services.csrf_service import CSRF
 
 @pytest.fixture
 def app():

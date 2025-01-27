@@ -1,12 +1,13 @@
 from flask import Flask, request
 from flask_migrate import Migrate
 from dotenv import load_dotenv
-from .security.protect import CSRF, Cors
-from .security.csrf_blueprint import csrf_routes
-from .routes.courses import course_routes
+from .routes.csrf import csrf
+from .routes.courses import courses
 from .routes.auth import auth
-from .routes.jwt import jwt, JWT
-from .routes.user import user_routes
+from .routes.user import users
+from .routes.me import me
+from .services.jwt_service import JWT
+from .services.csrf_service import CSRF, Cors
 from .db import db
 import os
 
@@ -34,10 +35,10 @@ def create_app():
     CSRF.init_app(app)
     JWT.init_app(app)
 
-    app.register_blueprint(csrf_routes)
-    app.register_blueprint(jwt)
+    app.register_blueprint(csrf)
     app.register_blueprint(auth)
-    app.register_blueprint(course_routes)
-    app.register_blueprint(user_routes)
+    app.register_blueprint(courses)
+    app.register_blueprint(users)
+    app.register_blueprint(me)
 
     return app

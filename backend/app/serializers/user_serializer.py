@@ -8,7 +8,7 @@ class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
-        exclude = ("password","id")
+        exclude = ("password",)
 
     user_type = fields.Method("get_user_type")
     

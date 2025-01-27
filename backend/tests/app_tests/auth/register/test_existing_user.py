@@ -3,7 +3,7 @@ from flask.testing import FlaskClient
 
 def test_existing_email(client:FlaskClient, csrf_token, create_user, userData):
 
-    response = client.post("/auth/register",
+    response = client.post("/users",
         data=userData,
         headers={
             'X-CSRFToken': csrf_token

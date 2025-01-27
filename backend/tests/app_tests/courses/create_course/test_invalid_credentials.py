@@ -4,7 +4,7 @@ def test_invalid_credentials(client:FlaskClient, csrf_token, courseData, teacher
 
     courseData.pop("name")
 
-    response = client.post("/courses/create",
+    response = client.post("/courses",
         content_type = "multipart/form-data",
         data = courseData,
         headers = {

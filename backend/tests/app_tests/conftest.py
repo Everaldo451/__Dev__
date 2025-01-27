@@ -48,7 +48,7 @@ def create_user(client:FlaskClient, db_conn, Users, userData):
     
 @pytest.fixture
 def csrf_token(client:FlaskClient):
-    response = client.get("/csrf/get")
+    response = client.get("/csrf")
 
     json = response.get_json()
     assert response.status_code == 200
@@ -59,7 +59,7 @@ def csrf_token(client:FlaskClient):
 @pytest.fixture
 def register_user_and_log_in(client:FlaskClient, userData, csrf_token):
 
-    response = client.post("/auth/register",
+    response = client.post("/users",
         data=userData,
         headers={
             "X-CSRFToken":csrf_token
@@ -67,14 +67,8 @@ def register_user_and_log_in(client:FlaskClient, userData, csrf_token):
     )
     assert response.status_code == 200
     response.close()
-    response = client.post("/jwt/refresh",
-        headers = {
-            "X-CSRFToken":csrf_token,
-        }
-    )
-    assert response.status_code == 200
-    response.close()
-    response = client.post("/user/",
+
+    response = client.get("/me",
         headers = {
             "X-CSRFToken":csrf_token,
         }

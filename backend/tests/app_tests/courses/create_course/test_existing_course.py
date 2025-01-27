@@ -2,7 +2,7 @@ from flask.testing import FlaskClient
 
 def test_existing_course(client:FlaskClient, csrf_token, teacherData, create_course, courseData, register_user_and_log_in):
 
-    response = client.post("/courses/create",
+    response = client.post("/courses",
         content_type = "multipart/form-data",
         data = courseData,
         headers = {

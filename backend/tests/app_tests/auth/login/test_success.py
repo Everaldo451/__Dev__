@@ -4,7 +4,7 @@ def test_success(client:FlaskClient, csrf_token, create_user, userData):
 
     userData.pop("full_name")
 
-    response = client.post("/auth/login",
+    response = client.post("/auth/signin",
         data=userData,
         headers={
             'X-CSRFToken': csrf_token

@@ -1,47 +1,96 @@
-from flask import Blueprint, request
+from flask import Blueprint
 from flask_jwt_extended import jwt_required, current_user
-from ..models.user_model import User
-from ..models.course_model import Course, Languages
+from ..models.user_model import User, UserTypes
 from ..db import db
 from ..serializers.user_serializer import UserSchema
 from ..serializers.course_serializer import CourseSchema
-from ..forms.courses import CourseQueryStringBase
+from ..forms.authentication import RegisterForm, TeacherRegisterForm
+from ..utils.jwt.response_with_tokens import create_response_all_tokens
 import logging
-import math
 
-user_routes = Blueprint('user',__name__,url_prefix="/user")
+users = Blueprint('users',__name__,url_prefix="/users")
 
-@user_routes.route("/",methods=["POST"])
+@users.route("",methods=["GET"])
 @jwt_required(locations=["cookies"])
-def getuser():
-    user_schema = UserSchema()
-    serialized_user = user_schema.dump(current_user)
-    return serialized_user
+def get_users():
+    if current_user.user_type != UserTypes.ADMIN:
+        return {"message":"Unauthorized"}, 403
+    
+    return UserSchema().dump(User.query.all(), many=True), 200
 
-@user_routes.route("/courses", methods=["GET"])
-@jwt_required(locations="cookies")
-def get_user_courses():
+
+@users.route("/<int:id>",methods=["GET"])
+@jwt_required(locations=["cookies"])
+def get_user(id):
+    user=None
+    try: 
+        user=db.session.get(User, id)
+    except Exception as error:
+        return {"message":"Internal server error."}, 500
+    
+    if user is None:
+        return {"message":"User don't exists."}, 404
+    
+    return UserSchema().dump(user), 200
+
+
+@users.route("/<int:id>", methods=["DELETE"])
+@jwt_required(locations=["cookies"])
+def delete_user(id):
+    user=None
+    try:
+        user = db.session.get(User,id)
+    except Exception as error:
+        return {"message":"Internal server error."}, 500
+    
+    if user is None:
+        return {"message":"User don't exists."}, 404
+    
+    if current_user.user_type != UserTypes.ADMIN:
+        return {"message":"Unauthorized."}, 403
+    
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        return {"message":"User deleted succesful."}, 200
+    except:
+        return {"message":"Internal server error"}, 500
+
+
+@users.route("",methods=["POST"])
+def post_user():
     logging.basicConfig(level="DEBUG")
-    query_string = CourseQueryStringBase(meta={'csrf':False},formdata=request.args)
-    filters = []
 
-    if not query_string.validate():
+    form = RegisterForm()
+    if not form.validate_on_submit():
         return {"message": "Invalid credentials."}, 400
 
-    filters.append(Course.users.any(User.id == current_user.id))
+    if User.query.filter_by(email=form.email.data).first():
+        return {"message": "Current email is already registered."}, 400
 
+    teacher_form = TeacherRegisterForm()
+    if teacher_form.validate_on_submit():
+        user_type = UserTypes.TEACHER
+    else:
+        user_type = UserTypes.STUDENT
+    
     try:
-        filters.append(Course.language == Languages(query_string.lang.data))
-    except ValueError as error: pass
+        first_name, last_name = form.full_name.data.split(maxsplit=1)
 
-    length = query_string.length.data
-    limit = math.ceil(length/6)*6 - length if length > 0 else 6
+        user = User(
+            email=form.email.data,
+            password=form.password.data,
+            first_name=first_name, 
+            last_name=last_name, 
+            user_type=user_type
+        )
+        db.session.add(user)
+        db.session.commit()
 
-    try:
-        courses = Course.query.filter(*filters).order_by(Course.date_created.desc()).offset(length).limit(limit).all()
-        course_schema = CourseSchema()
-        serialized_courses = course_schema.dump(courses, many=True)
-        return {"courses":serialized_courses}, 200
+        return create_response_all_tokens(str(user.id), "User created successful.", 200)
+    except ValueError as error: 
+        return {"message": "Last name isn't present."}, 400
+    except KeyError as error:
+        return {"message": "Last name isn't present."}, 400
     except Exception as error:
-        print(error)
-        return {"message":"Internal server error."}, 500
+        return {"message": "Internal server error."}, 500
