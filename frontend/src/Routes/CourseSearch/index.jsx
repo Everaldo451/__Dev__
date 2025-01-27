@@ -43,7 +43,7 @@ export default function CourseSearch() {
             <CourseCatalog 
                 filters={[["name", name]]} 
                 subscribe={true} 
-                area={false} 
+                userArea={false} 
                 repeatFunction={GetCourse} 
                 courseStateOrContext={[cachedCourses, setCachedCourses]}
             />

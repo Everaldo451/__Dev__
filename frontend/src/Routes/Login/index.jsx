@@ -10,7 +10,7 @@ function Login(){
 
     const [user, setUser] = useContext(User)
     const [csrf_token, setCSRFToken] = useContext(CSRFContext)
-    const [action, setAction] = useState("login")
+    const [action, setAction] = useState("/auth/signin")
     const [courses, setCourses] = useContext(Courses)
     const [errorMessage, setErrorMessage] = useState(null)
     const navigate = useNavigate()
@@ -55,12 +55,12 @@ function Login(){
         <main className={styles.Login}>
             <section>
                 <ul>
-                    <li id="login" onClick={(e) => setAction(e.target.id)}>Login</li>
-                    <li id="register" onClick={(e) => {setAction(e.target.id)}}>Registro</li>
+                    <li id="signin" onClick={(e) => setAction("auth/signin")}>Sign in</li>
+                    <li id="register" onClick={(e) => {setAction("users")}}>Sign up</li>
                 </ul>
 
                     
-                <form action={action?`http://localhost:5000/auth/${action}`:""} method="POST" onSubmit={onSubmit}>
+                <form action={action?`/api/${action}`:""} method="POST" onSubmit={onSubmit}>
                     {action == "register"?
                     <>
                         <input type="text" name="full_name" placeholder="Digite seu nome completo" required/>

@@ -77,7 +77,10 @@ def remove_course(id):
     if not course in current_user.courses:
         return {"message":"User don't have this course"}, 403
     
-    current_user.courses.remove(course)
-    db.session.commit()
-    return {"message":"User unsubscribed sucessful."}, 200
+    try:
+        current_user.courses.remove(course)
+        db.session.commit()
+        return {"message":"User unsubscribed sucessful."}, 200
+    except Exception as error:
+        return {"message":"Internal server error."}, 500
     

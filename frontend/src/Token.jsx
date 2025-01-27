@@ -3,7 +3,7 @@ import { courseListImagesToBlobURL, courseListSortByDateTime } from "./utils/cou
 
 async function SetUser(csrf_token, setUser, setCourses){
 
-    const response = await axios.post("http://localhost:5000/user/",undefined,{
+    const response = await axios.get("/api/me",undefined,{
         withCredentials: true,
         headers: {
           'X-CSRFToken':csrf_token
@@ -49,7 +49,7 @@ export default async function AccessTokenInterval(userContext, csrfContext, cour
 
   try {
 
-    await axios.post("http://localhost:5000/jwt/refresh",undefined,{
+    await axios.post("/api/auth/refresh",undefined,{
         withCredentials: true,
         headers: {
           'X-CSRFToken':csrf_token

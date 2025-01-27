@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
-import { GetCookies } from "./utils/GetCookies.jsx"
 import AccessTokenInterval from './Token.jsx'
 import LoadContexts from './MainContexts.jsx'
 import axios from 'axios'
@@ -21,7 +20,7 @@ export default function App() {
         console.log(csrf_token==null)
 
         if (!csrf_token) {
-          const response = await axios.get("/api/csrf/get",{withCredentials:true})
+          const response = await axios.get("/api/csrf",{withCredentials:true})
           const token = response.data.csrf
           console.log(token)
           setCSRFToken(token)

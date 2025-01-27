@@ -38,7 +38,7 @@ def logout():
 @auth.route("/refresh", methods=["POST"])
 @jwt_required(locations=["cookies"], refresh=True)
 def refresh_token():
-    response = make_response(status=200)
+    response = make_response(None,200)
     access_token = create_access_token(identity=str(current_user.id))
     set_access_cookies(response, access_token)
     return response

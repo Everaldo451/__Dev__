@@ -2,7 +2,7 @@ from flask.testing import FlaskClient
 
 def test_with_user(client:FlaskClient, csrf_token, create_course, commonCourseData, register_user_and_log_in):
 
-    response = client.post(f"/me/courses/1",
+    response = client.patch(f"/me/courses/1",
         headers = {
             "X-CSRFToken": csrf_token
         }

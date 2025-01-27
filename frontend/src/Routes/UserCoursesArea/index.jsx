@@ -18,7 +18,7 @@ export default function UserCoursesArea() {
         const [courseList, setCourseList] = courseState
 
         try {
-            const response = await axios.get(`/api/user/courses${filters}`)
+            const response = await axios.get(`/api/me/courses${filters}`)
 
             if (response.data && response.data.courses instanceof Object) {
                 const courses = response.data.courses
@@ -41,7 +41,7 @@ export default function UserCoursesArea() {
                 <CourseCatalog 
                     filters={[]} 
                     subscribe={false} 
-                    area={true}
+                    userArea={true}
                     repeatFunction={GetUserCourses}
                     courseStateOrContext={[userCourses, setUserCourses]} 
                 />
