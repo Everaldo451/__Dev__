@@ -1,6 +1,8 @@
 main.CourseRoute {
-    margin-top: 40px;
-    padding: 0 30px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+    --commonPadding: 20px;
 }
 
 main.CourseRoute > div.Container {

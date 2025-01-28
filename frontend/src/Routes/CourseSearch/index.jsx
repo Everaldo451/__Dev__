@@ -1,18 +1,61 @@
 import styles from "./index.module.css"
-import { useContext, useEffect, useMemo, useState } from "react"
+import { useContext, useState } from "react"
 import { useParams } from "react-router-dom"
 import axios from "axios"
-import SearchBar from "../../Components/SearchBar"
 import CourseCatalog from "../../Components/CourseCatalog"
-import { User, Courses } from "../../MainContexts"
+import { User } from "../../MainContexts"
 import { courseListImagesToBlobURL } from "../../utils/courseListModifiers"
+import Historia from "../../assets/historia.png"
 
 
 export default function CourseSearch() {
 
     const [user, setUser] = useContext(User)
     const {name} = useParams()
-    const [cachedCourses, setCachedCourses] = useState(new Set([]))
+    const [cachedCourses, setCachedCourses] = useState(new Set([
+        {
+            id:1,
+            language: "Python",
+            name: "Ensinando Python",
+            teachers:"Professor Everaldo",
+            image: Historia
+        },
+        {
+            id:1,
+            language: "Python",
+            name: "Ensinando Python",
+            teachers:"Professor Everaldo",
+            image: Historia
+        },
+        {
+            id:1,
+            language: "Python",
+            name: "Ensinando Python",
+            teachers:"Professor Everaldo",
+            image: Historia
+        },
+        {
+            id:1,
+            language: "Python",
+            name: "Ensinando Python",
+            teachers:"Professor Everaldo",
+            image: Historia
+        },
+        {
+            id:1,
+            language: "Python",
+            name: "Ensinando Python",
+            teachers:"Professor Everaldo",
+            image: Historia
+        },
+        {
+            id:1,
+            language: "Python",
+            name: "Ensinando Python",
+            teachers:"Professor Everaldo",
+            image: Historia
+        }
+    ]))
 
     async function GetCourse(filters, courseState) {
 
@@ -39,7 +82,6 @@ export default function CourseSearch() {
     return (
     <>
         <main className={styles.CourseRoute}>
-            <div className={styles.Container}><SearchBar/></div>
             <CourseCatalog 
                 filters={[["name", name]]} 
                 subscribe={true} 

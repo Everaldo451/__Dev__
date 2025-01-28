@@ -1,0 +1,51 @@
+button.Button {
+    margin-left: auto;
+    background-color: transparent;
+    border: none;
+}
+
+div.camada {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index: 3;
+    opacity: 0.4;
+    animation-name: escurecer;
+    animation-duration: 0.5s;
+}
+
+section.filter {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 30%;
+    height: 100%;
+    background-color: white;
+    z-index: 4;
+    animation-name: slide;
+    animation-duration: 0.5s;
+}
+
+@keyframes escurecer {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 0.4;
+    }
+    
+}
+
+@keyframes slide {
+    from {
+        transform: translate(100%,0);
+    }
+
+    to {
+        transform: translate(0,0);
+    }
+}

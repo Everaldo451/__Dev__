@@ -1,0 +1,14 @@
+div.courseHeader {
+    display: flex;
+    background-color: white;
+    align-items: center;
+    padding: 10px 40px;
+    margin-top: 60px;;
+}
+
+div.courseHeader h2 {
+    margin: 0;
+    font-weight: normal;
+    font-size: 20px;
+}
+

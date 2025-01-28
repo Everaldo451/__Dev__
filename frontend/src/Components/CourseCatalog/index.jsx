@@ -7,6 +7,7 @@ import styles from "./index.module.css"
 import { courseListLength } from "../../CourseListLength"
 import { getState, setState } from "./coursesInCacheFunctions"
 import PageChangeButton from "../courseComponents/PageChangeButton"
+import CourseHeader from "./Header"
 
 export default function CourseCatalog({filters, userArea, courseStateOrContext, repeatFunction}){
 
@@ -65,36 +66,27 @@ export default function CourseCatalog({filters, userArea, courseStateOrContext, 
 
     return (
         <>
-            {userArea == true && user.user_type == "teacher"?
-                <AddCourse setCourses={setCurrentCourses}/>
-                :null
-            }
-            <div className={styles.resultsLanguage}>
-                {userArea == true?
-                    <h2 style={{color:"white"}}>Meus Cursos:</h2>
-                    :
-                    <h2 style={{color:"white"}}>Cursos:</h2>
-                }
-                <LanguageSelector setLanguage={setLanguage}/>
+            <CourseHeader/>
+            <div className={styles.container}>
+                <section className={styles.courses}>
+
+                    {currentCourses
+                        .filter((_, index) => index >= 6*(page-1) && page*6 >= index)
+                        .map(course =>
+                            <Course 
+                                course={course} 
+                                key={course.key} 
+                                subscribe={!userArea} 
+                                setCurrentCourses={setCurrentCourses}
+                            />)
+                    }
+
+                </section>
             </div>
-            <section className={styles.courses}>
-
-                {currentCourses
-                    .filter((_, index) => index >= 6*(page-1) && page*6 >= index)
-                    .map(course =>
-                        <Course 
-                            course={course} 
-                            key={course.key} 
-                            subscribe={!userArea} 
-                            setCurrentCourses={setCurrentCourses}
-                        />)
-                }
-
-            </section>
             <section className={styles.PageButtons}>
-                <PageChangeButton setPage={setPage} reduce={true}>Prev</PageChangeButton>
+                <PageChangeButton setPage={setPage} reduce={true}>{page-1}</PageChangeButton>
                 <span>{page}</span>
-                <PageChangeButton setPage={setPage}>Next</PageChangeButton>
+                <PageChangeButton setPage={setPage}>{page+1}</PageChangeButton>
             </section>
         </>
     )

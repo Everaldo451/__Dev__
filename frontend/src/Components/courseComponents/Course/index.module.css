@@ -1,21 +1,45 @@
-section.Course{
+section.course{
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-rows: 3fr 4fr;
     position: relative;
-    padding: 15px;
-    border-radius: 20px;
-    background-color: rgb(128, 133, 150);
-    color: rgb(80, 91, 97);
+    background-color: #D6D7DF;
 }
 
-section.Course p.data {
-    margin: 2px 0;
-    font-size: 14px;
-}
-
-section.Course > div.imageContainer {
+section.course section.data {
     display: flex;
-    justify-content: center
+    flex-direction: column;
+    padding: 10px 20px;
 }
 
-section.Course span{
-    color: rgb(131, 85, 0);
+section.course section.data p {
+    margin: 0;
+}
+
+section.course section.data h4 {
+    margin: 0;
+    font-size: 20px;
+    font-weight:normal;
+}
+
+section.course section.data p.value {
+    margin-top: 30px;
+    font-size: 15px;
+}
+
+section.course section.data p.language {
+    font-size: 12px;
+}
+
+section.course section.data p.teachers {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #5B5959;
+}
+
+section.course > div.image{
+    width: 100%;
+    background-position: 50% 50%;
+    background-size: cover;
+    background-color: black;
 }
