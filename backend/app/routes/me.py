@@ -6,6 +6,8 @@ from ..db import db
 from ..serializers.user_serializer import UserSchema
 from ..forms.courses import CourseQueryStringBase
 from ..utils.courses.filter_courses import filter_courses
+from ..decorators.verify_permission import verify_user_permissions
+from ..decorators.validate_data import validate_data
 import logging
 
 me = Blueprint("me",__name__,url_prefix="/me")
@@ -16,14 +18,17 @@ def get_me():
     return UserSchema().dump(current_user), 200
 
 @me.route("/courses", methods=["GET"])
+@validate_data(
+    CourseQueryStringBase,
+    formdata=lambda:request.args,
+    meta={'csrf':False}
+)
 @jwt_required(locations=["cookies"])
 def get_me_courses():
+    
     logging.basicConfig(level="DEBUG")
     query_string = CourseQueryStringBase(meta={'csrf':False},formdata=request.args)
     filters = []
-
-    if not query_string.validate():
-        return {"message": "Invalid credentials."}, 400
 
     filters.append(Course.users.any(User.id == current_user.id))
     try:
@@ -39,11 +44,13 @@ def get_me_courses():
     
 
 @me.route("/courses/<int:id>", methods=["PATCH"])
+@verify_user_permissions(
+    [UserTypes.STUDENT, UserTypes.ADMIN],
+    "Teacher cannot subscribe a course."
+)
 @jwt_required(locations=["cookies"])
 def add_course(id):
-    if current_user.user_type == UserTypes.TEACHER:
-        return {"message":"Teacher cannot subscribe a course"}, 403
-    
+
     course = None
     try:
         course = db.session.get(Course, id)

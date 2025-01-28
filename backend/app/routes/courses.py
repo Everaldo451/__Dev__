@@ -6,6 +6,8 @@ from ..models.course_model import Course, Languages
 from ..models.user_model import User, UserTypes
 from ..serializers.course_serializer import CourseSchema
 from ..utils.courses.filter_courses import filter_courses
+from ..decorators.verify_permission import verify_user_permissions
+from ..decorators.validate_data import validate_data_on_submit, validate_data
 from ..db import db
 import logging
 import magic
@@ -15,16 +17,18 @@ import io
 courses = Blueprint("courses",__name__,url_prefix="/courses")
 
 @courses.route('/search',methods=["GET"])
+@validate_data(
+    CourseQueryStringFilters, 
+    formdata=lambda: request.args, 
+    meta={'csrf':False}
+)
 @jwt_required(locations="cookies", optional=True)
 def search():
     logging.basicConfig(level="DEBUG")
     query_string = CourseQueryStringFilters(meta={'csrf':False},formdata=request.args)
-    name = query_string.name.data
     filters = []
 
-    if not query_string.validate():
-        return {"message": "Invalid credentials."}, 400
-    
+    name = query_string.name.data
     filters.append(Course.name.ilike(f'%{name}%'))
     if current_user != None:
         filters.append(~Course.users.any(User.id == current_user.id))
@@ -45,11 +49,9 @@ def search():
 def get_course(id):pass
 
 @courses.route('/<int:id>', methods=["DELETE"])
+@verify_user_permissions([UserTypes.TEACHER, UserTypes.ADMIN])
 @jwt_required(locations='cookies')
 def delete_course(id):
-    if current_user.user_type != UserTypes.TEACHER:
-        return {"message":"This user cannot delete a course"}, 403
-    
     course=None
     try:
         course = db.session.get(Course,id)
@@ -57,22 +59,22 @@ def delete_course(id):
         return {"message":"Internal server error"}, 500
     
     if course is None:
-            return {"message":"The current course don't exists."}, 404
-    
-    db.session.delete(course)
-    db.session.delete()
+        return {"message":"The current course don't exists."}, 404
+    course.delete()
+
+    return {"message":"Course deleted succesful."}, 200
 
 
 @courses.route('',methods=["POST"])
+@validate_data_on_submit(CreateCourseForm)
+@verify_user_permissions(
+    [UserTypes.ADMIN, UserTypes.TEACHER], 
+    "Students cannot create a course."
+)
 @jwt_required(locations='cookies')
 def post_course():
     logging.basicConfig(level="DEBUG")
-
     form = CreateCourseForm()
-    if not form.validate_on_submit():
-        logging.error(dict(form.errors))
-        return {"message":"Invalid credentials.", "errors": dict(form.errors)}, 400
-    
     course = None
     try:
         course = Course.query.filter_by(name=form.name.data).first()
@@ -81,9 +83,6 @@ def post_course():
     
     if course is not None:
         return {"message":"Course with the current name already exists."}, 400
-    
-    if current_user.user_type == UserTypes.STUDENT:
-        return {"message":"Students cannot create a course."}, 403
     
     error = None
     buffer = io.BytesIO()
@@ -104,10 +103,8 @@ def post_course():
             image=image,
             image_mime_type=mime_type
         )
-
-        db.session.add(newCourse)
         newCourse.users.add(current_user)
-        db.session.commit()
+        newCourse.create()
 
         return {
             "message":"Course created sucessfully.",

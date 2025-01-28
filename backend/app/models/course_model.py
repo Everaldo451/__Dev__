@@ -5,11 +5,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, column_property
 import datetime
 from .user_courses_table import user_courses
 from .user_model import User, UserTypes
-from ..db import db
+from ..db import db, ModelMixin
 from ..enums import Languages
 
 
-class Course(db.Model):
+class Course(db.Model, ModelMixin):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = mapped_column(String(100), unique=True, nullable=False)

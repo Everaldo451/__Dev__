@@ -6,16 +6,15 @@ from ..serializers.user_serializer import UserSchema
 from ..serializers.course_serializer import CourseSchema
 from ..forms.authentication import RegisterForm, TeacherRegisterForm
 from ..utils.jwt.response_with_tokens import create_response_all_tokens
+from ..decorators.verify_permission import verify_user_permissions
 import logging
 
 users = Blueprint('users',__name__,url_prefix="/users")
 
 @users.route("",methods=["GET"])
+@verify_user_permissions([UserTypes.ADMIN])
 @jwt_required(locations=["cookies"])
 def get_users():
-    if current_user.user_type != UserTypes.ADMIN:
-        return {"message":"Unauthorized"}, 403
-    
     return UserSchema().dump(User.query.all(), many=True), 200
 
 
@@ -50,8 +49,7 @@ def delete_user(id):
         return {"message":"Unauthorized."}, 403
     
     try:
-        db.session.delete(user)
-        db.session.commit()
+        user.delete()
         return {"message":"User deleted succesful."}, 200
     except:
         return {"message":"Internal server error"}, 500
@@ -84,9 +82,7 @@ def post_user():
             last_name=last_name, 
             user_type=user_type
         )
-        db.session.add(user)
-        db.session.commit()
-
+        user.create()
         return create_response_all_tokens(str(user.id), "User created successful.", 200)
     except ValueError as error: 
         return {"message": "Last name isn't present."}, 400

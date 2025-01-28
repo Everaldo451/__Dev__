@@ -4,18 +4,17 @@ from flask_jwt_extended import jwt_required, unset_jwt_cookies, current_user
 from ..models.user_model import User
 from ..forms.authentication import LoginForm
 from ..utils.jwt.response_with_tokens import create_response_all_tokens
+from ..decorators.validate_data import validate_data_on_submit
 import logging
 
 #Authentication Blueprint
 auth = Blueprint("auth",__name__,url_prefix="/auth")
 
 @auth.route("/signin",methods=["POST"])
+@validate_data_on_submit(LoginForm)
 def sign_in():
 
     form = LoginForm()
-    if not form.validate_on_submit():
-        return {"message":"Invalid credentials."}, 400
-
     user = User.authenticate(email=form.email.data, password=form.password.data)
     if user is None:
         return {"message":"Invalid email or password."}, 400

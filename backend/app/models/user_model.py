@@ -4,13 +4,13 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
 from .user_courses_table import user_courses
-from ..db import db
+from ..db import db, ModelMixin
 from ..enums import UserTypes
 
 if TYPE_CHECKING:
     from .course_model import Course
 
-class User(db.Model):
+class User(db.Model, ModelMixin):
 
     first_name = mapped_column(String(50), nullable=False)
     last_name = mapped_column(String(100), nullable=False)
