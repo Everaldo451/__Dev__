@@ -1,12 +1,11 @@
 from flask_restx import fields
 from ..models.course_model import Languages
+from decimal import Decimal
 import base64
 
 class ImageField(fields.Raw):
     def format(self, value):
-        print(value)
         image, image_mime_type = value
-        
         return f"data:{image_mime_type};base64," + base64.b64encode(image).decode("utf-8")
     
 class TeacherField(fields.Raw):
@@ -14,6 +13,13 @@ class TeacherField(fields.Raw):
         if isinstance(value, str):
             return [value]
         return value
+    
+class DecimalField(fields.Raw):
+    def format(self, value):
+        if isinstance(value, Decimal):
+            return str(value)
+        
+        raise ValueError("This field should be a Decimal.")
 
 CourseSerializer = {
     "id": fields.Integer,
@@ -26,7 +32,8 @@ CourseSerializer = {
     "image_mime_type": fields.String,
     "date_created": fields.DateTime,
     "student_count": fields.Integer,
-    "teachers": TeacherField
+    "teachers": TeacherField,
+    "price": DecimalField,
 }
 
 OneCourseResponseSerializer = {

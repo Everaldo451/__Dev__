@@ -2,10 +2,10 @@ from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
 from ..models.user_model import User, UserTypes
 from ..db import db
-from ..forms.authentication import RegisterForm, TeacherRegisterForm
 from ..utils.jwt.response_with_tokens import create_response_all_tokens
 from ..decorators.verify_permission import verify_user_permissions
 from ..serializers.user_serializer import UserSerializer
+from ..parsers.authentication import RegisterParser
 import logging
 
 api = Namespace("users", path="/users")
@@ -23,25 +23,21 @@ class UserList(Resource):
     def post(self):
         logging.basicConfig(level="DEBUG")
 
-        form = RegisterForm()
-        if not form.validate_on_submit():
-            return {"message": "Invalid credentials."}, 400
-
-        if User.query.filter_by(email=form.email.data).first():
+        args = RegisterParser.parse_args()
+        if User.query.filter_by(email=args.get("email")).first():
             return {"message": "Current email is already registered."}, 400
 
-        teacher_form = TeacherRegisterForm()
-        if teacher_form.validate_on_submit():
+        if args.get("is_teacher"):
             user_type = UserTypes.TEACHER
         else:
             user_type = UserTypes.STUDENT
     
         try:
-            first_name, last_name = form.full_name.data.split(maxsplit=1)
+            first_name, last_name = args.get("full_name").split(maxsplit=1)
 
             user = User(
-                email=form.email.data,
-                password=form.password.data,
+                email=args.get("email"),
+                password=args.get("password"),
                 first_name=first_name, 
                 last_name=last_name, 
                 user_type=user_type

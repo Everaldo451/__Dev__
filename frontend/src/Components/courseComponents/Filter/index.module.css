@@ -4,7 +4,7 @@ button.Button {
     border: none;
 }
 
-div.camada {
+div.darkMask {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,8 +13,16 @@ div.camada {
     background-color: black;
     z-index: 3;
     opacity: 0.4;
-    animation-name: escurecer;
+}
+
+div.darkMaskIn {
+    animation-name: dark;
     animation-duration: 0.5s;
+}
+div.darkMaskOut {
+    animation-name: light;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
 }
 
 section.filter {
@@ -25,11 +33,18 @@ section.filter {
     height: 100%;
     background-color: white;
     z-index: 4;
-    animation-name: slide;
+}
+section.filterIn {
+    animation-name: slideIn;
     animation-duration: 0.5s;
 }
+section.filterOut {
+    animation-name: slideOut;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
 
-@keyframes escurecer {
+@keyframes dark {
     from {
         opacity: 0;
     }
@@ -40,12 +55,32 @@ section.filter {
     
 }
 
-@keyframes slide {
+@keyframes light {
+    from {
+        opacity: 0.4;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slideIn {
     from {
         transform: translate(100%,0);
     }
 
     to {
         transform: translate(0,0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translate(0,0);
+    }
+
+    to {
+        transform: translate(100%,0);
     }
 }

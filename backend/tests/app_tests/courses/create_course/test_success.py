@@ -46,6 +46,7 @@ def test_success(client:FlaskClient, csrf_token, courseData, teacherData, regist
     assert image is not None
     assert "image/png" in image
     assert course.get("users") is None
+    assert course.get("price") is not None
     assert course.get("student_count") == 0
 
     teachers = course.get("teachers")

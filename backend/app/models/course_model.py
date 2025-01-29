@@ -1,5 +1,6 @@
 from typing import Set
-from sqlalchemy import String, Enum, LargeBinary, Integer, Column, DateTime
+from decimal import Decimal
+from sqlalchemy import String, Enum, LargeBinary, Integer, Column, DateTime, DECIMAL
 from sqlalchemy import select, func, and_
 from sqlalchemy.orm import Mapped, mapped_column, relationship, column_property
 import datetime
@@ -19,6 +20,7 @@ class Course(db.Model, ModelMixin):
     image = mapped_column(LargeBinary(),nullable=False)
     image_mime_type = mapped_column(String(50),nullable=False)
     date_created = mapped_column(DateTime(False), default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    price: Mapped[Decimal] = mapped_column(DECIMAL(precision=3),nullable=False)
 
     users: Mapped[Set["User"]] = relationship("User", secondary=user_courses, back_populates="courses")
 

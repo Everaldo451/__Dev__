@@ -23,11 +23,9 @@ authentication_parser.add_argument(
 sigin_in_parser = authentication_parser.copy()
 sigin_in_parser.remove_argument("full_name")
 
-register_parser = authentication_parser.copy()
-
-teacher_register_parser = authentication_parser.copy()
-teacher_register_parser.add_argument(
+RegisterParser = authentication_parser.copy()
+RegisterParser.add_argument(
     name="is_teacher",
-    required=True,
+    required=False,
     type=str,
 )

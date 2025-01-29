@@ -39,6 +39,7 @@ def commonCourseData(Language):
         "name": "Ensinando Python",
         "language": Language.PYTHON,
         "description": "any description to the course",
+        "price": 50
     }
 
 @pytest.fixture

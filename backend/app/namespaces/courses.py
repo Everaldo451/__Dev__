@@ -17,11 +17,6 @@ import io
 api = Namespace("courses", path="/courses")
 model = api.model("Course", CourseSerializer)
 
-post_course_marshall = {
-    "message": fields.String,
-    "course": fields.Nested(model, allow_null=True)
-}
-
 @api.route("")
 class CourseList(Resource):
 
@@ -58,7 +53,8 @@ class CourseList(Resource):
             newCourse = Course(
                 name=args.get("name"), 
                 language=lang, 
-                description=args.get("description"), 
+                description=args.get("description"),
+                price=args.get("price"),
                 image=image,
                 image_mime_type=mime_type
             )
@@ -123,9 +119,7 @@ class Search(Resource):
 
         length = args.get("length")
         try:
-            courses = filter_courses(filters, length)
-            print(courses)
-            return courses
+            return filter_courses(filters, length)
         except Exception as error:
             print(error)
             return {"message":"Internal server error."}, 500

@@ -10,11 +10,10 @@ import json
 sys.path.append(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 print(os.path.dirname(os.path.abspath(__file__)))
 
-from app.app import create_app
+from app import create_app
 from app.db import db
 from app.models.user_model import User, UserTypes
 from app.models.course_model import Course, Languages
-from app.services.csrf_service import CSRF
 
 @pytest.fixture
 def app():

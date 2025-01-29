@@ -26,6 +26,11 @@ CreateCourseParser.add_argument(
     type=FileStorage,
     required=True
 )
+CreateCourseParser.add_argument(
+    "price",
+    type=float,
+    required=True
+)
 
 
 CourseArgsBaseParser = reqparse.RequestParser()
