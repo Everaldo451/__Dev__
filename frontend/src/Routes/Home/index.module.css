@@ -1,3 +1,13 @@
+@keyframes imageSlideUpDown {
+    from {
+        transform: translate(0, -2%);
+    }
+
+    to {
+        transform: translate(0, 2%);
+    }
+}
+
 main.Home > section.introduct {
     background-color: inherit;
     display: grid;
@@ -12,6 +22,14 @@ main.Home > section{
 main.Home > section.introduct div.container {
     display: grid;
     place-items: center;
+}
+
+main.Home > section.introduct div.container img{
+    animation-name: imageSlideUpDown;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
 }
 
 main.Home > section.introduct div.hello{

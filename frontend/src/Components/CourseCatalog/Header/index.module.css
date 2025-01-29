@@ -12,3 +12,9 @@ div.courseHeader h2 {
     font-size: 20px;
 }
 
+button.Button {
+    margin-left: auto;
+    background-color: transparent;
+    border: none;
+}
+

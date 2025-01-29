@@ -1,34 +1,32 @@
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import AnimatedImage from "./AnimatedImage"
+import { CourseFiltersContext } from "../../../contexts/CourseFilters"
 import styles from "./index.module.css"
 
-function FilterSection({setHidden}) {
-    const [slideIn, setSlideIn] = useState(true)
-
-    return(
-        <>
-            <div 
-                className={`${styles.darkMask} ${slideIn?styles.darkMaskIn:styles.darkMaskOut}`} 
-                onClick={(e)=>{setSlideIn(false)}}
-                onAnimationEnd={(e) => {!slideIn?setHidden(true):null}}
-            />
-            <section 
-                className={`${styles.filter} ${slideIn?styles.filterIn:styles.filterOut}`}
-            >
-            </section>
-        </>
+function Filter({slideIn}) {
+    return (
+        <section className={`${styles.filter} ${slideIn?styles.filterIn:styles.filterOut}`}>
+        </section>
     )
 }
 
-export default function Filter() {
-    const [hidden, setHidden] = useState(true)
+function DarkMask({setHidden, slideIn, setSlideIn}) {
+    return(
+        <div 
+            className={`${styles.darkMask} ${slideIn?styles.darkMaskIn:styles.darkMaskOut}`} 
+            onClick={(e)=>{setSlideIn(false)}}
+            onAnimationEnd={(e) => {!slideIn?setHidden(true):null}}
+        />
+    )
+}
+
+export default function FilterContainer({hidden, setHidden}) {
+    const [slideIn, setSlideIn] = useState(!hidden)
 
     return (
-        <>
-            <button className={styles.Button} onClick={(e) => {setHidden(false)}}>
-                <AnimatedImage/>
-            </button>
-            {!hidden?<FilterSection setHidden={setHidden}/>:null}
+        <>  
+            {!hidden?<DarkMask setHidden={setHidden} slideIn={slideIn} setSlideIn={setSlideIn}/>:null}
+            <Filter slideIn={slideIn}/>
         </>
     )
 }

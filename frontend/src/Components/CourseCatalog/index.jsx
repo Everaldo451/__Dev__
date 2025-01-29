@@ -1,54 +1,75 @@
-import { useState, useEffect, useContext } from "react"
-import { User } from "../../MainContexts"
-import Course from "../courseComponents/Course"
-import AddCourse from "../courseComponents/AddCourseButton"
-import LanguageSelector from "../courseComponents/LanguageSelector"
-import styles from "./index.module.css"
-import { courseListLength } from "../../CourseListLength"
-import { getState, setState } from "./coursesInCacheFunctions"
+import { useState, useEffect } from "react"
+import { CourseFiltersContext } from "../../contexts/CourseFilters"
 import PageChangeButton from "../courseComponents/PageChangeButton"
 import CourseHeader from "./Header"
+import Course from "../courseComponents/Course"
+import { courseListLength } from "../../CourseListLength"
+import { getState, setState } from "./coursesInCacheFunctions"
+import FilterContainer from "../courseComponents/Filter"
+import styles from "./index.module.css"
 
-export default function CourseCatalog({filters, userArea, courseStateOrContext, repeatFunction}){
+export default function CourseCatalog({initialfilters, userArea, courseStateOrContext, repeatFunction}){
 
-    const [language, setLanguage] = useState(null)
     const [currentCourses, setCurrentCourses] = useState([])
     const [coursesInCache, setCoursesInCache] = courseStateOrContext
     const [unFilteredCourses, setUnFilteredCourses] = useState(new Set(coursesInCache))
-    const [user, setUser] = useContext(User)
     const [page, setPage] = useState(1)
+
+    const [hidden, setHidden] = useState(true)
+    const [language, setLanguage] = useState(null)
+    const [filters, setFilters] = useState({
+        "language": {
+            "state": language,
+            "setter": setLanguage
+        },
+        ...initialfilters
+    })
 
     const getLocalCourses = () => getState(unFilteredCourses)
     const setLocalCourses = (courses) => setState(courses, unFilteredCourses, setUnFilteredCourses)
 
-    function getFilters(courses) {
-        const filtersList = [["length", courses.length],...filters]
-        language?filtersList.push(["lang", language]):null
+    function getFiltersQueryString(courses) {
+        let filtersQueryString = `?length=${courses.length}`
 
-        filtersList.forEach((value, index) => {
-            const joined = value.join("=")
-            filtersList[index] = joined
-        })
-        return "?"+filtersList.join("&")
+        for (const [key, value] of Object.entries(filters)) {
+
+            if (value instanceof Object && value.state && value.setter) {
+                value.state!=null?
+                    filtersQueryString += `${key}=${String(value.state)}&`
+                    :null
+            } else {
+                value!=null?
+                    filtersQueryString += `${key}=${String(value)}&`
+                    :null
+            }
+        }
     }
-    
-    function languageModified() {
-        console.log("language Changed:")
-        const localCourses = getLocalCourses()
-        console.log(localCourses)
 
-        const courses = language!=null?
-            localCourses.filter(course => course.language == language)
-            :localCourses
+    function filterModified(key) {
+
+        const filterValue = filters[key]
+        const localCourses = getLocalCourses()
+
+        let courses = null
+        if (filterValue instanceof Object && filterValue.setter) {
+            courses=filterValue.state!=null?
+                localCourses.filter(course => course[key] == filterValue.state)
+                :localCourses
+        } else {
+            courses = filterValue!=null?
+                localCourses.filter(course => course[key] == filterValue)
+                :localCourses
+        }
+
         setCurrentCourses(courses)
 
         if (courses.length != 0 && courses.length%courseListLength == 0) {return}
-        repeatFunction(getFilters(courses), [courses, setCurrentCourses])
+        repeatFunction(getFiltersQueryString(courses), [courses, setCurrentCourses])
     }
-
+    
     useEffect(() => {
-        languageModified()
-    },[language, filters])
+        filterModified("language")
+    },[filters.language[0], initialfilters])
 
     useEffect(() => {
         if (language == null && currentCourses.length > 0) {
@@ -66,23 +87,28 @@ export default function CourseCatalog({filters, userArea, courseStateOrContext, 
 
     return (
         <>
-            <CourseHeader/>
-            <div className={styles.container}>
-                <section className={styles.courses}>
+            <CourseHeader setHidden={setHidden}/>
+            <CourseFiltersContext.Provider value={[filters, setFilters]}>
 
-                    {currentCourses
-                        .filter((_, index) => index >= 6*(page-1) && page*6 >= index)
-                        .map(course =>
-                            <Course 
-                                course={course} 
-                                key={course.key} 
-                                subscribe={!userArea} 
-                                setCurrentCourses={setCurrentCourses}
-                            />)
-                    }
+                <div className={styles.container}>
+                    <section className={styles.courses}>
 
-                </section>
-            </div>
+                        {currentCourses
+                            .filter((_, index) => index >= 6*(page-1) && page*6 >= index)
+                            .map(course =>
+                                <Course 
+                                    course={course} 
+                                    key={course.key} 
+                                    subscribe={!userArea} 
+                                    setCurrentCourses={setCurrentCourses}
+                                />)
+                        }
+
+                    </section>
+                </div>
+                <FilterContainer setHidden={setHidden} hidden={hidden}/>
+
+            </CourseFiltersContext.Provider>
             <section className={styles.PageButtons}>
                 <PageChangeButton setPage={setPage} reduce={true}>{page-1}</PageChangeButton>
                 <span>{page}</span>
@@ -90,5 +116,4 @@ export default function CourseCatalog({filters, userArea, courseStateOrContext, 
             </section>
         </>
     )
-
 }
