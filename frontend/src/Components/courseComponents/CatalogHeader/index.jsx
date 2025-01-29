@@ -1,4 +1,4 @@
-import AnimatedImage from "../../courseComponents/Filter/AnimatedImage"
+import AnimatedImage from "./AnimatedImage"
 import styles from "./index.module.css"
 
 export default function CourseHeader({setHidden}) {

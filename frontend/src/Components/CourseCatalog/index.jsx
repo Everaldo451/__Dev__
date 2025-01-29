@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { CourseFiltersContext } from "../../contexts/CourseFilters"
 import PageChangeButton from "../courseComponents/PageChangeButton"
-import CourseHeader from "./Header"
+import CourseHeader from "../courseComponents/CatalogHeader"
 import Course from "../courseComponents/Course"
 import { courseListLength } from "../../CourseListLength"
 import { getState, setState } from "./coursesInCacheFunctions"
