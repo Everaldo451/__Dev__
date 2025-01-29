@@ -20,7 +20,11 @@ def test_success(client:FlaskClient, csrf_token, courseData, teacherData, regist
 
     response.close()
 
-    response = client.get("/auth/logout")
+    response = client.post("/auth/logout",
+        headers = {
+            "X-CSRFToken":csrf_token,
+        }
+    )
     response.close()
 
     response = client.get(f"/courses/search?length=0&name={courseData.get("name")}",
@@ -39,7 +43,7 @@ def test_success(client:FlaskClient, csrf_token, courseData, teacherData, regist
     assert course.get("name") is not None
     assert course.get("language") is not None
     image = course.get("image") 
-    assert course.get("image") is not None
+    assert image is not None
     assert "image/png" in image
     assert course.get("users") is None
     assert course.get("student_count") == 0

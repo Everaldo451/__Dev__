@@ -15,5 +15,8 @@ def test_invalid_credentials(client:FlaskClient, csrf_token, courseData, teacher
     json = response.get_json()
     assert json
     message = json["message"]
-    assert message == "Invalid credentials."
+    assert message == "Input payload validation failed"
+    errors = json["errors"]
+    name_error = errors["name"]
+    assert name_error
     assert response.status_code == 400

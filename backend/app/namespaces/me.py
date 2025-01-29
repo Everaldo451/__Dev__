@@ -1,0 +1,94 @@
+from flask_restx import Namespace, Resource
+from flask_jwt_extended import jwt_required, current_user
+from ..models.user_model import User, UserTypes
+from ..models.course_model import Course, Languages
+from ..db import db
+from ..utils.courses.filter_courses import filter_courses
+from ..decorators.verify_permission import verify_user_permissions
+from ..parsers.courses import CourseArgsBaseParser
+from ..serializers.course_serializer import ManyCourseResponseSerializer
+from ..serializers.user_serializer import UserSerializer
+import logging
+
+api = Namespace("me", path="/me")
+
+@api.route("")
+class Me(Resource):
+
+    @jwt_required(locations=["cookies"])
+    @api.marshal_with(UserSerializer)
+    def get(self):
+        return current_user, 200
+    
+@api.route("/courses")
+class MeCourseList(Resource):
+
+    @jwt_required(locations=["cookies"])
+    @api.marshal_with(ManyCourseResponseSerializer)
+    def get(self):
+    
+        logging.basicConfig(level="DEBUG")
+        args = CourseArgsBaseParser.parse_args()
+        filters = []
+
+        filters.append(Course.users.any(User.id == current_user.id))
+        try:
+            filters.append(Course.language == Languages(args.get("lang")))
+        except ValueError as error: pass
+
+        length = args.get("length")
+        try:
+            return filter_courses(filters, length), 200
+        except Exception as error:
+            print(error)
+            return {"message":"Internal server error."}, 500
+    
+
+@api.route("/courses/<int:id>")
+class MeCourse(Resource):
+
+    @verify_user_permissions(
+        [UserTypes.STUDENT, UserTypes.ADMIN],
+        "Teacher cannot subscribe a course."
+    )
+    @jwt_required(locations=["cookies"])
+    def patch(self, id):
+
+        course = None
+        try:
+            course = db.session.get(Course, id)
+        except Exception as error:
+            return {"message":"Internal server error."}, 500
+    
+        if course is None:
+            return {"message":"Course not found."}, 404
+    
+        try:
+            current_user.courses.add(course)
+            db.session.commit()
+            return {"message":"User subscribed successful."}, 200
+        except Exception as error:
+            return {"message":"Internal server error."}, 500
+        
+
+    @jwt_required(locations=["cookies"])
+    def delete(self, id):
+
+        course = None
+        try: 
+            course = db.session.get(Course, id)
+        except Exception as error:
+            return {"message":"Internal server error."}, 500
+    
+        if course is None:
+            return {"message":"Course not found."}, 404
+    
+        if not course in current_user.courses:
+            return {"message":"User don't have this course"}, 403
+    
+        try:
+            current_user.courses.remove(course)
+            db.session.commit()
+            return {"message":"User unsubscribed sucessful."}, 200
+        except Exception as error:
+            return {"message":"Internal server error."}, 500

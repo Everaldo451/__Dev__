@@ -16,5 +16,8 @@ def test_invalid_credentials(client:FlaskClient, csrf_token, create_user, userDa
 
     assert json
     message = json["message"]
-    assert message == "Invalid credentials."
+    assert message == 'Input payload validation failed'
+    errors = json["errors"]
+    email_error = errors["email"]
+    assert email_error == 'Invalid email. Missing required parameter in the JSON body or the post body or the query string'
     assert response.status_code == 400

@@ -1,4 +1,4 @@
-from ...serializers.course_serializer import CourseSchema, Course
+from ...models.course_model import Course
 import math
 
 def filter_courses(filters:list, offset:int):
@@ -8,6 +8,6 @@ def filter_courses(filters:list, offset:int):
         ).order_by(Course.date_created.desc()).offset(offset).limit(limit).all()
     return {
         "message":"Courses sending succesful.",
-        "courses":CourseSchema().dump(courses, many=True)
+        "courses":courses
     }, 200
     

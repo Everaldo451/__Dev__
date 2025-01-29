@@ -7,6 +7,7 @@ from .user_courses_table import user_courses
 from .user_model import User, UserTypes
 from ..db import db, ModelMixin
 from ..enums import Languages
+import base64
 
 
 class Course(db.Model, ModelMixin):
@@ -43,3 +44,7 @@ class Course(db.Model, ModelMixin):
         )
         .scalar_subquery()
     )
+
+    @property
+    def image_data(self):
+        return self.image, self.image_mime_type

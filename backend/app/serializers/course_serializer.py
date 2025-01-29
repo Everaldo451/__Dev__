@@ -1,32 +1,40 @@
-from ..models.course_model import Course
-from marshmallow import fields
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from flask_restx import fields
+from ..models.course_model import Languages
 import base64
-import magic
-import io
 
-class CourseSchema(SQLAlchemyAutoSchema):
-
-    class Meta:
-        model = Course
-        load_instance = True
-        exclude = ("users",)
-
-    image = fields.Method("get_image")
-    student_count = fields.Integer()
-    teachers = fields.Method("get_teachers")
-    language = fields.Method("get_language")
+class ImageField(fields.Raw):
+    def format(self, value):
+        print(value)
+        image, image_mime_type = value
+        
+        return f"data:{image_mime_type};base64," + base64.b64encode(image).decode("utf-8")
     
-    def get_language(self, obj):
-        if obj.language:
-            return obj.language.value
+class TeacherField(fields.Raw):
+    def format(self, value):
+        if isinstance(value, str):
+            return [value]
+        return value
 
-    def get_teachers(self, obj):
-        if isinstance(obj.teachers,str):
-            return [obj.teachers]
-        return obj.teachers
+CourseSerializer = {
+    "id": fields.Integer,
+    "name": fields.String,
+    "description": fields.String,
+    "language": fields.String(
+        enum=[language.value for language in Languages],
+    ),
+    "image": ImageField(attribute="image_data"),
+    "image_mime_type": fields.String,
+    "date_created": fields.DateTime,
+    "student_count": fields.Integer,
+    "teachers": TeacherField
+}
 
-    def get_image(self, obj):
-        if obj.image and obj.image_mime_type:
-            return f"data:{obj.image_mime_type};base64," + base64.b64encode(obj.image).decode("utf-8")
-        return None
+OneCourseResponseSerializer = {
+    "message": fields.String,
+    "course": fields.Nested(CourseSerializer, allow_null=True)
+}
+
+ManyCourseResponseSerializer = {
+    "message": fields.String,
+    "courses": fields.List(fields.Nested(CourseSerializer))
+}

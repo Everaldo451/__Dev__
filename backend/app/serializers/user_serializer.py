@@ -1,17 +1,17 @@
-from ..models.user_model import User
-from marshmallow import fields
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from .course_serializer import CourseSchema
+from flask_restx import fields
+from ..models.user_model import UserTypes
 
-class UserSchema(SQLAlchemyAutoSchema):
+class UserTypeField(fields.Raw):
+    def format(self, value):
+        if value.value not in [user_type.value for user_type in UserTypes]:
+            raise ValueError("Invalid user type.")
+        
+        return value.value
 
-    class Meta:
-        model = User
-        load_instance = True
-        exclude = ("password",)
-
-    user_type = fields.Method("get_user_type")
-    
-    def get_user_type(self, obj):
-        if obj.user_type:
-            return obj.user_type.value
+UserSerializer = {
+    "id": fields.Integer,
+    "full_name": fields.String,
+    "email": fields.String,
+    "user_type": UserTypeField,
+    "admin": fields.Boolean
+}
