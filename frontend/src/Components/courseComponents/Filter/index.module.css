@@ -44,7 +44,6 @@ section.filter {
     top: 0;
     right: 0;
     padding: 30px;
-    transform: translate(100%, 0);
     width: 30%;
     height: 100%;
     background-color: white;

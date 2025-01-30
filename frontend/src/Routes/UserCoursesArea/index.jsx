@@ -13,27 +13,6 @@ export default function UserCoursesArea() {
     const [userCourses, setUserCourses] = useContext(Courses)
     console.log(user)
 
-    async function GetUserCourses(filters, courseState) {
-
-        const [courseList, setCourseList] = courseState
-
-        try {
-            const response = await axios.get(`/api/me/courses${filters}`)
-
-            if (response.data && response.data.courses instanceof Object) {
-                const courses = response.data.courses
-            
-                setCourseList(prevCourses => [
-                    ...prevCourses,
-                    ...courseListImagesToBlobURL(courses).map((course, index, array) => {
-                        return {...course, key:courseList.length + array.length + 1}
-                    })
-                ])
-            
-            }
-        } catch(error) {console.log(error)}
-    }
-
     if (user) {
 
         return (
@@ -42,7 +21,10 @@ export default function UserCoursesArea() {
                     filters={[]} 
                     subscribe={false} 
                     userArea={true}
-                    repeatFunction={GetUserCourses}
+                    requestData={{
+                        url: "/api/me/courses",
+                        method: "GET",
+                    }}
                     courseStateOrContext={[userCourses, setUserCourses]} 
                 />
             </main>

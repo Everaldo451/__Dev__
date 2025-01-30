@@ -13,7 +13,7 @@ export default function Course({course, subscribe, setCurrentCourses}) {
                 <h4>{course.name}</h4>
                 <p className={styles.language}>Language: {course.language}</p>
                 <p className={styles.teachers}>{course.teachers}</p>
-                <p className={styles.value}>R$ 50,00</p>
+                <p className={styles.price}>{course.price}</p>
             </section>
         </section>
     )

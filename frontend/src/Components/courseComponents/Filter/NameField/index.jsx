@@ -4,7 +4,7 @@ export default function NameField() {
     return (
         <div>
             <label>Name</label>
-            <input className={styles.Name} type="text" placeholder="nome do curso"/>
+            <input className={styles.Name} name="name" type="text" placeholder="nome do curso"/>
         </div>
     )
 }

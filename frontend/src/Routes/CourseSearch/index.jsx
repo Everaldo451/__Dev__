@@ -1,5 +1,5 @@
 import styles from "./index.module.css"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import axios from "axios"
 import CourseCatalog from "../../Components/CourseCatalog"
@@ -12,72 +12,90 @@ export default function CourseSearch() {
 
     const [user, setUser] = useContext(User)
     const {name} = useParams()
+    const requestData = {
+        url: "/api/courses/search",
+        method: "GET",
+    }
+    
     const [cachedCourses, setCachedCourses] = useState(new Set([
         {
             id:1,
             language: "Python",
             name: "Ensinando Python",
             teachers:"Professor Everaldo",
-            image: Historia
+            image: Historia,
+            price: 50
         },
         {
             id:1,
             language: "Python",
             name: "Ensinando Python",
             teachers:"Professor Everaldo",
-            image: Historia
+            image: Historia,
+            price: 50
         },
         {
             id:1,
             language: "Python",
             name: "Ensinando Python",
             teachers:"Professor Everaldo",
-            image: Historia
+            image: Historia,
+            price: 50
         },
         {
             id:1,
             language: "Python",
             name: "Ensinando Python",
             teachers:"Professor Everaldo",
-            image: Historia
+            image: Historia,
+            price: 50
         },
         {
             id:1,
             language: "Python",
             name: "Ensinando Python",
             teachers:"Professor Everaldo",
-            image: Historia
+            image: Historia,
+            price: 50
         },
         {
             id:1,
             language: "Python",
             name: "Ensinando Python",
             teachers:"Professor Everaldo",
-            image: Historia
+            image: Historia,
+            price: 50
         }
     ]))
 
-    async function GetCourse(filters, courseState) {
-
-        const [courseList, setCourseList] = courseState
-
-        try {
-
-            const response = await axios.get(`/api/courses/search${filters}`)
-
-            if (response.data && response.data.courses instanceof Object) {
-                const courses = response.data.courses
-
-                setCourseList(prevCourses => [
-                    ...prevCourses,
-                    ...courseListImagesToBlobURL(courses).map((course, index, array) => {
-                        return {...course, key:courseList.length + array.length + 1}
-                    })
-                ])
-
+    useEffect(() => {
+        async function getFirstCourses() {
+            try {
+                const response = await axios({
+                    ...requestData,
+                    data: {
+                        name:name,
+                        length:0
+                    }
+                })
+            
+                if (response.data && response.data.courses instanceof Object) {
+                    setCachedCourses(
+                        {...courseListImagesToBlobURL(response.data.courses)
+                            .map((course, _, array) => {
+                                return {...course, key:currentCourses.length + array.length + 1}
+                            })
+                        }
+                    )
+                }
+            } catch(error) {
+                console.log("Error in course search")
             }
-        } catch(error) {console.log(error)}
-    }
+        }
+
+        getFirstCourses()
+    })
+
 
     return (
     <>
@@ -86,7 +104,7 @@ export default function CourseSearch() {
                 filters={[["name", name]]} 
                 subscribe={true} 
                 userArea={false} 
-                repeatFunction={GetCourse} 
+                requestData={requestData}
                 courseStateOrContext={[cachedCourses, setCachedCourses]}
             />
         </main>

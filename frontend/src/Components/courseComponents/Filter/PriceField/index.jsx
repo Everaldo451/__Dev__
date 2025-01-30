@@ -1,8 +1,10 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import styles from "./index.module.css"
 
-function BallButton({fn, left}) {
+function BallButton({fn, left, maxValue}) {
     const [margin, setMargin] = useState(0)
+    const [value, setValue] = useState(left?0:maxValue)
+    const ballRef = useRef(null)
 
     let onPointerMove = (e) => {}
     if (left) {
@@ -29,12 +31,33 @@ function BallButton({fn, left}) {
         }
     }
 
+    function generateEquation() {
+        const a = maxValue/(100**2)
+
+        return function secondGrau(x) {
+            return a * x**2
+        }
+    }
+    const valueSetter = generateEquation()
+
+    useEffect(() => {
+        const parentElement=ballRef.current.parentElement
+        const parentWidth=parentElement.clientWidth
+        const percent = (margin/parentWidth)*100
+
+        if (left) {setValue(Math.floor(valueSetter(percent)))}
+        else {setValue(Math.floor(valueSetter(100-percent)))}
+    },[margin])
+
     return (
         <div 
+            ref={ballRef}
             style={left?{marginLeft:margin}:{marginRight:margin}}
             className={styles.coloredBall} 
             onPointerMove={onPointerMove} 
-        />
+        >
+            <div className={styles.value}>{value}</div>
+        </div>
     )
 }
 
@@ -45,9 +68,9 @@ function PriceSelector({value, setValue}) {
             <div className={styles.Line}/>
             <div className={styles.ball}/>
             <div className={styles.buttons}>
-                <BallButton left={true}/>
+                <BallButton left={true} maxValue={1000}/>
                 <div className={styles.Line}/>
-                <BallButton left={false}/>
+                <BallButton left={false} maxValue={1000}/>
             </div>
         </div>
     )
@@ -59,7 +82,7 @@ export default function PriceField() {
     return (
         <div className={styles.field}>
             <label>Price</label>
-            <input type="hidden" value={value.join(",")}/>
+            <input type="hidden" name="price" value={value.join(",")}/>
             <PriceSelector value={value} setValue={setValue}/>
         </div>
     )
