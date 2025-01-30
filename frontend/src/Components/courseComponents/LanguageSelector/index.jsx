@@ -2,30 +2,56 @@ import { useState, useRef, useEffect } from "react"
 import { Languages } from "../../../Languages"
 import styles from "./index.module.css"
 
-export default function LanguageSelector ({attrs ,setLanguage}) {
+export default function LanguageSelector ({attrs}) {
 
-    const [options, setOptions] = useState([<option value="" key={0}>None</option>])
-
-    function LanguageOptions(length) {
-        const optionsList = []
-        Languages.forEach((value, key) => {
-            optionsList.push(<option value={value} key={length+1}>{value}</option>)
-        })
-        return optionsList
-    }
+    const selectRef = useRef(null)
+    const [languages, setLanguages] = useState([{value:"", placeholder:"None"}])
+    const [placeholder, setPlaceHolder] = useState("None")
+    const [visible, setVisible] = useState(false)
 
     useEffect(() => {
-        setOptions(prev => [...prev, ...LanguageOptions(prev.length)])
+        Languages.forEach((value, key) => {
+            setLanguages(prev => [...prev, {value:value, placeholder:value}])
+        })
     },[])
 
-    const ref = useRef(null)
+    function onOptionClickConstructor(option){
 
-    function onChange(e) {
-        const selected = ref.current.options[ref.current.options.selectedIndex]
-        setLanguage(selected.value!=""?selected.value:null)
+        return function onClick(e) {
+            e.preventDefault()
+
+            for (const opt of selectRef.current.options) {
+                if (option.placeholder == opt.label) {
+                    selectRef.current.value=option.value
+                    setPlaceHolder(option.placeholder)
+                }
+            }
+
+            setVisible(false)
+        }
     }
 
-    return (<select {...attrs} ref={ref} defaultValue={""} onChange={onChange}>
-        {options}
-    </select>)
+    function onClick(e) {
+        e.preventDefault()
+        setVisible(prev => !prev)
+    }
+
+    return (
+        <div className={styles.selector}>
+            <select ref={selectRef} {...attrs} className={styles.select} defaultValue={""}>
+                {languages.map((value) => <option value={value.value}>{value.placeholder}</option>)}
+            </select>
+
+            <div className={styles.select}>
+                <button onClick={onClick}>{placeholder}</button>
+                <div className={styles.options} style={{display:visible?"block":"none"}}>
+                    {languages.map((value) => 
+                        <button onClick={onOptionClickConstructor(value)}>
+                            {value.placeholder}
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    )
 }

@@ -34,38 +34,6 @@ export default function CourseSearch() {
             image: Historia,
             price: 50
         },
-        {
-            id:1,
-            language: "Python",
-            name: "Ensinando Python",
-            teachers:"Professor Everaldo",
-            image: Historia,
-            price: 50
-        },
-        {
-            id:1,
-            language: "Python",
-            name: "Ensinando Python",
-            teachers:"Professor Everaldo",
-            image: Historia,
-            price: 50
-        },
-        {
-            id:1,
-            language: "Python",
-            name: "Ensinando Python",
-            teachers:"Professor Everaldo",
-            image: Historia,
-            price: 50
-        },
-        {
-            id:1,
-            language: "Python",
-            name: "Ensinando Python",
-            teachers:"Professor Everaldo",
-            image: Historia,
-            price: 50
-        }
     ]))
 
     useEffect(() => {
@@ -73,19 +41,20 @@ export default function CourseSearch() {
             try {
                 const response = await axios({
                     ...requestData,
-                    data: {
+                    params: {
                         name:name,
                         length:0
                     }
                 })
+                console.log(response.data)
             
                 if (response.data && response.data.courses instanceof Object) {
                     setCachedCourses(
-                        {...courseListImagesToBlobURL(response.data.courses)
+                        new Set([...courseListImagesToBlobURL(response.data.courses)
                             .map((course, _, array) => {
                                 return {...course, key:currentCourses.length + array.length + 1}
                             })
-                        }
+                        ])
                     )
                 }
             } catch(error) {
@@ -94,7 +63,7 @@ export default function CourseSearch() {
         }
 
         getFirstCourses()
-    })
+    },[])
 
 
     return (

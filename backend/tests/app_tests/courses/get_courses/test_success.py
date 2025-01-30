@@ -9,7 +9,7 @@ def test_with_user(client:FlaskClient, csrf_token, create_course, commonCourseDa
     )
     response.close()
     courseName = commonCourseData["name"][:4]
-    response = client.get(f"/courses/search?length=0&name={courseName}")
+    response = client.get(f"/courses/search?length=0&name={courseName}&price=0,1000")
 
     json = response.get_json()
     assert json
@@ -20,7 +20,7 @@ def test_with_user(client:FlaskClient, csrf_token, create_course, commonCourseDa
 def test_without_user(client:FlaskClient, csrf_token, create_course, commonCourseData):
 
     courseName = commonCourseData["name"][:4]
-    response = client.get(f"/courses/search?length=0&name={courseName}",)
+    response = client.get(f"/courses/search?length=0&name={courseName}&price=0,1000",)
 
     json = response.get_json()
     assert json

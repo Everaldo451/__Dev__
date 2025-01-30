@@ -1,9 +1,18 @@
 import { getState } from "../../../CourseCatalog/coursesInCacheFunctions"
 import { courseListLength } from "../../../../CourseListLength"
 import { courseListImagesToBlobURL } from "../../../../utils/courseListModifiers"
+import styles from "./index.module.css"
 import axios from "axios"
 
-export default function SubmitInput({unFilteredCourses, currentCourses, setCurrentCourses, requestData}) {
+export default function SubmitInput(
+    {
+        filterSwitchs,
+        unFilteredCourses, 
+        currentCourses, 
+        setCurrentCourses, 
+        requestData
+    }
+) {
 
     const getLocalCourses = () => getState(unFilteredCourses)
 
@@ -13,24 +22,24 @@ export default function SubmitInput({unFilteredCourses, currentCourses, setCurre
         }
 
         filtersFormData.forEach((value, key) => {
-            if (value instanceof Object && value.state && value.setter) {
-                value.state!=null?
-                    filters[key] = value.state
-                    :null
-            } else {
-                value!=null?
-                    filters[key] = value
-                    :null
-            }
+            value!=null?filters[key] = value:null
         })
 
         return filters
     }
 
-    function filterModified(key, filterValue, coursesToFilter, equalTo) {
-        console.log(key, filterValue, coursesToFilter)
+    function switchValues(courseKey, courseKeyValue, filterValue) {
+        
+        if (filterSwitchs[courseKey]) {
+            return filterSwitchs[courseKey](courseKeyValue, filterValue)
+        }
+        return false
+    }
+
+    function filterModified(key, filterValue, coursesToFilter) {
+        console.log(key, filterValue)
         const courses = filterValue!=null?
-            coursesToFilter.filter(course => course[key] == filterValue)
+            coursesToFilter.filter(course => switchValues(key, course[key], filterValue))
             :coursesToFilter
         
         return courses
@@ -52,7 +61,12 @@ export default function SubmitInput({unFilteredCourses, currentCourses, setCurre
 
         let gettedCourses = []
         try {
-            const response = await axios({...requestData, data: data})
+            const requestParams=requestData.method=="GET"?
+                {...requestData, params: data}
+                :{...requestData, data: data}
+
+            console.log(requestParams)
+            const response = await axios(requestParams)
 
             if (response.data && response.data.courses instanceof Object) {
                 gettedCourses = response.data.courses
@@ -69,6 +83,6 @@ export default function SubmitInput({unFilteredCourses, currentCourses, setCurre
     }
 
     return (
-        <input type="submit" onClick={onClick}/>
+        <input type="submit" className={styles.submit} value="Apply" onClick={onClick}/>
     )
 }

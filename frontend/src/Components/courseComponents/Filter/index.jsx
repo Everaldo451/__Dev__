@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { setState } from "../../CourseCatalog/coursesInCacheFunctions"
 import NameField from "./NameField"
 import PriceField from "./PriceField"
+import LanguageField from "./LanguageField"
 import SubmitInput from "./SubmitInput"
 import styles from "./index.module.css"
 
@@ -19,6 +20,7 @@ export function Filter(
     const [unFilteredCourses, setUnFilteredCourses] = unFilteredCoursesState
 
     const [language, setLanguage] = useState(null)
+    const [filterSwitchs, setFilterSwitchs] = useState({})
 
     const setLocalCourses = (courses) => setState(courses, unFilteredCourses, setUnFilteredCourses)
 
@@ -31,14 +33,16 @@ export function Filter(
 
     return (
         <section className={`${styles.filter} ${slideIn?styles.filterIn:styles.filterOut}`}>
-            <form>
-                <NameField/>
-                <PriceField/>
+            <form className={styles.form}>
+                <NameField setFilterSwitchs={setFilterSwitchs}/>
+                <PriceField setFilterSwitchs={setFilterSwitchs}/>
+                <LanguageField setFilterSwitchs={setFilterSwitchs}/>
                 <SubmitInput 
                     unFilteredCourses={unFilteredCourses}
                     currentCourses={currentCourses}
                     setCurrentCourses={setCurrentCourses}
                     requestData={requestData}
+                    filterSwitchs={filterSwitchs}
                 />
             </form>
         </section>

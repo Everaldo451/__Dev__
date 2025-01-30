@@ -104,12 +104,23 @@ class Search(Resource):
     @jwt_required(locations="cookies", optional=True)
     @api.marshal_with(ManyCourseResponseSerializer)
     def get(self):
-        logging.basicConfig(level="DEBUG")
+        logging.basicConfig(level="DEBUG")    
         args = CourseArgsParser.parse_args()
         filters = []
 
         name = args.get("name")
-        filters.append(Course.name.ilike(f'%{name}%'))
+        price = args.get("price")
+        if name:
+            filters.append(Course.name.ilike(f'%{name}%'))
+        if price:
+            print(price)
+            try:
+                min_value, max_value = price
+                filters.append(Course.price>=min_value)
+                filters.append(Course.price<=max_value)
+            except:
+                return {"message": "Invalid values."}, 400
+            
         if current_user != None:
             filters.append(~Course.users.any(User.id == current_user.id))
 

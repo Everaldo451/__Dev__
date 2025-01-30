@@ -44,7 +44,13 @@ CourseArgsBaseParser.add_argument(
     "length",
     type=int,
     required=True
-) 
+)
+CourseArgsBaseParser.add_argument(
+    "price",
+    type=int,
+    action="split",
+    required=False
+)
 
 CourseArgsParser = CourseArgsBaseParser.copy()
 CourseArgsParser.add_argument(

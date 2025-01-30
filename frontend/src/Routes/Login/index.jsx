@@ -61,7 +61,7 @@ function Login(){
 
                     
                 <form action={action?`/api/${action}`:""} method="POST" onSubmit={onSubmit}>
-                    {action == "register"?
+                    {action == "users"?
                     <>
                         <input type="text" name="full_name" placeholder="Digite seu nome completo" required/>
                         <input type="email" name="email" placeholder="Digite um email" required/>
