@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { setState } from "../../CourseCatalog/coursesInCacheFunctions"
 import NameField from "./NameField"
 import PriceField from "./PriceField"
@@ -18,22 +18,31 @@ export function Filter(
 
     const [currentCourses, setCurrentCourses] = currentCoursesState
     const [unFilteredCourses, setUnFilteredCourses] = unFilteredCoursesState
-
-    const [language, setLanguage] = useState(null)
     const [filterSwitchs, setFilterSwitchs] = useState({})
+    const formRef=useRef(null)
 
     const setLocalCourses = (courses) => setState(courses, unFilteredCourses, setUnFilteredCourses)
 
     useEffect(() => {
-        if (language == null && currentCourses.length > 0) {
-            console.log(currentCourses.length, currentCourses)
-            setLocalCourses(currentCourses)
+        const formData=new FormData(formRef.current)
+
+        let isNotFiltered=true
+        for (const [filterName, filterData] of Object.entries(filterSwitchs)) {
+            const inputValue=formData.get(filterName)
+            if (inputValue===filterData.defaultValue) {
+                continue
+            }
+            isNotFiltered=false
+            break
         }
+
+        isNotFiltered?setLocalCourses(currentCourses):null
     },[currentCourses])
+
 
     return (
         <section className={`${styles.filter} ${slideIn?styles.filterIn:styles.filterOut}`}>
-            <form className={styles.form}>
+            <form ref={formRef} className={styles.form}>
                 <NameField setFilterSwitchs={setFilterSwitchs}/>
                 <PriceField setFilterSwitchs={setFilterSwitchs}/>
                 <LanguageField setFilterSwitchs={setFilterSwitchs}/>

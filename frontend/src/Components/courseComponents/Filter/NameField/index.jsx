@@ -6,8 +6,11 @@ export default function NameField({setFilterSwitchs}) {
 
     useEffect(()=>{
         setFilterSwitchs(prev => ({...prev, 
-            "name": (courseKeyValue, filterValue) => {
-                return courseKeyValue.includes(filterValue)
+            "name": {
+                "function": (courseKeyValue, filterValue) => {
+                    return courseKeyValue.includes(filterValue)
+                },
+                "defaultValue":""
             }
         }))
     },[])

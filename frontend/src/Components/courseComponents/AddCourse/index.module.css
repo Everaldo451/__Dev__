@@ -1,3 +1,39 @@
+button.addCourse {
+    --bgcolor: black;
+    position: relative;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: inherit;
+    border: 2px solid var(--bgcolor);
+    margin-left: 10px;
+}
+
+button.addCourse:hover {
+    cursor: pointer;
+}
+
+button.addCourse::before {
+    position: absolute;
+    content: "";
+    top:50%;
+    left:50%;
+    width: calc(100% - 5px);
+    height: 2px;
+    background-color: var(--bgcolor);
+    transform: translate(-50%,-50%);
+}
+
+button.addCourse::after {
+    position: absolute;
+    content: "";
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: calc(100% - 5px);
+    background-color: var(--bgcolor);
+    transform: translate(-50%,-50%);
+}
+
 form.CreateCourse {
     display: flex;
     position: fixed;

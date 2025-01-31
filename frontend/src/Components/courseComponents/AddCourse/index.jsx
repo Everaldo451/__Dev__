@@ -64,7 +64,7 @@ export default function AddCourse({setCourses}) {
 
     return (
         <>
-            <CourseRouteCommonButton onClick={(e) => {setFormRendered(!formRendered)}}>Add Course</CourseRouteCommonButton>
+            <button onClick={(e) => {setFormRendered(!formRendered)}} className={styles.addCourse}/>
             {formRendered==true?
                 <form 
                     ref={formRef} 
@@ -89,6 +89,11 @@ export default function AddCourse({setCourses}) {
                     <div>
                         <label htmlFor="description">Descrição:</label>
                         <textarea name="description" required/>
+                    </div>
+
+                    <div>
+                        <label htmlFor="price">Preço:</label>
+                        <input type="number" name="price" min={0} max={1000}/>
                     </div>
 
                     <input type="submit" value={"Enter"}/>

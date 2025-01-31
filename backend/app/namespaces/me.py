@@ -33,12 +33,12 @@ class MeCourseList(Resource):
 
         filters.append(Course.users.any(User.id == current_user.id))
         try:
-            filters.append(Course.language == Languages(args.get("lang")))
+            filters.append(Course.language == Languages(args.get("language")))
         except ValueError as error: pass
 
         length = args.get("length")
         try:
-            return filter_courses(filters, length), 200
+            return filter_courses(filters, length)
         except Exception as error:
             print(error)
             return {"message":"Internal server error."}, 500

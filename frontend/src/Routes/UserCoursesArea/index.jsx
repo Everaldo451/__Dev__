@@ -9,9 +9,40 @@ import styles from "./index.module.css"
 
 export default function UserCoursesArea() {
 
-    const [user, setUser] = useContext(User)
+    const [user, _] = useContext(User)
     const [userCourses, setUserCourses] = useContext(Courses)
-    console.log(user)
+    const requestData = {
+        url: "/api/me/courses",
+        method: "GET",
+    }
+
+    useEffect(() => {
+        async function getFirstCourses() {
+            try {
+                const response = await axios({
+                    ...requestData,
+                    params: {
+                        length:0
+                    }
+                })
+            
+                if (response.data && response.data.courses instanceof Object) {
+                    setUserCourses(
+                        new Set([...courseListImagesToBlobURL(response.data.courses)
+                            .map((course, _, array) => {
+                                return {...course, key:userCourses.length + array.length + 1}
+                            })
+                        ])
+                    )
+                }
+
+            } catch(error) {
+                console.log("Error in user courses get", error)
+            }
+        }
+
+        getFirstCourses()
+    },[])
 
     if (user) {
 
@@ -21,10 +52,7 @@ export default function UserCoursesArea() {
                     filters={[]} 
                     subscribe={false} 
                     userArea={true}
-                    requestData={{
-                        url: "/api/me/courses",
-                        method: "GET",
-                    }}
+                    requestData={requestData}
                     courseStateOrContext={[userCourses, setUserCourses]} 
                 />
             </main>

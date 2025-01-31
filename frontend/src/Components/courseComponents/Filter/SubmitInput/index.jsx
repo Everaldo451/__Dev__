@@ -22,23 +22,23 @@ export default function SubmitInput(
         }
 
         filtersFormData.forEach((value, key) => {
-            value!=null?filters[key] = value:null
+            value!=""?filters[key] = value:null
         })
 
         return filters
     }
 
     function switchValues(courseKey, courseKeyValue, filterValue) {
-        
-        if (filterSwitchs[courseKey]) {
-            return filterSwitchs[courseKey](courseKeyValue, filterValue)
+        const filterData = filterSwitchs[courseKey]
+        if (filterData) {
+            const fn = filterData.function
+            return fn(courseKeyValue, filterValue)
         }
         return false
     }
 
     function filterModified(key, filterValue, coursesToFilter) {
-        console.log(key, filterValue)
-        const courses = filterValue!=null?
+        const courses = filterValue!==""?
             coursesToFilter.filter(course => switchValues(key, course[key], filterValue))
             :coursesToFilter
         
@@ -57,7 +57,6 @@ export default function SubmitInput(
         if (courses.length != 0 && courses.length%courseListLength == 0) {return}
 
         const data = getFiltersData(courses, formData)
-        console.log(data, courses)
 
         let gettedCourses = []
         try {
@@ -65,7 +64,6 @@ export default function SubmitInput(
                 {...requestData, params: data}
                 :{...requestData, data: data}
 
-            console.log(requestParams)
             const response = await axios(requestParams)
 
             if (response.data && response.data.courses instanceof Object) {

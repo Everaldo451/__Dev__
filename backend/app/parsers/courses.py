@@ -35,7 +35,7 @@ CreateCourseParser.add_argument(
 
 CourseArgsBaseParser = reqparse.RequestParser()
 CourseArgsBaseParser.add_argument(
-    "lang",
+    "language",
     type=str,
     choices=[language.value for language in Languages],
     required=False

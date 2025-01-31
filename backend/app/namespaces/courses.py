@@ -125,7 +125,7 @@ class Search(Resource):
             filters.append(~Course.users.any(User.id == current_user.id))
 
         try:
-            filters.append(Course.language == Languages(args.get("lang")))
+            filters.append(Course.language == Languages(args.get("language")))
         except ValueError as error: pass
 
         length = args.get("length")

@@ -8,7 +8,7 @@ import styles from "./index.module.css"
 export default function CourseCatalog({initialfilters, userArea, courseStateOrContext, requestData}){
 
     const [coursesInCache, setCoursesInCache] = courseStateOrContext
-    const [currentCourses, setCurrentCourses] = useState([...coursesInCache])
+    const [currentCourses, setCurrentCourses] = useState([])
     const [unFilteredCourses, setUnFilteredCourses] = useState(new Set(coursesInCache))
     const [page, setPage] = useState(1)
 
@@ -26,9 +26,13 @@ export default function CourseCatalog({initialfilters, userArea, courseStateOrCo
         }
     },[])
 
+    useEffect(()=>{
+       setCurrentCourses([...coursesInCache])
+    },[coursesInCache])
+
     return (
         <>
-            <CourseHeader setHidden={setHidden}/>
+            <CourseHeader setHidden={setHidden} setCurrentCourses={setCurrentCourses}/>
 
             {!hidden?<DarkMask setHidden={setHidden} slideIn={slideIn} setSlideIn={setSlideIn}/>:null}
             <Filter 

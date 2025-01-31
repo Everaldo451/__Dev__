@@ -6,9 +6,11 @@ export default function LanguageField({setFilterSwitchs}) {
 
     useEffect(()=>{
         setFilterSwitchs(prev => ({...prev, 
-            "language":(courseKeyValue, filterValue) => {
-                if (filterValue.length==0){return true}
-                return courseKeyValue==filterValue
+            "language":{
+                "function": (courseKeyValue, filterValue) => {
+                    return courseKeyValue==filterValue
+                },
+                "defaultValue":""
             }
         }))
     },[])

@@ -20,14 +20,19 @@ class DecimalField(fields.Raw):
             return str(value)
         
         raise ValueError("This field should be a Decimal.")
+    
+class LanguageField(fields.Raw):
+    def format(self, value):
+        if value.value not in [language.value for language in Languages]:
+            raise ValueError("Invalid user type.")
+        
+        return value.value
 
 CourseSerializer = {
     "id": fields.Integer,
     "name": fields.String,
     "description": fields.String,
-    "language": fields.String(
-        enum=[language.value for language in Languages],
-    ),
+    "language": LanguageField,
     "image": ImageField(attribute="image_data"),
     "image_mime_type": fields.String,
     "date_created": fields.DateTime,

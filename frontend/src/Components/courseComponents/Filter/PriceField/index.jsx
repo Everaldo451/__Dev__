@@ -93,10 +93,13 @@ export default function PriceField({setFilterSwitchs}) {
 
     useEffect(() => {
         setFilterSwitchs(prev => ({...prev, 
-            "price": (courseKeyValue, filterValue) => {
-                const regex=/(\d+),(\d+)/
-                const [min, max] = regex.exec(filterValue).splice(1)
-                return courseKeyValue>=min && courseKeyValue<=max
+            "price": {
+                "function": (courseKeyValue, filterValue) => {
+                    const regex=/(\d+),(\d+)/
+                    const [min, max] = regex.exec(filterValue).splice(1)
+                    return courseKeyValue>=min && courseKeyValue<=max
+                },
+                "defaultValue":"0,1000"
             }
         }))
     },[])
