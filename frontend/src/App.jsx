@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
-import AccessTokenInterval from './Token.jsx'
-import LoadContexts from './MainContexts.jsx'
+import { Router } from './Router.jsx'
+import accessTokenInterval from './utils/tokenInterval.js'
+import LoadContexts from './contexts/mainContexts.jsx'
 import axios from 'axios'
-import Header from './Components/Header/index.jsx'
-import Footer from './Components/Footer/index.jsx'
 
 export default function App() {
 
@@ -24,7 +22,7 @@ export default function App() {
           const token = response.data.csrf
           console.log(token)
           setCSRFToken(token)
-          AccessTokenInterval([user, setUser], [token, setCSRFToken], [courses, setCourses], setLoaded)
+          accessTokenInterval([user, setUser], [token, setCSRFToken], setLoaded)
         }
       } catch(error) {setLoaded(true)}
     }
@@ -40,9 +38,7 @@ export default function App() {
         user: [user, setUser],
         courses: [courses, setCourses]
       }}>
-        <Header/>
-        <Outlet/>
-        <Footer/>
+        <Router/>
       </LoadContexts>
     )
 

@@ -1,4 +1,4 @@
-from ...models.course_model import Course
+from ..models.course_model import Course
 import math
 
 def filter_courses(filters:list, offset:int):

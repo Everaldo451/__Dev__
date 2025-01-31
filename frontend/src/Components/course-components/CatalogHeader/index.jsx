@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { User } from "../../../MainContexts"
+import { User } from "../../../contexts/mainContexts"
 import AnimatedImage from "./AnimatedImage"
 import AddCourse from "../AddCourse"
 import styles from "./index.module.css"

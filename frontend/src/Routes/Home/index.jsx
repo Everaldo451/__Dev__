@@ -1,13 +1,13 @@
 import { useContext, useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { CSRFContext, User } from "../../MainContexts"
-import Box from "../../Components/HomeBox"
+import { CSRFContext, User } from "../../contexts/mainContexts"
+import Box from "../../components/HomeBox"
 import styles from "./index.module.css"
 import Computador from "../../assets/computador.webp"
 import History from "../../assets/historia.png"
 import Objective from "../../assets/alvo.png"
 import Quality from "../../assets/verificar.png"
-import SearchBar from "../../Components/SearchBar"
+import SearchBar from "../../components/SearchBar"
 
 function TextInterval({text}) {
 
@@ -112,7 +112,7 @@ function Home() {
             <section className={styles.introduct}>
                 <div className={styles.hello}>
                     {user?
-                        <TextInterval text={`Ola, ${user.first_name}, seja bem vindo. Se inscreva para progredir na sua jornada como programador.`}/>
+                        <TextInterval text={`Ola, ${user.full_name}, seja bem vindo. Se inscreva para progredir na sua jornada como programador.`}/>
                         :<TextInterval text={"Ola, seja bem vindo. Se inscreva para progredir na sua jornada como programador."}/>
                     }
                     <SearchBar/>

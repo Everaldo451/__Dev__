@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useContext, useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { User, Courses } from "../../MainContexts";
-import CourseCatalog from "../../Components/CourseCatalog";
+import { User, Courses } from "../../contexts/mainContexts";
+import CourseCatalog from "../../components/CourseCatalog";
 import { courseListImagesToBlobURL } from "../../utils/courseListModifiers";
 import styles from "./index.module.css"
 
@@ -22,7 +22,7 @@ export default function UserCoursesArea() {
                 const response = await axios({
                     ...requestData,
                     params: {
-                        length:0
+                        length:userCourses.size
                     }
                 })
             
@@ -30,7 +30,7 @@ export default function UserCoursesArea() {
                     setUserCourses(
                         new Set([...courseListImagesToBlobURL(response.data.courses)
                             .map((course, _, array) => {
-                                return {...course, key:userCourses.length + array.length + 1}
+                                return {...course, key:userCourses.size + array.length + 1}
                             })
                         ])
                     )

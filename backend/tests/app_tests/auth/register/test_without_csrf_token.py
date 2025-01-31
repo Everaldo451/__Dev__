@@ -1,10 +1,10 @@
 import pytest
 from flask.testing import FlaskClient
 
-def test_without_csrf_token(client:FlaskClient, userData):
+def test_without_csrf_token(client:FlaskClient, user_data):
 
     response = client.post("/users",
-        data = userData
+        data = user_data
     )
 
     json = response.get_json()

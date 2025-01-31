@@ -3,7 +3,7 @@ from flask.testing import FlaskClient
 from werkzeug.security import generate_password_hash
 
 @pytest.fixture
-def userData():
+def user_data():
     return {
         "email": "algum@email.com",
         "password": "algumasenha",
@@ -11,20 +11,20 @@ def userData():
     }
 
 @pytest.fixture
-def teacherData(userData):
-    userData["is_teacher"] = "on"
-    return userData
+def teacher_data(user_data):
+    user_data["is_teacher"] = "on"
+    return user_data
 
 @pytest.fixture
-def studentData(userData):
-    return userData
+def student_data(user_data):
+    return user_data
 
 @pytest.fixture
-def create_user(client:FlaskClient, db_conn, Users, userData):
+def create_user(client:FlaskClient, db_conn, Users, user_data):
 
-    userData["password"] = generate_password_hash(userData.get("password"))
+    user_data["password"] = generate_password_hash(user_data.get("password"))
 
-    splitted_name = userData["full_name"].split(maxsplit=1)
+    splitted_name = user_data["full_name"].split(maxsplit=1)
     first_name = splitted_name[0]
     last_name = splitted_name[1]
 
@@ -32,8 +32,8 @@ def create_user(client:FlaskClient, db_conn, Users, userData):
 
         try: 
             new_user = Users(
-                email=userData["email"],
-                password=userData["password"],
+                email=user_data["email"],
+                password=user_data["password"],
                 first_name=first_name,
                 last_name=last_name
             )
@@ -57,33 +57,16 @@ def csrf_token(client:FlaskClient):
 
 
 @pytest.fixture
-def register_user_and_log_in(client:FlaskClient, userData, csrf_token):
+def register_user(client:FlaskClient, user_data, csrf_token):
 
     response = client.post("/users",
-        data=userData,
+        data=user_data,
         headers={
             "X-CSRFToken":csrf_token
         },
     )
     assert response.status_code == 200
     response.close()
-
-    response = client.get("/me",
-        headers = {
-            "X-CSRFToken":csrf_token,
-        }
-    )
-
-    json = response.get_json()
-    assert json
-    user_type = json["user_type"]
-    
-    if userData.get("is_teacher"):
-        assert user_type == "teacher"
-        print("is_teacher")
-    else:
-        assert user_type == "student"
-        print("is_student")
 
     yield
     

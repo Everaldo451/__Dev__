@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { Languages } from "../../../Languages"
+import { Languages } from "../../../enums/languages"
 import styles from "./index.module.css"
 
 export default function LanguageSelector ({attrs}) {

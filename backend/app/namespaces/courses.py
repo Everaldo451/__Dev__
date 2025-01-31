@@ -1,10 +1,10 @@
 from flask import request
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
 from sqlalchemy.exc import IntegrityError
 from ..models.course_model import Course, Languages
 from ..models.user_model import User, UserTypes
-from ..utils.courses.filter_courses import filter_courses
+from ..utils.filter_courses import filter_courses
 from ..decorators.verify_permission import verify_user_permissions
 from ..parsers.courses import CreateCourseParser, CourseArgsParser
 from ..serializers.course_serializer import CourseSerializer, OneCourseResponseSerializer, ManyCourseResponseSerializer

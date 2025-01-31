@@ -1,12 +1,12 @@
 import pytest
 from flask.testing import FlaskClient
 
-def test_invalid_credentials(client:FlaskClient, csrf_token, create_user, userData):
+def test_invalid_credentials(client:FlaskClient, csrf_token, create_user, user_data):
 
-    userData.pop("email")
+    user_data.pop("email")
 
     response = client.post("/auth/signin",
-        data=userData,
+        data=user_data,
         headers = {
             "X-CSRFToken": csrf_token
         }

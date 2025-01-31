@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react"
-import PageChangeButton from "../courseComponents/PageChangeButton"
-import CourseHeader from "../courseComponents/CatalogHeader"
-import Course from "../courseComponents/Course"
-import {DarkMask, Filter} from "../courseComponents/Filter"
+import PageChangeButton from "../course-components/PageChangeButton"
+import CourseHeader from "../course-components/CatalogHeader"
+import Course from "../course-components/Course"
+import {DarkMask, Filter} from "../course-components/Filter"
 import styles from "./index.module.css"
 
 export default function CourseCatalog({initialfilters, userArea, courseStateOrContext, requestData}){
 
     const [coursesInCache, setCoursesInCache] = courseStateOrContext
     const [currentCourses, setCurrentCourses] = useState([])
-    const [unFilteredCourses, setUnFilteredCourses] = useState(new Set(coursesInCache))
+    const [unFilteredCourses, setUnFilteredCourses] = useState(new Set())
     const [page, setPage] = useState(1)
 
     const [hidden, setHidden] = useState(true)
@@ -21,13 +21,14 @@ export default function CourseCatalog({initialfilters, userArea, courseStateOrCo
 
     useEffect(() => {
         return () => {
-            console.log(unFilteredCourses)
             setCoursesInCache(unFilteredCourses)
         }
     },[])
 
     useEffect(()=>{
-       setCurrentCourses([...coursesInCache])
+        console.log(coursesInCache)
+        setCurrentCourses([...coursesInCache])
+        setUnFilteredCourses(new Set(coursesInCache))
     },[coursesInCache])
 
     return (

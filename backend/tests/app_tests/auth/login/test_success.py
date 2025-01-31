@@ -1,11 +1,11 @@
 from flask.testing import FlaskClient
 
-def test_success(client:FlaskClient, csrf_token, create_user, userData):
+def test_success(client:FlaskClient, csrf_token, create_user, user_data):
 
-    userData.pop("full_name")
+    user_data.pop("full_name")
 
     response = client.post("/auth/signin",
-        data=userData,
+        data=user_data,
         headers={
             'X-CSRFToken': csrf_token
         },

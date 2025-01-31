@@ -1,11 +1,11 @@
 from flask.testing import FlaskClient
 
-def test_invalid_credentials(client:FlaskClient, csrf_token, userData):
+def test(client:FlaskClient, csrf_token, user_data):
 
-    userData.pop("full_name")
+    user_data.pop("full_name")
 
     response = client.post("/users",
-        data=userData,
+        data=user_data,
         headers={
             "X-CSRFToken":csrf_token
         },

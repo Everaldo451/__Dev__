@@ -1,10 +1,10 @@
 import pytest
 from flask.testing import FlaskClient
 
-def test_existing_email(client:FlaskClient, csrf_token, create_user, userData):
+def test(client:FlaskClient, csrf_token, create_user, user_data):
 
     response = client.post("/users",
-        data=userData,
+        data=user_data,
         headers={
             'X-CSRFToken': csrf_token
         },

@@ -1,5 +1,5 @@
 import { getState } from "../../../CourseCatalog/coursesInCacheFunctions"
-import { courseListLength } from "../../../../CourseListLength"
+import { courseListLength } from "../../../../courseListLength"
 import { courseListImagesToBlobURL } from "../../../../utils/courseListModifiers"
 import styles from "./index.module.css"
 import axios from "axios"

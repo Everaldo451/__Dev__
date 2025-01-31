@@ -1,5 +1,5 @@
 import { useState, useContext, useRef, useEffect } from "react"
-import { User } from "../../MainContexts"
+import { User } from "../../contexts/mainContexts"
 import style from "./index.module.css"
 import { Navigate } from "react-router-dom"
 

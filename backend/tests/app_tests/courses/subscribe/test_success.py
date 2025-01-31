@@ -1,7 +1,7 @@
 import pytest
 from flask.testing import FlaskClient
 
-def test_success(client:FlaskClient, csrf_token, create_course, courseData, register_user_and_log_in):
+def test_success(client:FlaskClient, csrf_token, create_course, course_data, register_user):
 
     response = client.patch(f"/me/courses/1",
         headers = {

@@ -2,8 +2,8 @@ import styles from "./index.module.css"
 import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import axios from "axios"
-import CourseCatalog from "../../Components/CourseCatalog"
-import { User } from "../../MainContexts"
+import CourseCatalog from "../../components/CourseCatalog"
+import { User } from "../../contexts/mainContexts"
 import { courseListImagesToBlobURL } from "../../utils/courseListModifiers"
 import Historia from "../../assets/historia.png"
 
@@ -16,25 +16,7 @@ export default function CourseSearch() {
         url: "/api/courses/search",
         method: "GET",
     }
-    
-    const [cachedCourses, setCachedCourses] = useState(new Set([
-        {
-            id:1,
-            language: "Python",
-            name: "Ensinando Python",
-            teachers:"Professor Everaldo",
-            image: Historia,
-            price: 50
-        },
-        {
-            id:1,
-            language: "Python",
-            name: "Ensinando Python",
-            teachers:"Professor Everaldo",
-            image: Historia,
-            price: 50
-        },
-    ]))
+    const [cachedCourses, setCachedCourses] = useState(new Set([]))
 
     useEffect(() => {
         async function getFirstCourses() {

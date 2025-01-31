@@ -6,7 +6,7 @@ from flask.testing import FlaskClient
 from werkzeug.datastructures import FileStorage
 
 @pytest.fixture
-def imageFileStorage():
+def image_file_storage():
 
     path = f"{os.path.dirname(os.path.abspath(__file__))}/images"
 
@@ -21,7 +21,7 @@ def imageFileStorage():
 
 
 @pytest.fixture
-def imageBytes():
+def image_bytes():
 
     path = f"{os.path.dirname(os.path.abspath(__file__))}/images"
 
@@ -29,12 +29,12 @@ def imageBytes():
         return file.read()
     
 @pytest.fixture
-def image_mime_type(imageBytes):
+def image_mime_type(image_bytes):
     mime = magic.Magic(True)
-    return mime.from_buffer(imageBytes)
+    return mime.from_buffer(image_bytes)
 
 @pytest.fixture
-def commonCourseData(Language):
+def common_course_data(Language):
     return {
         "name": "Ensinando Python",
         "language": Language.PYTHON,
@@ -43,22 +43,22 @@ def commonCourseData(Language):
     }
 
 @pytest.fixture
-def courseData(commonCourseData, imageFileStorage):
-    commonCourseData["image"] = imageFileStorage
-    commonCourseData["language"] = commonCourseData["language"].value
+def course_data(common_course_data, image_file_storage):
+    common_course_data["image"] = image_file_storage
+    common_course_data["language"] = common_course_data["language"].value
     
-    return commonCourseData
+    return common_course_data
 
 @pytest.fixture
-def create_course(client:FlaskClient, db_conn, Courses, commonCourseData, imageBytes, image_mime_type):
+def create_course(client:FlaskClient, db_conn, Courses, common_course_data, image_bytes, image_mime_type):
 
-    commonCourseData["image"] = imageBytes
-    commonCourseData["image_mime_type"] = image_mime_type
+    common_course_data["image"] = image_bytes
+    common_course_data["image_mime_type"] = image_mime_type
 
     with client.application.app_context():
 
         try: 
-            new_course = Courses(**commonCourseData)
+            new_course = Courses(**common_course_data)
             
             db_conn.session.add(new_course)
             db_conn.session.commit()

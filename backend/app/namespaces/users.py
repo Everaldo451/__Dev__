@@ -2,7 +2,7 @@ from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
 from ..models.user_model import User, UserTypes
 from ..db import db
-from ..utils.jwt.response_with_tokens import create_response_all_tokens
+from ..utils.response_with_tokens import create_response_all_tokens
 from ..decorators.verify_permission import verify_user_permissions
 from ..serializers.user_serializer import UserSerializer
 from ..parsers.authentication import RegisterParser

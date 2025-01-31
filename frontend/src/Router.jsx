@@ -1,25 +1,25 @@
-import Home from './Routes/Home'
-import Login from './Routes/Login'
-import CourseSearch from './Routes/CourseSearch'
-import Configs from './Routes/Configs'
-import UserCoursesArea from './Routes/UserCoursesArea'
+import Home from './routes/Home'
+import Login from './routes/Login'
+import CourseSearch from './routes/CourseSearch'
+import Configs from './routes/Configs'
+import UserCoursesArea from './routes/UserCoursesArea'
 import {BrowserRouter, Route, Routes} from "react-router-dom"
-import App from './App'
-import './App.css'
+import Header from './components/Header'
+import Footer from './components/Footer'
 
 export const Router = () => {
 
   return (
     <BrowserRouter>
+        <Header/>
         <Routes>
-            <Route path='/' element={<App/>}>
-                <Route index element={<Home/>}/>
-                <Route path='login' element={<Login/>}/>
-                <Route path='courses/:name' element={<CourseSearch/>}/>
-                <Route path='configs' element={<Configs/>}/>
-                <Route path='area' element={<UserCoursesArea/>}/>
-            </Route>
+            <Route path='/' element={<Home/>}/>
+            <Route path='/login' element={<Login/>}/>
+            <Route path='/courses/:name' element={<CourseSearch/>}/>
+            <Route path='/configs' element={<Configs/>}/>
+            <Route path='/area' element={<UserCoursesArea/>}/>
         </Routes>
+        <Footer/>
     </BrowserRouter>
   )
 }

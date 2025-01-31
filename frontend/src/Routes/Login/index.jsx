@@ -1,8 +1,8 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { CSRFContext, User, Courses } from "../../MainContexts";
+import { CSRFContext, User } from "../../contexts/mainContexts";
 import { Navigate } from "react-router-dom";
-import AccessTokenInterval from "../../Token";
+import { setUserContext } from "../../utils/tokenInterval";
 import axios from "axios";
 import styles from "./index.module.css"
 
@@ -11,7 +11,6 @@ function Login(){
     const [user, setUser] = useContext(User)
     const [csrf_token, setCSRFToken] = useContext(CSRFContext)
     const [action, setAction] = useState("/auth/signin")
-    const [courses, setCourses] = useContext(Courses)
     const [errorMessage, setErrorMessage] = useState(null)
     const navigate = useNavigate()
 
@@ -34,12 +33,8 @@ function Login(){
             console.log(response.data)
 
             if (response.status == 200) {
-                await AccessTokenInterval(
-                    [user,setUser], 
-                    [csrf_token,setCSRFToken], 
-                    [courses, setCourses]
-                )
-                navigate('/')
+                await setUserContext(csrf_token, setUser)
+                navigate("/")
             }
         } catch(e) {
             const errorData = e.response.data

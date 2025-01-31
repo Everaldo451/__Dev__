@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, current_user
 from ..models.user_model import User, UserTypes
 from ..models.course_model import Course, Languages
 from ..db import db
-from ..utils.courses.filter_courses import filter_courses
+from ..utils.filter_courses import filter_courses
 from ..decorators.verify_permission import verify_user_permissions
 from ..parsers.courses import CourseArgsBaseParser
 from ..serializers.course_serializer import ManyCourseResponseSerializer

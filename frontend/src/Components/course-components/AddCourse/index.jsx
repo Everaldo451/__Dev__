@@ -1,6 +1,5 @@
 import { useState, useRef, useContext } from "react"
-import { CSRFContext } from "../../../MainContexts"
-import CourseRouteCommonButton from "../../CourseRouteCommonButton"
+import { CSRFContext } from "../../../contexts/mainContexts"
 import { courseImageToBlobURL } from "../../../utils/courseListModifiers"
 import axios from "axios"
 import styles from "./index.module.css"
@@ -41,8 +40,6 @@ export default function AddCourse({setCourses}) {
     async function onSubmit(e) {
         e.preventDefault()
         const data = new FormData(e.target)
-
-        data.forEach((value,key) => {console.log(key, value)})
         
         try {
             const response = await axios({
