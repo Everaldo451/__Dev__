@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react"
-import { Languages } from "../../../enums/languages"
+import { Languages } from "../../../../../enums/languages"
 import styles from "./index.module.css"
 
-export default function LanguageSelector ({attrs}) {
+export default function LanguageSelector (attrs) {
 
     const selectRef = useRef(null)
     const [languages, setLanguages] = useState([{value:"", placeholder:"None"}])

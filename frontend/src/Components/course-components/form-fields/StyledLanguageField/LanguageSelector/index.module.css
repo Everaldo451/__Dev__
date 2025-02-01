@@ -11,7 +11,7 @@ div.selector div.select {
 }
 
 div.selector div.select > button {
-    border: 3px solid var(--commonColor);
+    border: 3px solid var(--commonFieldColor);
     background-color: #F8F8F8;
     color: #878787;
     padding: 5px 10px;

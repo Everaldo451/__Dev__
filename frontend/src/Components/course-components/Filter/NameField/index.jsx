@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import styles from "./index.module.css"
+import StyledNameField from "../../form-fields/StyledNameField"
 
 export default function NameField({setFilterSwitchs}) {
     const [value, setValue] = useState("")
@@ -15,15 +15,9 @@ export default function NameField({setFilterSwitchs}) {
         }))
     },[])
     return (
-        <div>
-            <label>Name</label>
-            <input 
-                className={styles.Name} 
-                type="text" 
-                placeholder="nome do curso" 
-                onInput={(e) => {setValue(e.target.value)}}
-            />
-            <input type="hidden" name="name" value={value}/>
-        </div>
+        <>
+        <StyledNameField onInput={(e) => {setValue(e.target.value)}}/>
+        <input type="hidden" name="name" value={value}/>
+        </>
     )
 }

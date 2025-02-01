@@ -49,7 +49,7 @@ div.selector div.ball, div.selector div.buttons div.coloredBall {
 
 div.selector div.buttons div.coloredBall {
     position: relative;
-    background-color: var(--commonColor);
+    background-color: var(--commonFieldColor);
 }
 
 div.selector div.buttons div.coloredBall div.value {
@@ -65,5 +65,5 @@ div.selector div.buttons div.Line, div.selector div.Line {
 }
 
 div.selector div.buttons div.Line {
-    background-color: var(--commonColor);
+    background-color: var(--commonFieldColor);
 }

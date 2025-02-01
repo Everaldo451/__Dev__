@@ -1,3 +1,24 @@
+@keyframes slideIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+} 
+
+
 button.addCourse {
     --bgcolor: black;
     position: relative;
@@ -34,73 +55,28 @@ button.addCourse::after {
     transform: translate(-50%,-50%);
 }
 
-form.CreateCourse {
+form.createCourse {
     display: flex;
+    flex-direction: column;
     position: fixed;
     width: clamp(200px, 40vw, 400px);
-    flex-direction: column;
-    align-items: center;
-    background-color: rgb(99, 102, 116);
-    color: white;
-    border-radius: 10px;
+    height: 300px;
+    background-color: white;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
     padding: 20px;
-    box-shadow: 5px 5px 10px rgb(21, 21, 24);
+    z-index: 4;
 }
 
-form.CreateCourse > div:nth-child(n+1) {
-    margin-top: 15px;
+form.slideIn {
+    animation-name: slideIn;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
 }
 
-form.CreateCourse > div {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-form.CreateCourse > div input[type="file"] {
-    display: none;
-}
-
-form.CreateCourse > div > input {
-    padding: 5px;
-}
-
-
-form.CreateCourse > div.fileDiv > div {
-    display: flex;
-    flex-direction: row;
-}
-
-form.CreateCourse > div.fileDiv > span {
-    align-self: end;
-    margin-top: 5px;
-    text-decoration: underline;
-    font-size: 12px;
-}
-
-form.CreateCourse > div.fileDiv button, form.CreateCourse input[type="submit"] {
-    display: inline-block;
-    margin-left: auto;
-    align-self: flex-start;
-    background-color: rgb(140, 158, 179);
-    border-radius: 5px;
-    padding: 2px 5px;
-    width: auto;
-    outline: none;
-    border: 1px solid rgb(47, 48, 65);
-    color: white;
-    transition: all 0.5s;
-}
-
-form.CreateCourse > div.fileDiv button:hover, form.CreateCourse input[type="submit"]:hover {
-    cursor: pointer;
-    background-color: rgb(114, 127, 143);
-    transform: scale(1.05);
-}
-
-form.CreateCourse input[type="submit"] {
-    margin: 10px auto 0 auto;
+form.slideOut {
+    animation-name: slideOut;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
 }

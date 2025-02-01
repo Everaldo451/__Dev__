@@ -1,7 +1,7 @@
 import { getState } from "../../../CourseCatalog/coursesInCacheFunctions"
 import { courseListLength } from "../../../../courseListLength"
 import { courseListImagesToBlobURL } from "../../../../utils/courseListModifiers"
-import styles from "./index.module.css"
+import StyledSubmitInput from "../../form-fields/StyledSubmitInput"
 import axios from "axios"
 
 export default function SubmitInput(
@@ -81,6 +81,6 @@ export default function SubmitInput(
     }
 
     return (
-        <input type="submit" className={styles.submit} value="Apply" onClick={onClick}/>
+        <StyledSubmitInput onClick={onClick} value="Apply"/>
     )
 }

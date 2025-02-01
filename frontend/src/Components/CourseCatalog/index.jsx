@@ -2,7 +2,8 @@ import { useState, useEffect } from "react"
 import PageChangeButton from "../course-components/PageChangeButton"
 import CourseHeader from "../course-components/CatalogHeader"
 import Course from "../course-components/Course"
-import {DarkMask, Filter} from "../course-components/Filter"
+import { DarkMask } from "../DarkMask"
+import { Filter} from "../course-components/Filter"
 import styles from "./index.module.css"
 
 export default function CourseCatalog({initialfilters, userArea, courseStateOrContext, requestData}){

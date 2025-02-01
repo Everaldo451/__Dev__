@@ -1,6 +1,5 @@
 import { useEffect } from "react"
-import LanguageSelector from "../../LanguageSelector"
-import styles from "./index.module.css"
+import StyledLanguageField from "../../form-fields/StyledLanguageField"
 
 export default function LanguageField({setFilterSwitchs}) {
 
@@ -15,10 +14,7 @@ export default function LanguageField({setFilterSwitchs}) {
         }))
     },[])
     return (
-        <div className={styles.inputContainer}>
-            <label>Language</label>
-            <LanguageSelector attrs={{name:"language"}}/>
-        </div>
+        <StyledLanguageField name="language"/>
     )
 
 }

@@ -1,9 +1,11 @@
 import { useState, useRef, useContext } from "react"
 import { CSRFContext } from "../../../contexts/mainContexts"
+import StyledNameField from "../form-fields/StyledNameField/index"
+import StyledLanguageField from "../form-fields/StyledLanguageField/index"
+import StyledSubmitInput from "../form-fields/StyledSubmitInput/index"
 import { courseImageToBlobURL } from "../../../utils/courseListModifiers"
 import axios from "axios"
 import styles from "./index.module.css"
-import { useNavigate } from "react-router-dom"
 
 function FileInput() {
 
@@ -30,12 +32,10 @@ function FileInput() {
 
 }
 
-export default function AddCourse({setCourses}) {
+export default function AddCourse({setCourses, hiddenState, slideIn}) {
 
     const [csrf_token, _] = useContext(CSRFContext)
-
-    const [formRendered, setFormRendered] = useState(false)
-    const formRef = useRef(null)
+    const [hidden, setHidden] = hiddenState
 
     async function onSubmit(e) {
         e.preventDefault()
@@ -54,34 +54,23 @@ export default function AddCourse({setCourses}) {
 
             if (response.status == 200 && response.data.course) {
                 setCourses(prev => [courseImageToBlobURL({...response.data.course}), ...prev])
-                setFormRendered(false)
+                setHidden(false)
             }
         } catch (error) {} 
     }
 
     return (
         <>
-            <button onClick={(e) => {setFormRendered(!formRendered)}} className={styles.addCourse}/>
-            {formRendered==true?
+            <button onClick={(e) => {setHidden(!hidden)}} className={styles.addCourse}/>
+            {!hidden?
                 <form 
-                    ref={formRef} 
                     encType="multipart/form-data" 
-                    className={styles.CreateCourse} 
+                    className={`${styles.createCourse} ${slideIn?styles.slideIn:styles.slideOut}`} 
                     action="/api/courses"
                     method="POST"
                     onSubmit={onSubmit}
                 >
-                    <FileInput/>
-
-                    <div>
-                        <label htmlFor="name">Nome do curso:</label>
-                        <input type="text" name="name" placeholder="Insira o nome do seu curso" required/>
-                    </div>
-
-                    <div>
-                        <label htmlFor="language">Linguagem:</label>
-                        <input type="text" name="language" placeholder="Insira a linguagem" required/>
-                    </div>
+                    {/*<FileInput/>
 
                     <div>
                         <label htmlFor="description">Descrição:</label>
@@ -91,10 +80,11 @@ export default function AddCourse({setCourses}) {
                     <div>
                         <label htmlFor="price">Preço:</label>
                         <input type="number" name="price" min={0} max={1000}/>
-                    </div>
+                    </div>*/}
 
-                    <input type="submit" value={"Enter"}/>
-
+                    <StyledNameField name="name"/>
+                    <StyledLanguageField name="language"/>
+                    <StyledSubmitInput value="Enter"/>
                 </form>
                 :null
             }
