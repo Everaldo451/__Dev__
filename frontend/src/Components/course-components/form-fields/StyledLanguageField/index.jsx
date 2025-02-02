@@ -5,7 +5,7 @@ export default function StyledLanguageField(attrs) {
 
     return (
         <div className={styles.inputContainer}>
-            <label>Language</label>
+            <label htmlFor={attrs.id?attrs.id:null}>Language</label>
             <LanguageSelector {...attrs}/>
         </div>
     )

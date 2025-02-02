@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_restx import Api
 from dotenv import load_dotenv
 from .services.jwt_service import jwt
-from .initializers.namespaces import initialize_namespaces
+from .initializers.controllers import initialize_api_controllers
 from .db import db
 import os
 
@@ -37,5 +37,5 @@ def create_app():
     CSRF.init_app(app)
     jwt.init_app(app)
 
-    initialize_namespaces(api)
+    initialize_api_controllers(api)
     return app

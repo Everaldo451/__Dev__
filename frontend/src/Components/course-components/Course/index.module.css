@@ -6,13 +6,22 @@ section.course{
     background-color: #D6D7DF;
 }
 
+section.course:hover {
+    cursor: pointer;
+}
+
 section.course section.data {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    overflow: hidden;
     padding: 10px 20px;
 }
 
 section.course section.data p {
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin: 0;
 }
 
@@ -20,6 +29,9 @@ section.course section.data h4 {
     margin: 0;
     font-size: 20px;
     font-weight:normal;
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 section.course section.data p.price {

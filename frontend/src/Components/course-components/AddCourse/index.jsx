@@ -3,34 +3,11 @@ import { CSRFContext } from "../../../contexts/mainContexts"
 import StyledNameField from "../form-fields/StyledNameField/index"
 import StyledLanguageField from "../form-fields/StyledLanguageField/index"
 import StyledSubmitInput from "../form-fields/StyledSubmitInput/index"
+import StyledFileField from "../form-fields/StyledFileField/index"
+import StyledDescriptionField from "../form-fields/StyledDescriptionField"
 import { courseImageToBlobURL } from "../../../utils/courseListModifiers"
 import axios from "axios"
 import styles from "./index.module.css"
-
-function FileInput() {
-
-    const fileInputRef = useRef(null)
-    const [fileValue, setFileValue] = useState("")
-
-    function fileValueChange(e) {
-        const regex = /\\\w+\\(.+\.\w+)/
-        const value = e.currentTarget.value.match(regex)
-        console.log(value)
-        setFileValue(value?value[1]:"")
-    }
-
-    return (
-        <div className={styles.fileDiv}>
-            <div>
-                <label htmlFor="image">Logo:</label>
-                <input type="file" name="image" required ref={fileInputRef} onInput={fileValueChange}/>
-                <button onClick={(e) => {fileInputRef.current.click()}}>Upload</button>
-            </div>
-            <span>{fileValue}</span>
-        </div>
-    )
-
-}
 
 export default function AddCourse({setCourses, hiddenState, slideIn}) {
 
@@ -53,10 +30,11 @@ export default function AddCourse({setCourses, hiddenState, slideIn}) {
             })
 
             if (response.status == 200 && response.data.course) {
+                console.log(response.data.course)
                 setCourses(prev => [courseImageToBlobURL({...response.data.course}), ...prev])
                 setHidden(false)
             }
-        } catch (error) {} 
+        } catch (error) {console.log(error)} 
     }
 
     return (
@@ -70,20 +48,15 @@ export default function AddCourse({setCourses, hiddenState, slideIn}) {
                     method="POST"
                     onSubmit={onSubmit}
                 >
-                    {/*<FileInput/>
-
-                    <div>
-                        <label htmlFor="description">Descrição:</label>
-                        <textarea name="description" required/>
-                    </div>
-
-                    <div>
-                        <label htmlFor="price">Preço:</label>
+    
+                    <StyledNameField name="name" id="name"/>
+                    <StyledLanguageField name="language" id="language"/>
+                    <div className={styles.price}>
+                        <label>Price</label>
                         <input type="number" name="price" min={0} max={1000}/>
-                    </div>*/}
-
-                    <StyledNameField name="name"/>
-                    <StyledLanguageField name="language"/>
+                    </div>
+                    <StyledDescriptionField name="description" id="description"/>
+                    <StyledFileField name="image" id="image" required={true}/>
                     <StyledSubmitInput value="Enter"/>
                 </form>
                 :null

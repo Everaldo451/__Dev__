@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react"
+import CustomButon from "../../CustomButton"
 import { Languages } from "../../../../../enums/languages"
 import styles from "./index.module.css"
 
@@ -43,7 +44,7 @@ export default function LanguageSelector (attrs) {
             </select>
 
             <div className={styles.select}>
-                <button onClick={onClick}>{placeholder}</button>
+                <CustomButon onClick={onClick}>{placeholder}</CustomButon>
                 <div className={styles.options} style={{display:visible?"block":"none"}}>
                     {languages.map((value) => 
                         <button onClick={onOptionClickConstructor(value)}>

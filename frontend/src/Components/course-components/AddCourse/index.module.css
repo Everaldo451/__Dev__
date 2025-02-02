@@ -60,7 +60,7 @@ form.createCourse {
     flex-direction: column;
     position: fixed;
     width: clamp(200px, 40vw, 400px);
-    height: 300px;
+    min-height: 390px;
     background-color: white;
     top: 50%;
     left: 50%;
@@ -79,4 +79,16 @@ form.slideOut {
     animation-name: slideOut;
     animation-duration: 0.5s;
     animation-fill-mode: forwards;
+}
+
+form.createCourse div.price {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+}
+
+form.createCourse div.price input {
+    outline: none;
+    border: 2px solid var(--commonFieldColor);
+
 }

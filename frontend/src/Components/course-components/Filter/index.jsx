@@ -35,7 +35,8 @@ export function Filter(
             isNotFiltered=false
             break
         }
-
+        console.log("testing this")
+        console.log(currentCourses)
         isNotFiltered?setLocalCourses(currentCourses):null
     },[currentCourses])
 

@@ -1,19 +1,16 @@
-from flask import Flask, request
+from flask import Flask
 from flask.testing import FlaskClient
 import pytest
 import sys
 import os
-import logging
-import base64
-import json
 
 sys.path.append(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 print(os.path.dirname(os.path.abspath(__file__)))
 
-from app import create_app
-from app.db import db
-from app.models.user_model import User, UserTypes
-from app.models.course_model import Course, Languages
+from src.app import create_app
+from src.db import db
+from src.models.user_model import User, UserTypes
+from src.models.course_model import Course, Languages
 
 @pytest.fixture
 def app():
