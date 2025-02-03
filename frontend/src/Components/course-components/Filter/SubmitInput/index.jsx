@@ -1,4 +1,4 @@
-import { getState } from "../../../CourseCatalog/coursesInCacheFunctions"
+import { getState } from "../../../CourseCatalog/courseInCacheFunctions"
 import { courseListLength } from "../../../../courseListLength"
 import { courseListImagesToBlobURL } from "../../../../utils/courseListModifiers"
 import StyledSubmitInput from "../../form-fields/StyledSubmitInput"
@@ -72,6 +72,7 @@ export default function SubmitInput(
         } catch(error) {
             console.log(error)
         }
+        console.log(courses,gettedCourses)
 
         setCurrentCourses([...courses, 
             ...courseListImagesToBlobURL(gettedCourses).map((course, _, array) => {

@@ -3,12 +3,14 @@ from sqlalchemy import String, Boolean, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
-from .user_courses_table import user_courses
+from .many_to_many.user_courses import user_courses
+from .many_to_many.user_roles import user_roles
 from ..db import db, ModelMixin
 from ..enums import UserTypes
 
 if TYPE_CHECKING:
     from .course_model import Course
+    from .role_model import Role
 
 class User(db.Model, ModelMixin):
 
@@ -20,6 +22,7 @@ class User(db.Model, ModelMixin):
     admin = mapped_column(Boolean(), default=False)
 
     courses: Mapped[Set["Course"]] = relationship(secondary=user_courses, back_populates="users")
+    roles: Mapped[Set["Role"]] = relationship(secondary=user_roles, back_populates="users")
 
     @hybrid_property
     def full_name(self):

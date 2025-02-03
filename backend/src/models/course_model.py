@@ -4,11 +4,9 @@ from sqlalchemy import String, Enum, LargeBinary, Integer, Column, DateTime, DEC
 from sqlalchemy import select, func, and_
 from sqlalchemy.orm import Mapped, mapped_column, relationship, column_property
 import datetime
-from .user_courses_table import user_courses
-from .user_model import User, UserTypes
+from .user_model import User, UserTypes, user_courses
 from ..db import db, ModelMixin
 from ..enums import Languages
-import base64
 
 
 class Course(db.Model, ModelMixin):

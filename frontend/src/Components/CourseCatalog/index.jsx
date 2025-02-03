@@ -53,7 +53,7 @@ export default function CourseCatalog({initialfilters, userArea, courseStateOrCo
                         .map(course =>
                             <Course 
                                 course={course} 
-                                key={course.key} 
+                                key={course.id} 
                                 subscribe={!userArea} 
                                 setCurrentCourses={setCurrentCourses}
                             />)

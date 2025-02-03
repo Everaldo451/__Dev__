@@ -96,8 +96,11 @@ export default function PriceField({setFilterSwitchs}) {
             "price": {
                 "function": (courseKeyValue, filterValue) => {
                     const regex=/(\d+),(\d+)/
-                    const [min, max] = regex.exec(filterValue).splice(1)
-                    return courseKeyValue>=min && courseKeyValue<=max
+                    const [minString, maxString] = regex.exec(filterValue).splice(1)
+                    const [min, max] = [Number(minString), Number(maxString)]
+                    const price = Number(courseKeyValue)
+                    console.log(price, min, max, price>=min && price<=max)
+                    return price>=min && price<=max
                 },
                 "defaultValue":"0,1000"
             }

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react"
-import { setState } from "../../CourseCatalog/coursesInCacheFunctions"
+import { setState } from "../../CourseCatalog/courseInCacheFunctions"
 import NameField from "./NameField"
 import PriceField from "./PriceField"
 import LanguageField from "./LanguageField"
@@ -21,7 +21,7 @@ export function Filter(
     const [filterSwitchs, setFilterSwitchs] = useState({})
     const formRef=useRef(null)
 
-    const setLocalCourses = (courses) => setState(courses, unFilteredCourses, setUnFilteredCourses)
+    const setLocalCourses = (courses) => setState(courses, setUnFilteredCourses)
 
     useEffect(() => {
         const formData=new FormData(formRef.current)
@@ -35,8 +35,6 @@ export function Filter(
             isNotFiltered=false
             break
         }
-        console.log("testing this")
-        console.log(currentCourses)
         isNotFiltered?setLocalCourses(currentCourses):null
     },[currentCourses])
 
