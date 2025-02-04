@@ -1,0 +1,45 @@
+div.AnimatedImage{
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    height: 25px;
+    width: 30px;
+}
+
+div.AnimatedImage:hover {
+    cursor: pointer;
+}
+
+div.AnimatedImage:hover div.Line div.Ball {
+    left: calc(100% - var(--distance));
+    background-color: black;
+}
+
+div.Line {
+    position: relative;
+}
+
+div.Line::before{
+    content: "";
+    position: absolute;
+    transform: translate(0, -50%);
+    background-color: black;
+    border-radius: 1px;
+    width: 100%;
+    height: 2px;
+    top: 50%;
+    left:0;
+}
+
+div.Line div.Ball {
+    position: absolute;
+    border: 2px solid black;
+    background-color: white;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    transform: translate(-50%, -50%);
+    transition: all 0.5s;
+    top: 50%;
+    left: var(--distance);
+    z-index: 1;
+}

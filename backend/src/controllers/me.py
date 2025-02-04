@@ -26,12 +26,25 @@ class MeCourseList(Resource):
     @jwt_required(locations=["cookies"])
     @api.marshal_with(ManyCourseResponseSerializer)
     def get(self):
-    
         logging.basicConfig(level="DEBUG")
         args = CourseArgsBaseParser.parse_args()
         filters = []
 
         filters.append(Course.users.any(User.id == current_user.id))
+
+        name = args.get("name")
+        price = args.get("price")
+        if name:
+            filters.append(Course.name.ilike(f'%{name}%'))
+        if price:
+            print(price)
+            try:
+                min_value, max_value = price
+                filters.append(Course.price>=min_value)
+                filters.append(Course.price<=max_value)
+            except:
+                return {"message": "Invalid values."}, 400
+            
         try:
             filters.append(Course.language == Languages(args.get("language")))
         except ValueError as error: pass

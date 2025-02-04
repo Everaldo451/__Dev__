@@ -1,0 +1,18 @@
+div.fileDiv {
+    display: flex;
+    flex-direction: column;
+}
+
+div.fileDiv input[type="file"] {
+    display: none;
+}
+
+div.fileDiv > div {
+    display: flex;
+    justify-content: space-between;
+}
+
+div.fileDiv > span {
+    margin-left: auto;
+    font-size: 12px;
+}

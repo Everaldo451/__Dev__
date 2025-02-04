@@ -1,0 +1,14 @@
+input.submit {
+    margin-top: auto;
+    align-self: flex-end;
+    background-color: var(--commonFieldColor);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    vertical-align: center;
+}
+
+input.submit:hover {
+    cursor: pointer;
+}

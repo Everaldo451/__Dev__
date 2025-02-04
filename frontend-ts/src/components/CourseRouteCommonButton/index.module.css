@@ -1,0 +1,17 @@
+button.CommonCourseButton {
+    display: inline-block;
+    background-color: rgb(140, 158, 179);
+    border-radius: 5px;
+    padding: 2px 5px;
+    width: auto;
+    outline: none;
+    border: 1px solid rgb(47, 48, 65);
+    color: white;
+    transition: all 0.5s;
+}
+
+button.CommonCourseButton:hover {
+    cursor: pointer;
+    background-color: rgb(114, 127, 143);
+    transform: scale(1.05);
+}
