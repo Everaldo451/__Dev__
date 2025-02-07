@@ -1,7 +1,7 @@
 import styles from "./index.module.css"
 
 export default function StyledDescriptionField(
-    attrs:React.DetailedHTMLProps<React.HTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>
+    attrs:React.AllHTMLAttributes<HTMLTextAreaElement>
 ) {
     return (
         <div className={styles.description}>

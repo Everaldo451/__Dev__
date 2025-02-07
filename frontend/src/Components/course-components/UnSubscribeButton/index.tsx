@@ -1,32 +1,21 @@
-import { SetStateAction, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useContext } from "react";
 import { CourseType } from "../../../types/CourseType";
 
-import { UserContext } from "../../../contexts/UserContext";
 import { CourseContext } from "../../../contexts/CourseContext";
 import { CSRFContext } from "../../../contexts/CSRFContext";
-import styles from "./index.module.css"
+
+import SubscribePageButton from "../SubscribePageButton";
 import axios from "axios";
 
 export default function UnSubscribeButton(
-    {course}:{course:CourseType}
+    {children, course}:{children:React.ReactNode, course:CourseType}
 ) {
-
     const [csrf_token, setCSRFToken] = useContext(CSRFContext)
-    const [user, setUser] = useContext(UserContext)
     const [courses, setCourses] = useContext(CourseContext)
-    const navigate = useNavigate()
 
-    async function onclickIfNotUser(e:React.MouseEvent<HTMLButtonElement>) {
-        e.preventDefault()
-        navigate("/login")
-    }
-
-    async function onclickIfUserIsStudent(e:React.MouseEvent<HTMLButtonElement>) {
+    async function onClickIfUserIsStudent(e:React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault()
         try{
-
             const response = await axios.delete(`/api/me/courses/${course.id}`,
                 {
                     withCredentials: true,
@@ -37,19 +26,9 @@ export default function UnSubscribeButton(
 
             if (response.status == 200) {
                 setCourses(prev => new Set([...prev].filter((value) => value.id != course.id)))
-                navigate("/")
             }
-
         } catch(error) {console.log(error)}
     }
 
-    function onClick() {
-        if (!user) {return onclickIfNotUser}
-        if (user.user_type == "student") {return onclickIfUserIsStudent}
-    }
-    return (
-        <button className={styles.unSubscribe} onClick={onClick()}>
-            <img></img>
-        </button>
-    )
+    return <SubscribePageButton onClickIfUserIsStudent={onClickIfUserIsStudent}>{children}</SubscribePageButton>
 }

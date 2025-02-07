@@ -1,1 +1,0 @@
-export type LoadEnumValues<T> = T[keyof T] 

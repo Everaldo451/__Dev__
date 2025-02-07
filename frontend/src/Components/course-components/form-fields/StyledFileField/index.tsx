@@ -3,7 +3,7 @@ import CustomButton from "../CustomButton";
 import styles from "./index.module.css"
 
 export default function FileInput(
-    attrs:React.DetailedHTMLProps<React.HTMLAttributes<HTMLInputElement>, HTMLInputElement>
+    attrs:React.AllHTMLAttributes<HTMLInputElement>
 ) {
 
     const fileInputRef = useRef<HTMLInputElement>(null)

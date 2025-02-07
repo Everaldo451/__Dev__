@@ -106,7 +106,8 @@ function PriceSelector({inputValue, setInputValue}:PriceSelectorProps) {
 export default function PriceField(
     {setFilterSwitchs}:{setFilterSwitchs:React.Dispatch<SetStateAction<{[key:string]:FilterType}>>}
 ) {
-    const [value, setValue] = useState<[number, number]>([0, 1000])
+    const [minValue, maxValue] = [0, 1000]
+    const [value, setValue] = useState<[number, number]>([minValue, maxValue])
 
     useEffect(() => {
         setFilterSwitchs(prev => ({...prev, 
@@ -133,7 +134,7 @@ export default function PriceField(
         <div className={styles.field}>
             <label>Price</label>
             <input type="hidden" name="price" value={value.join(",")}/>
-            <PriceSelector inputValue={value} setInputValue={setValue}/>
+            <PriceSelector inputValue={[minValue, maxValue]} setInputValue={setValue}/>
         </div>
     )
 }

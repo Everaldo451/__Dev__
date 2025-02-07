@@ -46,6 +46,10 @@ export default function CourseCatalog(
         }
     },[])
 
+    useEffect(() => {
+        console.log(currentCourses)
+    },[currentCourses])
+
     useEffect(()=>{
         console.log(coursesInCache)
         setCurrentCourses([...coursesInCache])

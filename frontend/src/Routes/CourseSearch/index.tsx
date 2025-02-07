@@ -31,11 +31,7 @@ export default function CourseSearch() {
             
                 if (response.data && response.data.courses satisfies CourseType[]) {
                     setCachedCourses(
-                        new Set([...courseListImagesToBlobURL(response.data.courses)
-                            .map((course, _, array) => {
-                                return {...course, key:course.id + array.length + 1}
-                            })
-                        ])
+                        new Set([...courseListImagesToBlobURL(response.data.courses)])
                     )
                 }
             } catch(error) {

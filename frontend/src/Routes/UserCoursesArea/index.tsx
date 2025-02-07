@@ -30,11 +30,7 @@ export default function UserCoursesArea() {
             
                 if (response.data && response.data.courses satisfies CourseType[]) {
                     setUserCourses(
-                        new Set([...courseListImagesToBlobURL(response.data.courses)
-                            .map((course, _, array) => {
-                                return {...course, key:userCourses.size + array.length + 1}
-                            })
-                        ])
+                        new Set([...courseListImagesToBlobURL(response.data.courses)])
                     )
                 }
 

@@ -1,0 +1,59 @@
+section.subscribe {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    left: 0;
+    top: 50%;
+    padding: 30px;
+    background-color: white;
+    z-index: 4;
+    width: 400px;
+    height: 200px;
+}
+
+section.subscribe h3 {
+    margin: 0 0 30px 0;
+    text-wrap: nowrap;
+}
+
+div.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+section.slideIn {
+    animation-name: slideIn;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
+
+section.slideOut {
+    animation-name: slideOut;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slideIn {
+    from {
+        left: 0;
+        transform: translate(-100%, -50%);
+    }
+
+    to {
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    to {
+        left: 100%;
+        transform: translate(0, -50%);
+    }
+}

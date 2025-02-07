@@ -1,5 +1,5 @@
-export enum UserGroups {
-    STUDENT = "student",
-    TEACHER = "teacher",
-    ADMIN = "admin",
-}
+export const UserGroups = {
+    "STUDENT":"student",
+    "TEACHER":"teacher",
+    "ADMIN":"admin",
+} as const

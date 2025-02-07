@@ -39,7 +39,7 @@ export default function AddCourse({setCourses, hiddenState, slideIn}:AddCoursePr
                 method: e.currentTarget.method
             })
 
-            if (response.status == 200 && response.data.course) {
+            if (response.status == 200 && response.data.course satisfies CourseType) {
                 console.log(response.data.course)
                 setCourses(prev => [courseImageToBlobURL({...response.data.course}), ...prev])
                 setHidden(false)
