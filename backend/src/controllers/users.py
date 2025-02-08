@@ -4,22 +4,25 @@ from ..models.user_model import User, UserTypes
 from ..db import db
 from ..utils.response_with_tokens import create_response_all_tokens
 from ..decorators.verify_permission import verify_user_permissions
-from ..serializers.user_serializer import UserSerializer
+from ..api import user_serializer
 from ..parsers.authentication import RegisterParser
 import logging
 
 api = Namespace("users", path="/users")
-model = api.model("User", UserSerializer)
 
 @api.route("")
 class UserList(Resource):
 
     @verify_user_permissions([UserTypes.ADMIN])
     @jwt_required(locations=["cookies"])
-    @api.marshal_with(model, as_list=True)
+    @api.marshal_with(user_serializer, as_list=True)
+    @api.doc(security="accessJWT")
     def get(self):
         return User.query.all(), 200
     
+    @api.expect(RegisterParser)
+    @api.header("X-CSRFToken", "A valid csrf token.")
+    @api.doc(security=None)
     def post(self):
         logging.basicConfig(level="DEBUG")
 
@@ -53,10 +56,12 @@ class UserList(Resource):
 
 
 @api.route("/<int:id>")
+@api.doc(params={'id': 'A user id.'})
 class Users(Resource):
 
     @jwt_required(locations=["cookies"])
-    @api.marshal_with(model)
+    @api.marshal_with(user_serializer)
+    @api.doc(security="accessJWT")
     def get(self, id):
         user=None
         try: 
@@ -70,6 +75,8 @@ class Users(Resource):
         return user, 200
     
     @jwt_required(locations=["cookies"])
+    @api.header("X-CSRFToken", "A valid csrf token.")
+    @api.doc(security="accessJWT")
     def delete(self, id):
         user=None
         try:

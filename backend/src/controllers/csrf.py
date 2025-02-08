@@ -7,6 +7,7 @@ api = Namespace("csrf", path="/csrf")
 @api.route("")
 class CSRFToken(Resource):
 
+    @api.doc(security=None)
     def get(self):
         print("accessing csrf route")
         return {"csrf":generate_csrf()}

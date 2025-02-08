@@ -6,12 +6,12 @@ from flask_restx import Api
 from dotenv import load_dotenv
 from .services.jwt_service import jwt
 from .initializers.controllers import initialize_api_controllers
+from .api import api
 from .db import db
 import os
 
 cors = CORS(origins="http://localhost:3000", supports_credentials=True)
 CSRF = CSRFProtect()
-api = Api()
 migrate = Migrate()
 
 def create_app():

@@ -40,13 +40,3 @@ CourseSerializer = {
     "teachers": TeacherField,
     "price": DecimalField,
 }
-
-OneCourseResponseSerializer = {
-    "message": fields.String,
-    "course": fields.Nested(CourseSerializer, allow_null=True)
-}
-
-ManyCourseResponseSerializer = {
-    "message": fields.String,
-    "courses": fields.List(fields.Nested(CourseSerializer))
-}

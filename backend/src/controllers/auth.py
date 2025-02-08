@@ -13,6 +13,9 @@ api = Namespace("auth", path="/auth")
 @api.route("/signin")
 class Signin(Resource):
 
+    @api.expect(sigin_in_parser)
+    @api.header("X-CSRFToken", "A valid csrf token.")
+    @api.doc(security=None)
     def post(self):
         args = sigin_in_parser.parse_args(strict=True)
         user = User.authenticate(email=args.get("email"), password=args.get("password"))
@@ -28,6 +31,8 @@ class Signin(Resource):
 @api.route("/logout")
 class Signout(Resource):
 
+    @api.header("X-CSRFToken", "A valid csrf token.")
+    @api.doc(security=None)
     def post(self):
         response = make_response()
         response.status_code = 204
@@ -39,6 +44,8 @@ class Signout(Resource):
 class RefreshToken(Resource):
 
     @jwt_required(locations=["cookies"], refresh=True)
+    @api.header("X-CSRFToken", "A valid csrf token.")
+    @api.doc(security="refreshJWT")
     def post(self):
         response = make_response()
         response.status_code = 200

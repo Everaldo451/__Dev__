@@ -1,4 +1,4 @@
-from flask_restx import Namespace, Resource
+from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, current_user
 from ..models.user_model import User, UserTypes
 from ..models.course_model import Course, Languages
@@ -6,8 +6,7 @@ from ..db import db
 from ..utils.filter_courses import filter_courses
 from ..decorators.verify_permission import verify_user_permissions
 from ..parsers.courses import CourseArgsBaseParser
-from ..serializers.course_serializer import ManyCourseResponseSerializer
-from ..serializers.user_serializer import UserSerializer
+from ..api import courses_response, user_serializer
 import logging
 
 api = Namespace("me", path="/me")
@@ -16,7 +15,8 @@ api = Namespace("me", path="/me")
 class Me(Resource):
 
     @jwt_required(locations=["cookies"])
-    @api.marshal_with(UserSerializer)
+    @api.marshal_with(user_serializer)
+    @api.doc(security="accessJWT")
     def get(self):
         return current_user, 200
     
@@ -24,7 +24,9 @@ class Me(Resource):
 class MeCourseList(Resource):
 
     @jwt_required(locations=["cookies"])
-    @api.marshal_with(ManyCourseResponseSerializer)
+    @api.marshal_with(courses_response)
+    @api.expect(CourseArgsBaseParser)
+    @api.doc(security="accessJWT")
     def get(self):
         logging.basicConfig(level="DEBUG")
         args = CourseArgsBaseParser.parse_args()
@@ -58,6 +60,7 @@ class MeCourseList(Resource):
     
 
 @api.route("/courses/<int:id>")
+@api.doc(params={'id': 'A course id that user is registered.'})
 class MeCourse(Resource):
 
     @verify_user_permissions(
@@ -65,6 +68,8 @@ class MeCourse(Resource):
         "Teacher cannot subscribe a course."
     )
     @jwt_required(locations=["cookies"])
+    @api.header("X-CSRFToken", "A valid csrf token.")
+    @api.doc(security="accessJWT")
     def patch(self, id):
 
         course = None
@@ -85,6 +90,8 @@ class MeCourse(Resource):
         
 
     @jwt_required(locations=["cookies"])
+    @api.header("X-CSRFToken", "A valid csrf token.")
+    @api.doc(security="accessJWT")
     def delete(self, id):
 
         course = None

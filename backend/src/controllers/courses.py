@@ -1,5 +1,6 @@
 from flask import request
 from flask_restx import Namespace, Resource
+from flask_restx import fields
 from flask_jwt_extended import jwt_required, current_user
 from sqlalchemy.exc import IntegrityError
 from ..models.course_model import Course, Languages
@@ -7,7 +8,7 @@ from ..models.user_model import User, UserTypes
 from ..utils.filter_courses import filter_courses
 from ..decorators.verify_permission import verify_user_permissions
 from ..parsers.courses import CreateCourseParser, CourseArgsParser
-from ..serializers.course_serializer import CourseSerializer, OneCourseResponseSerializer, ManyCourseResponseSerializer
+from ..api import course_reponse, courses_response
 from ..db import db
 import logging
 import magic
@@ -15,7 +16,6 @@ import io
 
 #Course Blueprint
 api = Namespace("courses", path="/courses")
-model = api.model("Course", CourseSerializer)
 
 @api.route("")
 class CourseList(Resource):
@@ -25,7 +25,10 @@ class CourseList(Resource):
         [UserTypes.ADMIN, UserTypes.TEACHER], 
         "Students cannot create a course."
     )
-    @api.marshal_with(OneCourseResponseSerializer)
+    @api.marshal_with(course_reponse)
+    @api.expect(CreateCourseParser)
+    @api.header("X-CSRFToken", "A valid csrf token.")
+    @api.doc(security="accessJWT")
     def post(self):
         logging.basicConfig(level="DEBUG")
         args = CreateCourseParser.parse_args()
@@ -78,13 +81,17 @@ class CourseList(Resource):
 
 
 @api.route("/<int:id>")
+@api.doc(params={"id": "A course id."})
 class Courses(Resource):
     
+    @api.doc(security="accessJWT")
     def get(self, id):pass
 
     @verify_user_permissions([UserTypes.TEACHER, UserTypes.ADMIN])
     @jwt_required(locations='cookies')
-    def delete_(self, id):
+    @api.header("X-CSRFToken", "A valid csrf token.")
+    @api.doc(security="accessJWT")
+    def delete(self, id):
         course=None
         try:
             course = db.session.get(Course,id)
@@ -102,7 +109,8 @@ class Courses(Resource):
 class Search(Resource):
     
     @jwt_required(locations="cookies", optional=True)
-    @api.marshal_with(ManyCourseResponseSerializer)
+    @api.marshal_with(courses_response)
+    @api.expect(CourseArgsParser)
     def get(self):
         logging.basicConfig(level="DEBUG")    
         args = CourseArgsParser.parse_args()
