@@ -1,6 +1,6 @@
 #Files
 .gitignore
-.env*
+*.env
 *.db
 
 #Folders
@@ -9,4 +9,4 @@ tests/
 __pycache__/
 .pytest_cache/
 .git/
-instance/
+

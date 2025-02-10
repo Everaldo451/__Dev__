@@ -49,7 +49,7 @@ export default function AddCourse({setCourses, hiddenState, slideIn}:AddCoursePr
 
     return (
         <>
-            <button onClick={(e) => {setHidden(!hidden)}} className={styles.addCourse}/>
+            <button onClick={(_) => {setHidden(!hidden)}} className={styles.addCourse}/>
             {!hidden?
                 <form 
                     encType="multipart/form-data" 

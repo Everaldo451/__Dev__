@@ -4,4 +4,4 @@ import os
 load_dotenv()
 
 bind = f"{os.getenv("HOST")}:{os.getenv("PORT")}"
-workers = 1
+workers = 2 * os.cpu_count()

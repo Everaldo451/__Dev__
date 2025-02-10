@@ -18,7 +18,7 @@ export default function LanguageSelector (
     const [visible, setVisible] = useState(false)
 
     useEffect(() => {
-        for (const [key, language] of Object.entries(Languages)) {
+        for (const [_, language] of Object.entries(Languages)) {
             setLanguages(prev => [...prev, {value:language, placeholder:language}])
         }
     },[])

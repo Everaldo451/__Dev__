@@ -10,7 +10,7 @@ import styles from "./index.module.css"
 
 export interface FilterProps {
     slideIn: boolean,
-    initialfilters: [],
+    //initialfilters: [],
     unFilteredCoursesState: [Set<CourseType>, React.Dispatch<SetStateAction<Set<CourseType>>>],
     currentCoursesState: [CourseType[], React.Dispatch<SetStateAction<CourseType[]>>],
     requestData: RequestData
@@ -24,7 +24,7 @@ export interface FilterType {
 export default function Filter(
     {
         slideIn, 
-        initialfilters, 
+        //initialfilters, 
         unFilteredCoursesState, 
         currentCoursesState,
         requestData,

@@ -49,7 +49,7 @@ function Header() {
                                 <li><Link to="/area">Área do Professor</Link></li>
                                 :null
                         }
-                        <li><button onClick={(e) => {onclick()}}>Logout</button></li>
+                        <li><button onClick={(_) => {onclick()}}>Logout</button></li>
                     </ul>
                 </div>
                 :

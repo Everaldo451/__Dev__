@@ -47,7 +47,7 @@ export default function CourseSearch() {
     <>
         <main className={styles.CourseRoute}>
             <CourseCatalog 
-                initialfilters={[]} 
+                //initialfilters={[]} 
                 userArea={false} 
                 requestData={requestData}
                 courseStateOrContext={[cachedCourses, setCachedCourses]}

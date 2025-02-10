@@ -13,8 +13,8 @@ export default function SubscribeButton(
     {children, course}:{children:React.ReactNode, course:CourseType}
 ) {
 
-    const [csrf_token, setCSRFToken] = useContext(CSRFContext)
-    const [courses, setCourses] = useContext(CourseContext)
+    const [csrf_token, _] = useContext(CSRFContext)
+    const [__, setCourses] = useContext(CourseContext)
     const navigate = useNavigate()
 
     async function onClickIfUserIsStudent(e:React.MouseEvent<HTMLButtonElement>) {

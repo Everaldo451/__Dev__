@@ -10,8 +10,8 @@ import styles from "./index.module.css"
 function Login(){
 
     const [user, setUser] = useContext(UserContext)
-    const [csrf_token, setCSRFToken] = useContext(CSRFContext)
-    const [action, setAction] = useState("/auth/signin")
+    const [csrf_token, _] = useContext(CSRFContext)
+    const [action, setAction] = useState("auth/signin")
     const [errorMessage, setErrorMessage] = useState(null)
     const navigate = useNavigate()
 
@@ -19,6 +19,7 @@ function Login(){
         e.preventDefault()
 
         const data = new FormData(e.currentTarget)
+        console.log(csrf_token)
 
         try {
             const response = await axios({
@@ -40,6 +41,7 @@ function Login(){
         } catch(error) {
             if (error instanceof AxiosError) {
                 const errorData = error.response?.data
+                console.log(error)
 
                 errorData["message"]?setErrorMessage(errorData["message"]):null
             }
@@ -53,8 +55,8 @@ function Login(){
         <main className={styles.Login}>
             <section>
                 <ul>
-                    <li id="signin" onClick={(e) => setAction("auth/signin")}>Sign in</li>
-                    <li id="register" onClick={(e) => {setAction("users")}}>Sign up</li>
+                    <li id="signin" onClick={(_) => setAction("auth/signin")}>Sign in</li>
+                    <li id="register" onClick={(_) => {setAction("users")}}>Sign up</li>
                 </ul>
 
                     

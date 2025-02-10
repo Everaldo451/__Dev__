@@ -18,9 +18,9 @@ function BallButton({setInputValue, left, maxValue}:BallButtonProps) {
     const [value, setValue] = useState(left?0:maxValue)
     const ballRef = useRef<HTMLDivElement>(null)
 
-    let onPointerMove = (e:React.PointerEvent<HTMLDivElement>) => {}
+    let onPointerMove = (_:React.PointerEvent<HTMLDivElement>) => {}
     if (left) {
-        onPointerMove = (e) => {
+        onPointerMove = (e:React.PointerEvent<HTMLDivElement>) => {
             const parent = e.currentTarget.parentElement
             if (!parent) {return}
             const parentRect = parent.getBoundingClientRect()
@@ -32,7 +32,7 @@ function BallButton({setInputValue, left, maxValue}:BallButtonProps) {
             )
         }
     } else {
-        onPointerMove = (e) => {
+        onPointerMove = (e:React.PointerEvent<HTMLDivElement>) => {
             const parent = e.currentTarget.parentElement
             if (!parent) {return}
             const parentRect = parent.getBoundingClientRect()

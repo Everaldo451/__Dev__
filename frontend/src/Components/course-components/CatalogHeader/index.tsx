@@ -40,7 +40,7 @@ export default function CatalogHeader({setHidden, setCurrentCourses}:CatalogHead
                 </>
                 :null
             }
-            <button className={styles.Button} onClick={(e) => {setHidden(false)}}>
+            <button className={styles.Button} onClick={(_) => {setHidden(false)}}>
                 <AnimatedImage/>
             </button>
         </div>

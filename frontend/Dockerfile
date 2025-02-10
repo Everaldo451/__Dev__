@@ -1,11 +1,19 @@
-FROM node:18 as build
+FROM node:18 AS build
 
 WORKDIR /app
 COPY package-lock.json package.json ./
 RUN npm install
+COPY . .
 RUN npm run build
 
 FROM nginx:latest
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /app/dist /usr/share/nginx/html/dist
+
+ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
+COPY nginx.conf /etc/nginx/templates/nginx.conf.template
+COPY --from=build /app/dist /usr/share/nginx/html
+
+ENV PORT=80
+ENV HOST=0.0.0.0
 EXPOSE 80
+
+CMD ["sh", "-c" , "envsubst < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]

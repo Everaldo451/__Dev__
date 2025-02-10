@@ -47,7 +47,7 @@ export default function UserCoursesArea() {
         return (
             <main className={styles.Area}>
                 <CourseCatalog 
-                    initialfilters={[]} 
+                    //initialfilters={[]} 
                     userArea={true}
                     requestData={requestData}
                     courseStateOrContext={[userCourses, setUserCourses]} 

@@ -18,14 +18,15 @@ import styles from "./index.module.css"
 
 
 interface CourseCatalogProps {
-    initialfilters:[],
+    //initialfilters:[],
     userArea:boolean,
     courseStateOrContext:CourseContextType,
     requestData: RequestData
 }
 
 export default function CourseCatalog(
-    {initialfilters, userArea, courseStateOrContext, requestData}:CourseCatalogProps
+    {//initialfilters
+        userArea, courseStateOrContext, requestData}:CourseCatalogProps
 ){
 
     const [coursesInCache, setCoursesInCache] = courseStateOrContext
@@ -63,7 +64,7 @@ export default function CourseCatalog(
             {!hidden?<DarkMask setHidden={setHidden} slideIn={slideIn} setSlideIn={setSlideIn}/>:null}
             <Filter 
                 slideIn={slideIn} 
-                initialfilters={initialfilters}
+                //initialfilters={initialfilters}
                 unFilteredCoursesState={[unFilteredCourses, setUnFilteredCourses]} 
                 currentCoursesState={[currentCourses, setCurrentCourses]}
                 requestData={requestData}
@@ -79,7 +80,6 @@ export default function CourseCatalog(
                                 course={course} 
                                 key={course.id} 
                                 subscribe={!userArea} 
-                                setCurrentCourses={setCurrentCourses}
                             />)
                     }
 

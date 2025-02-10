@@ -21,7 +21,7 @@ export default function FileInput(
             <div>
                 <label htmlFor={attrs.id?attrs.id:undefined}>Logo:</label>
                 <input type="file" {...attrs} ref={fileInputRef} onInput={fileValueChange}/>
-                <CustomButton onClick={(e) => {fileInputRef.current?.click()}}>Upload</CustomButton>
+                <CustomButton onClick={(_) => {fileInputRef.current?.click()}}>Upload</CustomButton>
             </div>
             <span>{fileValue}</span>
         </div>

@@ -1,4 +1,4 @@
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
 from ..models.user_model import User, UserTypes
 from ..models.course_model import Course, Languages
@@ -18,7 +18,7 @@ class Me(Resource):
     @api.marshal_with(user_serializer)
     @api.doc(security="accessJWT")
     def get(self):
-        return current_user, 200
+        return current_user
     
 @api.route("/courses")
 class MeCourseList(Resource):

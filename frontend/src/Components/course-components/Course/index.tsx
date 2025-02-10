@@ -1,4 +1,4 @@
-import { useState, useContext, SetStateAction, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { CourseType } from "../../../types/CourseType"
 
 import SubscribeButton from "../SubscribeButton"
@@ -12,16 +12,15 @@ import styles from "./index.module.css"
 interface CourseProps {
     course: CourseType,
     subscribe: boolean,
-    setCurrentCourses: React.Dispatch<SetStateAction<CourseType[]>>
 }
 
 
-export default function Course({course, subscribe, setCurrentCourses}:CourseProps) {
+export default function Course({course, subscribe}:CourseProps) {
 
     const [hidden, setHidden] = useState(true)
     const [slideIn, setSlideIn] = useState(false)
 
-    function onClick(e:React.MouseEvent<HTMLElement>){
+    function onClick(_:React.MouseEvent<HTMLElement>){
         setHidden(false)
     }
 
@@ -34,7 +33,7 @@ export default function Course({course, subscribe, setCurrentCourses}:CourseProp
             {!hidden?
             <>
                 <DarkMask setHidden={setHidden} setSlideIn={setSlideIn} slideIn={slideIn}/>
-                <SubscribeSection setSlideIn={setSlideIn} course={course} slideIn={slideIn}>
+                <SubscribeSection slideIn={slideIn}>
                     {subscribe?
                         <SubscribeButton course={course}>Subscribe</SubscribeButton>
                         :<UnSubscribeButton course={course}>Unsubscribe</UnSubscribeButton>

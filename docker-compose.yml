@@ -1,6 +1,6 @@
 services:
   backend:
-    container_name: app_backend
+    container_name: backend
     build:
       context: ./backend
     ports:
@@ -8,10 +8,16 @@ services:
     depends_on:
       - db
     env_file:
-      - ./backend/.env
+      - ./.env
+    environment:
+      - DATABASE_URI=mysql://root:${MYSQL_ROOT_PASSWORD}@db/${MYSQL_DATABASE}
+      - SECRET_KEY=${FLASK_SECRET_KEY}
+      - PORT=${FLASK_PORT}
+    networks:
+      - app-network
   
   frontend:
-    container_name: app_frontend
+    container_name: frontend
     build:
       context: ./frontend
     ports:
@@ -19,10 +25,25 @@ services:
     depends_on:
       - backend
     env_file:
-      - ./frontend/.env
+      - ./.env
+    environment:
+      - API_PROTOCOL=http
+      - API_DOMAIN=backend
+      - API_PORT=${FLASK_PORT}
+    networks:
+      - app-network
 
   db:
     image: mysql:latest
-    container_name: app_db
+    container_name: db
     env_file:
-      - .env
+      - ./.env
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

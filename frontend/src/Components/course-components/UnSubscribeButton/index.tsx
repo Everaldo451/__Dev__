@@ -10,8 +10,8 @@ import axios from "axios";
 export default function UnSubscribeButton(
     {children, course}:{children:React.ReactNode, course:CourseType}
 ) {
-    const [csrf_token, setCSRFToken] = useContext(CSRFContext)
-    const [courses, setCourses] = useContext(CourseContext)
+    const [csrf_token, _] = useContext(CSRFContext)
+    const [__, setCourses] = useContext(CourseContext)
 
     async function onClickIfUserIsStudent(e:React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault()

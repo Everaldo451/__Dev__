@@ -11,9 +11,9 @@ export default function PageChangeButton({setPage, reduce, children}:PageChanger
     let onClick;
 
     if (reduce) {
-        onClick = (e:React.MouseEvent<HTMLButtonElement>) => {setPage(prev => prev-1>0?prev-1:prev)}
+        onClick = (_:React.MouseEvent<HTMLButtonElement>) => {setPage(prev => prev-1>0?prev-1:prev)}
     } else {
-        onClick = (e:React.MouseEvent<HTMLButtonElement>) => {setPage(prev => prev+1)}
+        onClick = (_:React.MouseEvent<HTMLButtonElement>) => {setPage(prev => prev+1)}
     }
     return <button className={styles.Button} onClick={onClick}>{children}</button>
 }

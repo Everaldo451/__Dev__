@@ -48,7 +48,7 @@ function Config({children, attrs, setChange}:ConfigProps){
 
 function Configs(){
 
-    const [user, setUser] = useContext(UserContext)
+    const [user, _] = useContext(UserContext)
     const [changingInputs,setInputs] = useState(0)
 
     const formRef = useRef<HTMLFormElement>(null)
