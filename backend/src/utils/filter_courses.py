@@ -1,8 +1,7 @@
 from ..models.course_model import Course
-import math
 
 def filter_courses(filters:list, offset:int):
-    limit = math.ceil(offset/6)*6 - offset if offset > 0 else 6
+    limit = 6 - (offset % 6)
   
     courses = Course.query.filter(*filters
         ).order_by(Course.date_created.desc()).offset(offset).limit(limit).all()

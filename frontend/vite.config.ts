@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
 
       proxy: {
         '/api': {
-          target: `${env.API_PROTOCOL}://${env.API_DOMAIN}:${env.API_PORT}`,
+          target: `http://${env.API_DOMAIN}:${env.API_PORT}`,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         }
