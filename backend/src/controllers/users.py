@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
+from sqlalchemy.exc import SQLAlchemyError
 from ..models.user_model import User, UserTypes
 from ..db import db
 from ..utils.response_with_tokens import create_response_all_tokens
@@ -51,7 +52,7 @@ class UserList(Resource):
             return {"message": "Last name isn't present."}, 400
         except KeyError as error:
             return {"message": "Last name isn't present."}, 400
-        except Exception as error:
+        except SQLAlchemyError as error:
             return {"message": "Internal server error."}, 500
 
 
@@ -66,7 +67,7 @@ class Users(Resource):
         user=None
         try: 
             user=db.session.get(User, id)
-        except Exception as error:
+        except SQLAlchemyError as error:
             return {"message":"Internal server error."}, 500
     
         if user is None:
@@ -81,7 +82,7 @@ class Users(Resource):
         user=None
         try:
             user = db.session.get(User,id)
-        except Exception as error:
+        except SQLAlchemyError as error:
             return {"message":"Internal server error."}, 500
     
         if user is None:

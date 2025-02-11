@@ -1,11 +1,11 @@
 from flask import request
 from flask_restx import Namespace, Resource
-from flask_restx import fields
 from flask_jwt_extended import jwt_required, current_user
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from ..models.course_model import Course, Languages
-from ..models.user_model import User, UserTypes
+from ..models.user_model import UserTypes
 from ..utils.filter_courses import filter_courses
+from ..utils.search_course_filters import add_name_filter, add_price_filter, add_language_filter, add_user_is_not_current_filter
 from ..decorators.verify_permission import verify_user_permissions
 from ..parsers.courses import CreateCourseParser, CourseArgsParser
 from ..api import course_reponse, courses_response
@@ -36,7 +36,7 @@ class CourseList(Resource):
         course = None
         try:
             course = Course.query.filter_by(name=args.get("name")).first()
-        except Exception as error:
+        except SQLAlchemyError as error:
             return {"message":"Internal server Error"}, 500
     
         if course is not None:
@@ -64,10 +64,10 @@ class CourseList(Resource):
             newCourse.users.add(current_user)
             newCourse.create()
 
-            return {
+            response, status = {
                 "message":"Course created sucessfully.",
                 "course":newCourse
-            }
+            }, 200
         except Exception as error:
             response, status = {"message": "Ola"}, 500
         except IntegrityError as error:
@@ -95,7 +95,7 @@ class Courses(Resource):
         course=None
         try:
             course = db.session.get(Course,id)
-        except Exception as error:
+        except SQLAlchemyError as error:
             return {"message":"Internal server error"}, 500
     
         if course is None:
@@ -116,25 +116,13 @@ class Search(Resource):
         args = CourseArgsParser.parse_args()
         filters = []
 
-        name = args.get("name")
-        price = args.get("price")
-        if name:
-            filters.append(Course.name.ilike(f'%{name}%'))
-        if price:
-            print(price)
-            try:
-                min_value, max_value = price
-                filters.append(Course.price>=min_value)
-                filters.append(Course.price<=max_value)
-            except:
-                return {"message": "Invalid values."}, 400
+        add_name_filter(args.get("name"), filters)
+        result = add_price_filter(args.get("price"), filters)
+        if result.get("error"):
+            return {"message": result.get("message")}, result.get("status")
             
-        if current_user != None:
-            filters.append(~Course.users.any(User.id == current_user.id))
-
-        try:
-            filters.append(Course.language == Languages(args.get("language")))
-        except ValueError as error: pass
+        add_user_is_not_current_filter(current_user, filters)
+        add_language_filter(args.get("language"), filters)
 
         length = args.get("length")
         try:

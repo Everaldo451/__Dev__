@@ -1,0 +1,38 @@
+section.textChanger {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: 1fr;
+    align-items: center;
+    gap: 20px;
+}
+
+div.container {
+    margin: clamp(30px, 10vw, 70px);
+}
+
+section.textChanger > button {
+    border-radius: 50%;
+    background-color: #D9D9D9;
+    border: none;
+    padding: clamp(12px, 2vw, 20px);
+}
+
+section.textChanger > button:hover {
+    cursor: pointer;
+}
+
+section.text p {
+    font-size: clamp(12px, 1.2vw, 15px);
+    text-align: justify;
+}
+
+@media (max-width:700px) {
+
+    section.textChanger > button {
+        display: none
+    }
+
+    section.textChanger {
+        grid-template-columns: 1fr;
+    }
+}
