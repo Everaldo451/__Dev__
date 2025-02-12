@@ -70,6 +70,7 @@ class DevelopmentConfig(Config):
         },
         "loggers": {
             "endpoint_logger": {
+                "level": "INFO",
                 "handlers": ["endpoint_handler"]
             }
         }
@@ -91,12 +92,13 @@ class TestingConfig(Config):
             "endpoint_handler": {
                 "class": 'logging.StreamHandler',
                 "formatter": 'endpoint_formatter',
-                "level": 'WARNING',
+                "level": 'DEBUG',
                 'stream': 'ext://sys.stdout',
             }
         },
         "loggers": {
             "endpoint_logger": {
+                "level":"DEBUG",
                 "handlers": ["endpoint_handler"]
             }
         }
