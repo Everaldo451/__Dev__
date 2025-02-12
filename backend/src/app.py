@@ -1,11 +1,13 @@
+import logging.config
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
 from flask_migrate import Migrate
-from flask_restx import Api
 from dotenv import load_dotenv
 from .services.jwt_service import jwt
 from .initializers.controllers import initialize_api_controllers
+from .middlewares.after.request_log import request_log
+import logging
 from .api import api
 from .db import db
 import os
@@ -27,8 +29,10 @@ def create_app():
         print("test Env")
         app.config.from_object(config.TestingConfig)
     else:
-        print("dev Env")
+        print("development Env")
         app.config.from_object(config.DevelopmentConfig)
+
+    logging.config.dictConfig(app.config.get("LOGGER"))
 
     db.init_app(app)
     api.init_app(app)
@@ -38,4 +42,7 @@ def create_app():
     jwt.init_app(app)
 
     initialize_api_controllers(api)
+
+    app.after_request(request_log)
+
     return app
