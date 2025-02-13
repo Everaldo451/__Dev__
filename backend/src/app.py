@@ -24,13 +24,13 @@ def create_app():
     flask_env = os.getenv("FLASK_ENV")
     if flask_env == "production":
         print("production Env")
-        app.config.from_object(config.ProductionConfig)
+        app.config.from_object(config.ProductionConfig())
     elif flask_env == "test":
         print("test Env")
-        app.config.from_object(config.TestingConfig)
+        app.config.from_object(config.TestingConfig())
     else:
         print("development Env")
-        app.config.from_object(config.DevelopmentConfig)
+        app.config.from_object(config.DevelopmentConfig())
 
     logging.config.dictConfig(app.config.get("LOGGER"))
 
