@@ -1,5 +1,4 @@
 from datetime import timedelta
-import logging
 import os
 import copy
 from dotenv import load_dotenv
@@ -56,7 +55,8 @@ class Config(object):
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)
     JWT_TOKEN_LOCATION = ["headers","cookies"]
     JWT_SESSION_COOKIE = False
-    JWT_COOKIE_CSRF_PROTECT = False
+    JWT_COOKIE_CSRF_PROTECT = True
+    JWT_CSRF_IN_COOKIES = True
     JWT_ACCESS_COOKIE_NAME = "access_token"
     JWT_REFRESH_COOKIE_NAME = "refresh_token"
 

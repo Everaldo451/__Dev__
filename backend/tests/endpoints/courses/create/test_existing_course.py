@@ -1,12 +1,14 @@
 from flask.testing import FlaskClient
 
-def test_existing_course(client:FlaskClient, csrf_token, teacher_data, create_course, course_data, register_user):
+def test_existing_course(client:FlaskClient, teacher_data, create_course, course_data, register_user):
+
+    access_csrf_token, refresh_csrf_token = register_user
 
     response = client.post("/courses",
         content_type = "multipart/form-data",
         data = course_data,
         headers = {
-            "X-CSRFToken":csrf_token,
+            "X-CSRF-TOKEN":access_csrf_token.value,
         }
     )
 

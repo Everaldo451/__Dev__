@@ -1,11 +1,12 @@
 from flask.testing import FlaskClient
 
-def test_success(client:FlaskClient, csrf_token, register_user, subscribe_course):
+def test_success(client:FlaskClient, register_user, subscribe_course):
 
+    access_csrf_token, refresh_csrf_token = register_user
    
     response=client.delete("/me/courses/1",
         headers={
-            "X-CSRFToken": csrf_token
+            "X-CSRF-TOKEN":access_csrf_token.value,
         }
     )
 

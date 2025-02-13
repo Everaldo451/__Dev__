@@ -1,6 +1,5 @@
 import logging.config
 from flask import Flask
-from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
 from flask_migrate import Migrate
 from dotenv import load_dotenv
@@ -13,7 +12,6 @@ from .db import db
 import os
 
 cors = CORS(origins="http://localhost:3000", supports_credentials=True)
-CSRF = CSRFProtect()
 migrate = Migrate()
 
 def create_app():
@@ -38,7 +36,6 @@ def create_app():
     api.init_app(app)
     migrate.init_app(app, db)
     cors.init_app(app)
-    CSRF.init_app(app)
     jwt.init_app(app)
 
     initialize_api_controllers(api)

@@ -1,12 +1,14 @@
 from flask.testing import FlaskClient
 
-def test_success(client:FlaskClient, csrf_token, course_data, teacher_data, register_user):
+def test_success(client:FlaskClient, course_data, teacher_data, register_user):
+
+    access_csrf_token, refresh_csrf_token = register_user
 
     response = client.post("/courses",
         content_type = "multipart/form-data",
         data = course_data,
         headers = {
-            "X-CSRFToken":csrf_token,
+            "X-CSRF-TOKEN":access_csrf_token.value,
         }
     )
 
@@ -22,16 +24,12 @@ def test_success(client:FlaskClient, csrf_token, course_data, teacher_data, regi
 
     response = client.post("/auth/logout",
         headers = {
-            "X-CSRFToken":csrf_token,
+            "X-CSRF-TOKEN":access_csrf_token.value,
         }
     )
     response.close()
 
-    response = client.get(f"/courses/search?length=0&name={course_data.get("name")}",
-        headers = {
-            "X-CSRFToken": csrf_token
-        }
-    )
+    response = client.get(f"/courses/search?length=0&name={course_data.get("name")}")
 
     json = response.get_json()
 

@@ -1,13 +1,9 @@
 from flask.testing import FlaskClient
+from flask_jwt_extended.config import config
 
-def test_student_success(client:FlaskClient, csrf_token, student_data):
+def test_student_success(client:FlaskClient, student_data):
 
-    response = client.post("/users",
-        data=student_data,
-        headers={
-            "X-CSRFToken":csrf_token
-        },
-    )
+    response = client.post("/users",data=student_data)
 
     json = response.get_json()
 
@@ -16,15 +12,14 @@ def test_student_success(client:FlaskClient, csrf_token, student_data):
     assert message == "User created successful."
     assert response.status_code == 200
 
+    with client.application.app_context():
+        assert client.get_cookie(config.access_csrf_cookie_name)
+        assert client.get_cookie(config.refresh_csrf_cookie_name)
 
-def test_teacher_success(client:FlaskClient, csrf_token, teacher_data):
 
-    response = client.post("/users",
-        data=teacher_data,
-        headers={
-            "X-CSRFToken":csrf_token
-        },
-    )
+def test_teacher_success(client:FlaskClient, teacher_data):
+
+    response = client.post("/users",data=teacher_data)
 
     json = response.get_json()
 
@@ -32,3 +27,7 @@ def test_teacher_success(client:FlaskClient, csrf_token, teacher_data):
     message = json["message"]
     assert message == "User created successful."
     assert response.status_code == 200
+
+    with client.application.app_context():
+        assert client.get_cookie(config.access_csrf_cookie_name)
+        assert client.get_cookie(config.refresh_csrf_cookie_name)

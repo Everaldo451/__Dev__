@@ -1,10 +1,12 @@
 from flask.testing import FlaskClient
 
-def test_success(client:FlaskClient, csrf_token, register_user):
+def test_success(client:FlaskClient, register_user):
+
+    access_token, refresh_token = register_user
 
     response = client.post("/auth/refresh",
         headers={
-            "X-CSRFToken": csrf_token
+            "X-CSRF-TOKEN": refresh_token.value
         }
     )
     

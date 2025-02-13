@@ -1,15 +1,10 @@
 from flask.testing import FlaskClient
 
-def test(client:FlaskClient, csrf_token, user_data):
+def test(client:FlaskClient, user_data):
 
     user_data.pop("full_name")
 
-    response = client.post("/users",
-        data=user_data,
-        headers={
-            "X-CSRFToken":csrf_token
-        },
-    )
+    response = client.post("/users",data=user_data)
 
     json = response.get_json()
     assert json

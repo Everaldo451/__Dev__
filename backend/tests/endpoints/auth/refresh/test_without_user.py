@@ -1,11 +1,7 @@
 from flask.testing import FlaskClient
 
-def test_without_user(client:FlaskClient, csrf_token):
+def test_without_user(client:FlaskClient):
 
-    response=client.post("/auth/refresh",
-        headers={
-            "X-CSRFToken": csrf_token
-        }
-    )
+    response=client.post("/auth/refresh")
 
     assert response.status_code==401

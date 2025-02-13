@@ -1,6 +1,7 @@
 import pytest
 from flask.testing import FlaskClient
 from werkzeug.security import generate_password_hash
+from flask_jwt_extended.config import config
 
 @pytest.fixture
 def user_data():
@@ -45,28 +46,22 @@ def create_user(client:FlaskClient, db_conn, Users, user_data):
 
         assert new_user is not None
         yield new_user
-    
-@pytest.fixture
-def csrf_token(client:FlaskClient):
-    response = client.get("/csrf")
-
-    json = response.get_json()
-    assert response.status_code == 200
-    assert json
-    yield json["csrf"]
-
 
 @pytest.fixture
-def register_user(client:FlaskClient, user_data, csrf_token):
+def register_user(client:FlaskClient, user_data):
 
     response = client.post("/users",
         data=user_data,
-        headers={
-            "X-CSRFToken":csrf_token
-        },
     )
     assert response.status_code == 200
     response.close()
 
-    yield
+    with client.application.app_context():
+        access_csrf_cookie = client.get_cookie(config.access_csrf_cookie_name)
+        refresh_csrf_cookie = client.get_cookie(config.refresh_csrf_cookie_name)
+
+        assert access_csrf_cookie
+        assert refresh_csrf_cookie
+
+        yield [access_csrf_cookie, refresh_csrf_cookie]
     

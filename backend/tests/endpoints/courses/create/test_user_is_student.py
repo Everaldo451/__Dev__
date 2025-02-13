@@ -1,13 +1,15 @@
 import pytest
 from flask.testing import FlaskClient
 
-def test_user_is_student(client:FlaskClient, csrf_token, course_data, user_data, register_user):
+def test_user_is_student(client:FlaskClient, course_data, user_data, register_user):
+
+    access_csrf_token, refresh_csrf_token = register_user
 
     response = client.post("/courses",
         content_type = "multipart/form-data",
         data = course_data,
         headers = {
-            "X-CSRFToken":csrf_token,
+            "X-CSRF-TOKEN":access_csrf_token.value,
         }
     )
 
