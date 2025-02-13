@@ -1,18 +1,13 @@
 import { SetStateAction } from "react"
 import { UserType } from "../types/UserType"
 import { UserContextType } from "../contexts/UserContext"
-import { CSRFContextType } from "../contexts/CSRFContext"
-import axios from "axios"
+import { api } from "../api/api"
 
 export async function setUserContext(
-    csrf_token:string|null, 
     setUser:React.Dispatch<SetStateAction<UserType|null>>
 ){
-    const response = await axios.get("/api/me",{
+    const response = await api.get("/me",{
         withCredentials: true,
-        headers: {
-          'X-CSRFToken':csrf_token
-        }
     })
     setUser(response.data)
 }
@@ -20,12 +15,10 @@ export async function setUserContext(
 
 export default async function accessTokenInterval(
     userContext: UserContextType, 
-    csrfContext: CSRFContextType, 
     setLoaded: React.Dispatch<SetStateAction<boolean>>
 ) {
 
   const [user, setUser] = userContext
-  const [csrf_token, _] = csrfContext
 
   if (user !== null) {
     setLoaded?setLoaded(true):null
@@ -35,7 +28,7 @@ export default async function accessTokenInterval(
   let errorOcurred = false
 
   try {
-    await setUserContext(csrf_token, setUser)
+    await setUserContext(setUser)
   } catch(error) {
     errorOcurred = true
   } 
@@ -46,13 +39,10 @@ export default async function accessTokenInterval(
 
   try {
 
-    await axios.post("/api/auth/refresh",undefined,{
+    await api.post("/auth/refresh",undefined,{
         withCredentials: true,
-        headers: {
-          'X-CSRFToken':csrf_token
-        }
     })
-    await setUserContext(csrf_token, setUser)
+    await setUserContext(setUser)
   
   } catch (error) {}
   setLoaded?setLoaded(true):null

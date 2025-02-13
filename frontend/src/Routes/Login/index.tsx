@@ -1,16 +1,15 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
-import { CSRFContext } from "../../contexts/CSRFContext";
 import { Navigate } from "react-router-dom";
 import { setUserContext } from "../../utils/tokenInterval";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import axios from "axios";
 import styles from "./index.module.css"
 
 function Login(){
 
     const [user, setUser] = useContext(UserContext)
-    const [csrf_token, _] = useContext(CSRFContext)
     const [action, setAction] = useState("auth/signin")
     const [errorMessage, setErrorMessage] = useState(null)
     const navigate = useNavigate()
@@ -19,23 +18,19 @@ function Login(){
         e.preventDefault()
 
         const data = new FormData(e.currentTarget)
-        console.log(csrf_token)
 
         try {
             const response = await axios({
                 url: e.currentTarget.action,
                 method: e.currentTarget.method,
                 data: data,
-                headers: {
-                    'X-CSRFToken': csrf_token?csrf_token:""
-                },
                 withCredentials: true
             })
 
             console.log(response.data)
 
             if (response.status == 200) {
-                await setUserContext(csrf_token, setUser)
+                await setUserContext(setUser)
                 navigate("/")
             }
         } catch(error) {

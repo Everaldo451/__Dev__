@@ -2,18 +2,16 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { CourseType } from "../../../types/CourseType";
 
-import { CSRFContext } from "../../../contexts/CSRFContext";
 import { CourseContext } from "../../../contexts/CourseContext";
 
 import SubscribePageButton from "../SubscribePageButton";
-import axios from "axios";
+import { api } from "../../../api/api";
 
 
 export default function SubscribeButton(
     {children, course}:{children:React.ReactNode, course:CourseType}
 ) {
 
-    const [csrf_token, _] = useContext(CSRFContext)
     const [__, setCourses] = useContext(CourseContext)
     const navigate = useNavigate()
 
@@ -21,12 +19,9 @@ export default function SubscribeButton(
         e.preventDefault()
         try{
 
-            const response = await axios.patch(`/api/me/courses/${course.id}`,undefined,
+            const response = await api.patch(`/me/courses/${course.id}`,undefined,
                 {
                     withCredentials: true,
-                    headers: {
-                        'X-CSRFToken':`${csrf_token}`
-                    }
                 })
 
             if (response.status == 200) {

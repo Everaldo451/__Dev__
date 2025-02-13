@@ -4,11 +4,10 @@ import Router from './router'
 import { UserType } from './types/UserType'
 import { CourseType } from './types/CourseType'
 import accessTokenInterval from './utils/tokenInterval'
-import axios from 'axios'
+import configureApiRequestInterceptor from './api/getCSRFCookieNames'
 
 export default function App() {
 
-  const [csrf_token, setCSRFToken] = useState<string|null>(null)
   const [user,setUser] = useState<UserType|null>(null)
   const [courses, setCourses] = useState<Set<CourseType>>(new Set([]))
   const [loaded,setLoaded] = useState(false)
@@ -16,16 +15,9 @@ export default function App() {
   useEffect(()=>{
 
     async function fetchData() {
+      await configureApiRequestInterceptor()
       try {
-        console.log(csrf_token==null)
-
-        if (!csrf_token) {
-          const response = await axios.get("/api/csrf",{withCredentials:true})
-          const token = response.data.csrf
-          console.log(token)
-          setCSRFToken(token)
-          accessTokenInterval([user, setUser], [token, setCSRFToken], setLoaded)
-        }
+        accessTokenInterval([user, setUser], setLoaded)
       } catch(error) {setLoaded(true)}
     }
 
@@ -36,7 +28,6 @@ export default function App() {
 
     return (
       <LoadContexts contextValues={{
-        csrf_token: [csrf_token, setCSRFToken],
         user: [user, setUser],
         courses: [courses, setCourses]
       }}>

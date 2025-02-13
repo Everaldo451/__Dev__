@@ -1,4 +1,4 @@
-export const GetCookies = () => {
+export const getCookies = () => {
     
     const cookie_dict = new Map()
 

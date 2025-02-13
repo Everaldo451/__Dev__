@@ -1,27 +1,22 @@
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../../contexts/UserContext"
-import { CSRFContext } from "../../contexts/CSRFContext"
 import styles from "./index.module.css"
 import {Link} from "react-router-dom"
-import axios from "axios"
+import { api } from "../../api/api"
 
 
 function Header() {
 
     const [user, setUser] = useContext(UserContext)
-    const [csrfToken, _] = useContext(CSRFContext)
     const navigate = useNavigate()
     
     async function onclick() {
 
         try {
-            const response = await axios.post("/api/auth/logout",undefined,
+            const response = await api.post("/auth/logout",undefined,
                 {
                     withCredentials:true,
-                    headers: {
-                        "X-CSRF-Token":csrfToken
-                    }
                 })
             if (response.status==204){
                 setUser(null)

@@ -1,5 +1,4 @@
 import { useContext, SetStateAction } from "react"
-import { CSRFContext } from "../../../contexts/CSRFContext"
 
 import StyledNameField from "../form-fields/StyledNameField/index"
 import StyledLanguageField from "../form-fields/StyledLanguageField/index"
@@ -10,7 +9,7 @@ import StyledDescriptionField from "../form-fields/StyledDescriptionField"
 import { CourseType } from "../../../types/CourseType"
 import { courseImageToBlobURL } from "../../../utils/courseListModifiers"
 
-import axios from "axios"
+import { api } from "../../../api/api"
 import styles from "./index.module.css"
 
 interface AddCourseProps {
@@ -20,8 +19,7 @@ interface AddCourseProps {
 }
 
 export default function AddCourse({setCourses, hiddenState, slideIn}:AddCourseProps) {
-
-    const [csrf_token, _] = useContext(CSRFContext)
+    
     const [hidden, setHidden] = hiddenState
 
     async function onSubmit(e:React.FormEvent<HTMLFormElement>) {
@@ -29,13 +27,10 @@ export default function AddCourse({setCourses, hiddenState, slideIn}:AddCoursePr
         const data = new FormData(e.currentTarget)
         
         try {
-            const response = await axios({
+            const response = await api({
                 url: e.currentTarget.action,
                 withCredentials: true,
                 data: data,
-                headers: {
-                    'X-CSRFToken':`${csrf_token}`,
-                },
                 method: e.currentTarget.method
             })
 
