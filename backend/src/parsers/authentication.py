@@ -1,22 +1,23 @@
-from flask_restx import Namespace, Resource, fields, reqparse
+from flask_restx import reqparse
+from .custom_types.no_html_str import no_html_str
 
 authentication_parser = reqparse.RequestParser()
 authentication_parser.add_argument(
     name="email", 
     required=True,
-    type=str, 
+    type=no_html_str, 
     help="Invalid email."
 )
 authentication_parser.add_argument(
     name="password", 
     required=True,
-    type=str, 
+    type=no_html_str, 
     help="Invalid password"
 )
 authentication_parser.add_argument(
     name="full_name",
     required=True,
-    type=str,
+    type=no_html_str,
     help="You need to insert a full name."
 )
 
@@ -27,5 +28,5 @@ RegisterParser = authentication_parser.copy()
 RegisterParser.add_argument(
     name="is_teacher",
     required=False,
-    type=str,
+    type=no_html_str,
 )
