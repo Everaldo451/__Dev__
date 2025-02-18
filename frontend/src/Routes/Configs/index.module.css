@@ -1,11 +1,10 @@
 main.Configs {
     margin: auto 0;
-    padding: 0 30px;
+    padding: 0 70px;
 }
 
 main.Configs > section{
     padding: 20px;
-    border-radius: 15px;
     background-color: white;
 }
 
@@ -19,37 +18,4 @@ main.Configs > section form {
 main.Configs > section > h2{
     font-size: clamp(15px, 5vw, 30px);
 
-}
-
-main.Configs > section form > div.Config{
-    display: flex;
-    width: 100%;
-    align-items: center;
-}
-
-main.Configs > section form > div.Config label, 
-main.Configs > section form > div.Config input{
-    font-size: clamp(12px, 2.5vw, 15px);
-}
-
-
-main.Configs > section form > div.Config button {
-    font-size: clamp(10px, 2.5vw, 15px);
-}
-
-main.Configs > section form > div.Config input {
-    width: auto;
-    overflow: visible;
-}
-
-main.Configs > section form > div.Config button{margin-left: auto;}
-
-main.Configs > section form > div.Config:nth-child(n+2){margin-top: clamp(10px, 2vw, 20px);}
-
-
-main.Configs .OffChangeInput {
-    border:none;
-    padding: 0;
-    outline: none;
-    font-size: 16px;
 }

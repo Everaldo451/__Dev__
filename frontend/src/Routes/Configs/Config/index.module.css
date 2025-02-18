@@ -1,0 +1,29 @@
+div.Config{
+    width: 100%;
+}
+
+div.Config label, 
+div.Config input{
+    font-size: clamp(12px, 2.5vw, 15px);
+}
+
+
+div.Config button {
+    font-size: clamp(10px, 2.5vw, 15px);
+}
+
+div.Config input {
+    width: auto;
+    overflow: visible;
+}
+
+div.Config button{margin-left: auto;}
+
+div.Config:nth-child(n+2){margin-top: clamp(10px, 2vw, 20px);}
+
+.OffChangeInput {
+    border:none;
+    padding: 0;
+    outline: none;
+    font-size: 16px;
+}

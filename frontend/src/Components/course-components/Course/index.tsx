@@ -33,7 +33,10 @@ export default function Course({course, subscribe}:CourseProps) {
             {!hidden?
             <>
                 <DarkMask setHidden={setHidden} setSlideIn={setSlideIn} slideIn={slideIn}/>
-                <SubscribeSection slideIn={slideIn}>
+                <SubscribeSection 
+                    slideIn={slideIn} 
+                    message={subscribe?"Do you want subscribe?":"Do you want to unsubscribe?"}
+                >
                     {subscribe?
                         <SubscribeButton course={course}>Subscribe</SubscribeButton>
                         :<UnSubscribeButton course={course}>Unsubscribe</UnSubscribeButton>
