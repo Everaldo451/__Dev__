@@ -1,7 +1,7 @@
 import { useState, useContext } from "react"
 import { UserContext } from "../../contexts/UserContext"
 import { Navigate } from "react-router-dom"
-import SideMenu from "../../components/SideConfigurationMenu"
+import ConfigurationSideMenu from "./ConfigurationSideMenu"
 import style from "./index.module.css"
 
 
@@ -15,7 +15,7 @@ function ConfigRoute(){
         {user?
             <main className={style.Configs}>
                 <section>
-                    <SideMenu setConfigSection={setConfigSection} user={user}/>
+                    <ConfigurationSideMenu setConfigSection={setConfigSection} user={user}/>
                     {configSection?configSection:null}
                 </section>
             </main>

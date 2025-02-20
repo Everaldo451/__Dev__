@@ -12,7 +12,7 @@ export default function ConfigurationSection({configurations, title}: Configurat
     return (
         <section className={styles.configSection}>
             <h2>{title}</h2>
-            {configurations.map((value) => <Config {...value}/>)}
+            {configurations.map((value, index) => <Config key={index} {...value}/>)}
         </section>
     )
 }

@@ -1,4 +1,6 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import DarkMask from "../../../components/DarkMask"
+import CustomButton from "../../../components/CustomButton"
 import styles from "./index.module.css"
 
 export interface ConfigProps {
@@ -9,34 +11,42 @@ export interface ConfigProps {
 export default function Config({children, attrs}:ConfigProps){
 
     const [val, setValue] = useState(attrs.value)
-    const [Onchange,setChangeState] = useState(false)
+    const [hidden, setHidden] = useState(true)
+    const [slideIn, setSlideIn] = useState(false)
     const ref = useRef<HTMLInputElement>(null)
 
     function onInput(e:React.FormEvent<HTMLInputElement>) {e.preventDefault();setValue(ref.current?.value)}
 
+    useEffect(() => {
+        setSlideIn(!hidden)
+    }, [hidden])
+
     return (
+        <>
+        {!hidden?
+            <DarkMask setHidden={setHidden} setSlideIn={setSlideIn} slideIn={slideIn}/>
+            :null
+        }
         <div className={styles.Config}>
             <div className={styles.InputContainer}>
                 <label htmlFor={attrs.name} style={{marginRight:5}}>{children?.toString().toUpperCase()}</label>
             
                 <input 
-                    className={Onchange==false?styles.OffChangeInput:undefined}
+                    className={styles.OffChangeInput}
                     {...attrs} 
                     required
                     id={attrs.name} 
                     value={val}
                     ref={ref} 
                     onInput={onInput} 
-                    readOnly={!Onchange}
+                    readOnly={true}
                 />
             </div>
             
-            <button 
-                style={{outline:"none",border:"none",backgroundColor:"gray",padding:5}} 
-                onClick={(e) => {e.preventDefault();setChangeState(!Onchange)}}
-            >
-                {Onchange==true?"Save":"Change"}
-            </button>
+            <CustomButton onClick={(_) => {setHidden(prev => !prev)}}>
+                Change
+            </CustomButton>
         </div>
+        </>
     )
 }

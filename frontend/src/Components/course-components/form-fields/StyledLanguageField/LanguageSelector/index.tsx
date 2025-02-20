@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import CustomButon from "../../CustomButton"
+import CustomButon from "../../../../CustomButton"
 import { Languages } from "../../../../../enums/Languages"
 import styles from "./index.module.css"
 

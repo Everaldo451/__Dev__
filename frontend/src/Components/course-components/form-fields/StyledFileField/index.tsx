@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import CustomButton from "../CustomButton";
+import CustomButton from "../../../CustomButton";
 import styles from "./index.module.css"
 
 export default function FileInput(

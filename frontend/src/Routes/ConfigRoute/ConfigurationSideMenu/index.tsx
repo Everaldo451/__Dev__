@@ -1,19 +1,19 @@
 import { SetStateAction } from "react"
-import ChangeConfigurationSectionButton from "../ChangeConfigurationSectionButton"
+import ConfigurationSectionChangeButton from "../ConfigurationSectionChangeButton"
 import ConfigurationSection from "../ConfigurationSection"
 import styles from "./index.module.css"
-import { UserType } from "../../types/UserType"
+import { UserType } from "../../../types/UserType"
 
-interface SideMenuProps {
+interface ConfigurationSideMenuProps {
     setConfigSection: React.Dispatch<SetStateAction<JSX.Element|null>>,
     user: UserType
 }
 
-export default function SideMenu({setConfigSection, user}:SideMenuProps) {
+export default function ConfigurationSideMenu({setConfigSection, user}:ConfigurationSideMenuProps) {
 
     return (
         <section className={styles.sideMenu}>
-            <ChangeConfigurationSectionButton 
+            <ConfigurationSectionChangeButton
                 image=""
                 setConfigSection={setConfigSection}
                 configSection={

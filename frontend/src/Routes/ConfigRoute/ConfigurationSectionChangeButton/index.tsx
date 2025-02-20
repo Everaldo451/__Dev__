@@ -7,7 +7,7 @@ export interface ChangeConfigurationSectionButtonProps {
     image: string
 }
 
-export default function ChangeConfigurationSectionButton(
+export default function ConfigurationSectionChangeButton(
     {configSection, setConfigSection, image}: ChangeConfigurationSectionButtonProps
 ) {
     async function onClick() {
