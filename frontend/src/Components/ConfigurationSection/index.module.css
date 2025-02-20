@@ -1,0 +1,9 @@
+section.configSection > h2{
+    font-size: clamp(15px, 5vw, 30px);
+    font-weight: normal;
+    margin: 0;
+}
+
+section.configSection {
+    padding: 30px;
+}

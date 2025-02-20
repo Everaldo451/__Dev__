@@ -1,0 +1,11 @@
+main.Configs {
+    margin: auto 0;
+    padding: 0 70px;
+}
+
+main.Configs > section{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    padding: 0;
+    background-color: white;
+}

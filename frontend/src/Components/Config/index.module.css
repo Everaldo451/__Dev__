@@ -1,10 +1,16 @@
 div.Config{
+    display: flex;
     width: 100%;
+    align-items: center;
+    margin-top: 30px;
 }
 
-div.Config label, 
-div.Config input{
+div.Config label{
     font-size: clamp(12px, 2.5vw, 15px);
+}
+
+div.Config input{
+    font-size: clamp(10px, 2.5vw, 12px);
 }
 
 
@@ -19,7 +25,10 @@ div.Config input {
 
 div.Config button{margin-left: auto;}
 
-div.Config:nth-child(n+2){margin-top: clamp(10px, 2vw, 20px);}
+div.Config div.InputContainer {
+    display: flex;
+    flex-direction: column;
+}
 
 .OffChangeInput {
     border:none;

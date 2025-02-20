@@ -1,13 +1,12 @@
-import { useEffect, useRef, useState, SetStateAction } from "react"
+import { useRef, useState } from "react"
 import styles from "./index.module.css"
 
-interface ConfigProps {
+export interface ConfigProps {
     children: React.ReactNode,
     attrs: React.AllHTMLAttributes<HTMLInputElement>,
-    setChange: React.Dispatch<SetStateAction<number>>
 }
 
-export default function Config({children, attrs, setChange}:ConfigProps){
+export default function Config({children, attrs}:ConfigProps){
 
     const [val, setValue] = useState(attrs.value)
     const [Onchange,setChangeState] = useState(false)
@@ -15,24 +14,22 @@ export default function Config({children, attrs, setChange}:ConfigProps){
 
     function onInput(e:React.FormEvent<HTMLInputElement>) {e.preventDefault();setValue(ref.current?.value)}
 
-    useEffect(() => {
-        setChange(prev => Onchange==true?prev+1:prev-1>=0?prev-1:prev)
-    },[Onchange])
-
     return (
         <div className={styles.Config}>
-            <label htmlFor={attrs.name} style={{marginRight:5}}>{children?.toString().toUpperCase()}</label>
+            <div className={styles.InputContainer}>
+                <label htmlFor={attrs.name} style={{marginRight:5}}>{children?.toString().toUpperCase()}</label>
             
-            <input 
-                className={Onchange==false?styles.OffChangeInput:undefined}
-                {...attrs} 
-                required
-                id={attrs.name} 
-                value={val}
-                ref={ref} 
-                onInput={onInput} 
-                readOnly={!Onchange}
-            />
+                <input 
+                    className={Onchange==false?styles.OffChangeInput:undefined}
+                    {...attrs} 
+                    required
+                    id={attrs.name} 
+                    value={val}
+                    ref={ref} 
+                    onInput={onInput} 
+                    readOnly={!Onchange}
+                />
+            </div>
             
             <button 
                 style={{outline:"none",border:"none",backgroundColor:"gray",padding:5}} 
