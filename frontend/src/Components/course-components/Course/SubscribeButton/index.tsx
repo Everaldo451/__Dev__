@@ -1,11 +1,11 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { CourseType } from "../../../types/CourseType";
+import { CourseType } from "../../../../types/CourseType";
 
-import { CourseContext } from "../../../contexts/CourseContext";
+import { CourseContext } from "../../../../contexts/CourseContext";
 
 import SubscribePageButton from "../SubscribePageButton";
-import { api } from "../../../api/api";
+import { api } from "../../../../api/api";
 
 
 export default function SubscribeButton(

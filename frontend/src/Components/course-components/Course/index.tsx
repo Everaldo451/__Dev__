@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react"
 import { CourseType } from "../../../types/CourseType"
 
-import SubscribeButton from "../SubscribeButton"
-import UnSubscribeButton from "../UnSubscribeButton"
-import SubscribeSection from "../SubscribeSection"
+import SubscribeButton from "./SubscribeButton"
+import UnSubscribeButton from "./UnSubscribeButton"
+import SubscribeSection from "./SubscribeSection"
 
 import DarkMask from "../../DarkMask"
 import Image from "../Image"

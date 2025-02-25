@@ -1,26 +1,12 @@
-section.subscribe {
+section.sec {
     position: fixed;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     left: 0;
     top: 50%;
     padding: 30px;
     background-color: white;
     z-index: 4;
-    width: 400px;
-    height: 200px;
 }
 
-section.subscribe h3 {
-    margin: 0 0 30px 0;
-    text-wrap: nowrap;
-}
-
-div.buttonContainer {
-    display: flex;
-    justify-content: space-between;
-}
 
 section.slideIn {
     animation-name: slideIn;

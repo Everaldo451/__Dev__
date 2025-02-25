@@ -1,0 +1,17 @@
+section.subscribe {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 400px;
+    height: 200px;
+}
+
+h3.title {
+    margin: 0 0 30px 0;
+    text-wrap: nowrap;
+}
+
+div.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
+from sqlalchemy.exc import SQLAlchemyError
 from ..models.user_model import UserTypes
 from ..models.course_model import Course
 from ..db import db
@@ -7,6 +8,7 @@ from ..utils.filter_courses import filter_courses
 from ..utils.search_course_filters import add_user_is_current_filter, add_name_filter, add_price_filter, add_language_filter
 from ..decorators.verify_permission import verify_user_permissions
 from ..parsers.courses import CourseArgsBaseParser
+from ..parsers.user import UserConfigurationParser
 from ..api import courses_response, user_serializer
 import logging
 
@@ -23,6 +25,45 @@ class Me(Resource):
     def get(self):
         self.logger.info("Sending response with current user data, status 200.")
         return current_user
+    
+
+    @jwt_required(locations=["cookies"])
+    @api.header("X-CSRF-TOKEN", "A valid csrf token.")
+    @api.expect(UserConfigurationParser)
+    @api.doc(security="accessJWT")
+    def patch(self):
+        self.logger.info("Starting the user configuration change endpoint.")
+        args = UserConfigurationParser.parse_args(strict=True)
+
+        self.logger.info("Verifying if the user sent exactly one argument.")
+        self.logger.debug(f"Arguments: {str(args)}")
+
+        args_with_value = {key: value for key, value in args.items() if value is not None}
+        if len(args_with_value)!=1:
+            self.logger.info("Sending response with status 400. Bad arguments.")
+            return {"message": "You need to send exactly one attribute."}, 400
+        
+        for key, value in args_with_value.items():
+            self.logger.debug(f"Key value: {key}")
+            self.logger.info("Verifying if the attribute exists.")
+            if not hasattr(current_user, key):
+                self.logger.info("Sending response with status 400. The attribute sent don't exists.")
+                return {"message": "The attribute sent don't exists."}, 400
+            
+            attribute_value=getattr(current_user, key)
+            self.logger.info("Verifying if the current attribute value and the sent value are equal.")
+            if attribute_value == value:
+                continue
+
+            self.logger.info("Modifying the attribute with the sent value.")
+            setattr(current_user, key, value)
+        
+        try:
+            db.session.commit()
+            self.logger.info("Sending response with status 200. The attribute was changed successful.")
+            return {"message": "The attribute was changed successful."}, 200
+        except SQLAlchemyError as error:
+            return {"message": f"Internal server error. Reason: \n\n {error}"}, 500
     
 @api.route("/courses")
 class MeCourseList(Resource):

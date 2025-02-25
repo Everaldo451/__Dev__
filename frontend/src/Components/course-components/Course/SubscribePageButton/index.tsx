@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../../contexts/UserContext";
-import CustomButton from "../../CustomButton";
+import { UserContext } from "../../../../contexts/UserContext";
+import CustomButton from "../../../CustomButton";
 
 interface SubscribePageButtonProps {
     children: React.ReactNode,

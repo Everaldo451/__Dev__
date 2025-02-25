@@ -1,0 +1,9 @@
+h3.title {
+    margin: 0 0 30px 0;
+    text-wrap: nowrap;
+}
+
+div.buttonsContainer {
+    display: flex;
+    justify-content: space-between;
+}

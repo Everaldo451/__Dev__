@@ -99,8 +99,9 @@ class Users(Resource):
     
         return user, 200
     
+    
     @jwt_required(locations=["cookies"])
-    @api.header("X-CSRFToken", "A valid csrf token.")
+    @api.header("X-CSRF-TOKEN", "A valid csrf token.")
     @api.doc(security="accessJWT")
     def delete(self, id):
         self.logger.info("Starting delete user by id route.")

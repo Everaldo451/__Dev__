@@ -4,7 +4,7 @@ import { UserContext } from "../../../contexts/UserContext"
 import { CourseType } from "../../../types/CourseType"
 
 import AnimatedImage from "./AnimatedImage"
-import AddCourse from "../AddCourse"
+import AddCourse from "../../course-components/AddCourse"
 import DarkMask from "../../DarkMask"
 import styles from "./index.module.css"
 

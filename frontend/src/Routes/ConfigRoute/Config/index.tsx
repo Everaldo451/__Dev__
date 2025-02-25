@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import DarkMask from "../../../components/DarkMask"
 import CustomButton from "../../../components/CustomButton"
+import ChangeConfigurationSection from "../ChangeConfigurationSection"
 import styles from "./index.module.css"
 
 export interface ConfigProps {
@@ -24,13 +25,20 @@ export default function Config({children, attrs}:ConfigProps){
     return (
         <>
         {!hidden?
-            <DarkMask setHidden={setHidden} setSlideIn={setSlideIn} slideIn={slideIn}/>
+            <>
+                <DarkMask setHidden={setHidden} setSlideIn={setSlideIn} slideIn={slideIn}/>
+                <ChangeConfigurationSection 
+                    setSlideIn={setSlideIn}
+                    slideIn={slideIn} 
+                    configName={attrs.name?attrs.name:""} 
+                    configValue={val}
+                />
+            </>
             :null
         }
         <div className={styles.Config}>
             <div className={styles.InputContainer}>
                 <label htmlFor={attrs.name} style={{marginRight:5}}>{children?.toString().toUpperCase()}</label>
-            
                 <input 
                     className={styles.OffChangeInput}
                     {...attrs} 
