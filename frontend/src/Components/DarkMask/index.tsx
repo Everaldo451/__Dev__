@@ -10,9 +10,9 @@ interface DarkMaskProps {
 export default function DarkMask({setHidden, slideIn, setSlideIn}:DarkMaskProps) {
     return(
         <div 
-            className={`${styles.darkMask} ${slideIn?styles.darkMaskIn:styles.darkMaskOut}`} 
+            className={`${styles.darkMask} ${slideIn?styles.active:""}`} 
             onClick={(_)=>{setSlideIn(false)}}
-            onAnimationEnd={(_) => {!slideIn?setHidden(true):null}}
+            onTransitionEnd={(_) => {!slideIn?setHidden(true):null}}
         />
     )
 }

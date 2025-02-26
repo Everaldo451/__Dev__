@@ -55,7 +55,7 @@ export default function Filter(
 
 
     return (
-        <section className={`${styles.filter} ${slideIn?styles.filterIn:styles.filterOut}`}>
+        <section className={`${styles.filter} ${slideIn?styles.active:""}`}>
             <form ref={formRef} className={styles.form}>
                 <NameField setFilterSwitchs={setFilterSwitchs}/>
                 <PriceField setFilterSwitchs={setFilterSwitchs}/>

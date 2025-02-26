@@ -2,44 +2,19 @@ section.sec {
     position: fixed;
     left: 0;
     top: 50%;
+    transform: translate(-100%, -50%);
     padding: 30px;
     background-color: white;
+    transition: all 0.5s;
     z-index: 4;
 }
 
-
-section.slideIn {
-    animation-name: slideIn;
-    animation-duration: 0.5s;
-    animation-fill-mode: forwards;
+section.sec.active {
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-section.slideOut {
-    animation-name: slideOut;
-    animation-duration: 0.5s;
-    animation-fill-mode: forwards;
-}
-
-@keyframes slideIn {
-    from {
-        left: 0;
-        transform: translate(-100%, -50%);
-    }
-
-    to {
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-}
-
-@keyframes slideOut {
-    from {
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    to {
-        left: 100%;
-        transform: translate(0, -50%);
-    }
+section.sec.deactive {
+    left: 100%;
+    transform: translate(0, -50%);
 }

@@ -9,7 +9,7 @@ import styles from "./index.module.css"
 
 
 interface ChangeConfigurationSectionProps {
-    setSlideIn: React.Dispatch<SetStateAction<boolean>>,
+    setSlideIn: React.Dispatch<SetStateAction<boolean>>
     configName: string,
     configValue: any
 }

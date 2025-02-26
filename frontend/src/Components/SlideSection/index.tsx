@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import styles from "./index.module.css"
 
 export interface SlideSectionProps {
@@ -8,10 +9,16 @@ export interface SlideSectionProps {
 
 export default function SlideSection({slideIn, children, classNames}:SlideSectionProps) {
 
+    const [style, setStyle] = useState("")
+
+    useEffect(() => {
+        setStyle(slideIn?styles.active:styles.deactive)
+    },[slideIn])
+
     return (
-        <section 
+        <section
             className={
-                `${styles.sec} ${classNames?.join(" ")} ${slideIn?styles.slideIn:styles.slideOut}`
+                `${styles.sec} ${classNames?.join(" ")} ${style}`
             }
         >
             {children}

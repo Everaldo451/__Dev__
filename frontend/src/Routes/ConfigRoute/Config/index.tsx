@@ -14,12 +14,14 @@ export default function Config({children, attrs}:ConfigProps){
     const [val, setValue] = useState(attrs.value)
     const [hidden, setHidden] = useState(true)
     const [slideIn, setSlideIn] = useState(false)
+    const [onChange, setOnChange] = useState(false)
     const ref = useRef<HTMLInputElement>(null)
 
     function onInput(e:React.FormEvent<HTMLInputElement>) {e.preventDefault();setValue(ref.current?.value)}
 
     useEffect(() => {
         setSlideIn(!hidden)
+        setOnChange(prev => !hidden?hidden:prev)
     }, [hidden])
 
     return (
@@ -40,20 +42,26 @@ export default function Config({children, attrs}:ConfigProps){
             <div className={styles.InputContainer}>
                 <label htmlFor={attrs.name} style={{marginRight:5}}>{children?.toString().toUpperCase()}</label>
                 <input 
-                    className={styles.OffChangeInput}
+                    className={onChange?"":styles.OffChangeInput}
                     {...attrs} 
                     required
                     id={attrs.name} 
                     value={val}
                     ref={ref} 
                     onInput={onInput} 
-                    readOnly={true}
+                    readOnly={!onChange}
                 />
             </div>
             
-            <CustomButton onClick={(_) => {setHidden(prev => !prev)}}>
-                Change
-            </CustomButton>
+            {!onChange?
+                <CustomButton onClick={(_) => {setOnChange(prev => !prev)}}>
+                    Change
+                </CustomButton>
+                :
+                <CustomButton onClick={(_) => {setHidden(prev => !prev)}}>
+                    Save
+                </CustomButton>
+            }
         </div>
         </>
     )
