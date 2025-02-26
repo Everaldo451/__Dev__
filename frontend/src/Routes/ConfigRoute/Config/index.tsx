@@ -41,16 +41,18 @@ export default function Config({children, attrs}:ConfigProps){
         <div className={styles.Config}>
             <div className={styles.InputContainer}>
                 <label htmlFor={attrs.name} style={{marginRight:5}}>{children?.toString().toUpperCase()}</label>
-                <input 
-                    className={onChange?"":styles.OffChangeInput}
-                    {...attrs} 
-                    required
-                    id={attrs.name} 
-                    value={val}
-                    ref={ref} 
-                    onInput={onInput} 
-                    readOnly={!onChange}
-                />
+                {onChange?
+                    <input 
+                        {...attrs} 
+                        required
+                        id={attrs.name} 
+                        value={val}
+                        ref={ref} 
+                        onInput={onInput} 
+                    />
+                    :
+                    <span>{attrs.value}</span>
+                }
             </div>
             
             {!onChange?

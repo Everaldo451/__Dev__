@@ -9,7 +9,7 @@ div.Config label{
     font-size: clamp(12px, 2.5vw, 15px);
 }
 
-div.Config input{
+div.Config input, div.Config span{
     font-size: clamp(10px, 2.5vw, 12px);
 }
 
