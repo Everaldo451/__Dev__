@@ -5,7 +5,7 @@ export interface RequestData {
 
 
 import { useState, useEffect } from "react"
-import PageChangeButton from "../course-components/PageChangeButton"
+import PageChangeButton from "./PageChangeButton"
 import CatalogHeader from "./CatalogHeader"
 import { CourseContextType } from "../../contexts/CourseContext"
 

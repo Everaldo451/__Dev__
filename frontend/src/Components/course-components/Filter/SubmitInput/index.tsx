@@ -26,19 +26,17 @@ export default function SubmitInput(
 
     const getLocalCourses = () => getState(unFilteredCourses)
 
-    function getFiltersData(courses:CourseType[], filtersFormData:FormData) {
+    function filtersFormDataToObject(courses:CourseType[], filtersFormData:FormData) {
         const filters:{[key:string]: any} = {
             length: courses.length
         }
-
         filtersFormData.forEach((value, key) => {
             value!=""?filters[key] = value:null
         })
-
         return filters
     }
 
-    function switchValues(
+    function applyFilter(
         courseAttr:string, 
         courseAttrValue:any, 
         inputValue:FormDataEntryValue
@@ -50,14 +48,14 @@ export default function SubmitInput(
         return false
     }
 
-    function filterModified(
+    function applyFilterToAllCourses(
         courseAttr:keyof CourseType, 
         inputValue:FormDataEntryValue, 
         coursesToFilter:CourseType[]
     ) {
        
         const courses = inputValue!==""?
-            coursesToFilter.filter(course => switchValues(courseAttr, course[courseAttr], inputValue))
+            coursesToFilter.filter(course => applyFilter(courseAttr, course[courseAttr], inputValue))
             :coursesToFilter
         
         return courses
@@ -72,13 +70,13 @@ export default function SubmitInput(
 
         let courses = getLocalCourses()
         formData.forEach((value, key) => {
-            courses = filterModified(key as keyof CourseType, value, courses)
+            courses = applyFilterToAllCourses(key as keyof CourseType, value, courses)
         })
         if (courses.length != 0 && courses.length%courseListLength == 0) {return}
 
-        const data = getFiltersData(courses, formData)
+        const data = filtersFormDataToObject(courses, formData)
 
-        let gettedCourses = []
+        let fetchedCourses = []
         try {
             const requestParams=requestData.method=="GET"?
                 {...requestData, params: data}
@@ -87,15 +85,15 @@ export default function SubmitInput(
             const response = await axios(requestParams)
 
             if (response.data && response.data.courses instanceof Object) {
-                gettedCourses = response.data.courses
+                fetchedCourses = response.data.courses
             }
         } catch(error) {
             console.log(error)
         }
-        console.log(courses,gettedCourses)
+        console.log(courses,fetchedCourses)
 
         setCurrentCourses([...courses, 
-            ...courseListImagesToBlobURL(gettedCourses).map((course, _, array) => {
+            ...courseListImagesToBlobURL(fetchedCourses).map((course, _, array) => {
                 return {...course, key:currentCourses.length + array.length + 1}
             })
         ])

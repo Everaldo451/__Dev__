@@ -14,7 +14,7 @@ export default function UserCoursesArea() {
     const [user, _] = useContext(UserContext)
     const [userCourses, setUserCourses] = useContext(CourseContext)
     const requestData = {
-        url: "/api/me/courses",
+        url: "/api/me/courses/search",
         method: "GET",
     }
 

@@ -6,7 +6,7 @@ import UnSubscribeButton from "./UnSubscribeButton"
 import SubscribeSection from "./SubscribeSection"
 
 import DarkMask from "../../DarkMask"
-import Image from "../Image"
+import Image from "./Image"
 import styles from "./index.module.css"
 
 interface CourseProps {

@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
-from ..models.user_model import UserTypes
+from ..models.user_model import UserTypes, User
 from ..models.course_model import Course
 from ..db import db
 from ..utils.filter_courses import filter_courses
@@ -67,6 +67,25 @@ class Me(Resource):
     
 @api.route("/courses")
 class MeCourseList(Resource):
+
+    logger=logging.getLogger("endpoint_logger")
+
+    @jwt_required(locations=["cookies"])
+    @api.marshal_with(courses_response)
+    @api.expect(CourseArgsBaseParser)
+    @api.doc(security="accessJWT")
+    def get(self):
+        self.logger.info("Starting current user courses get route.")
+        try:
+            courses = current_user.courses
+            self.logger.info("Returning response with status 200. Courses getted succesful.")
+            return courses
+        except Exception as error:
+            self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
+            return {"message":"Internal server error."}, 500
+
+@api.route("/courses/search")  
+class MeCourseListSearch(Resource):
 
     logger=logging.getLogger("endpoint_logger")
 
