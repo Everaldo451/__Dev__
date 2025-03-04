@@ -1,14 +1,17 @@
 import { getState } from "../../../CourseCatalog/courseInCacheFunctions"
 import { courseListLength } from "../../../../courseListLenght"
 import { FilterProps, FilterType } from ".."
-import { courseListImagesToBlobURL } from "../../../../utils/courseListModifiers"
+
 import { CourseType } from "../../../../types/CourseType"
+import { courseArrayToHashMap } from "../../../CourseCatalog/courseInCacheFunctions"
+import { courseListSortByDateTime, courseListImagesToBlobURL  } from "../../../../utils/courseListModifiers"
+
 import StyledSubmitInput from "../../form-fields/StyledSubmitInput"
 import axios from "axios"
 
 interface SubmitInputProps {
     filterSwitchs: {[key: string]:FilterType},
-    unFilteredCourses: Pick<FilterProps, "unFilteredCoursesState">["unFilteredCoursesState"][0],
+    loadedCoursesHashMapState: Pick<FilterProps, "loadedCoursesHashMapState">["loadedCoursesHashMapState"],
     currentCourses: Pick<FilterProps, "currentCoursesState">["currentCoursesState"][0],
     setCurrentCourses: Pick<FilterProps, "currentCoursesState">["currentCoursesState"][1],
     requestData: FilterProps["requestData"]
@@ -17,14 +20,14 @@ interface SubmitInputProps {
 export default function SubmitInput(
     {
         filterSwitchs,
-        unFilteredCourses, 
+        loadedCoursesHashMapState, 
         currentCourses, 
         setCurrentCourses, 
         requestData
     }: SubmitInputProps
 ) {
-
-    const getLocalCourses = () => getState(unFilteredCourses)
+    const [loadedCoursesHashMap, setLoadedCoursesHashMap] = loadedCoursesHashMapState
+    const getLocalCourses = () => getState(loadedCoursesHashMap)
 
     function filtersFormDataToObject(courses:CourseType[], filtersFormData:FormData) {
         const filters:{[key:string]: any} = {
@@ -76,7 +79,8 @@ export default function SubmitInput(
 
         const data = filtersFormDataToObject(courses, formData)
 
-        let fetchedCourses = []
+        const coursesToState:CourseType[] = []
+        let fetchedCourses:CourseType[] = []
         try {
             const requestParams=requestData.method=="GET"?
                 {...requestData, params: data}
@@ -84,19 +88,30 @@ export default function SubmitInput(
 
             const response = await axios(requestParams)
 
-            if (response.data && response.data.courses instanceof Object) {
+            if (response.data && response.data.courses satisfies CourseType[]) {
                 fetchedCourses = response.data.courses
             }
         } catch(error) {
             console.log(error)
         }
-        console.log(courses,fetchedCourses)
+        
+        fetchedCourses.forEach((value) => {
+            if (!(String(value.id) in loadedCoursesHashMap)) {
+                coursesToState.push(value)
+            }
+        })
+        console.log(courses,coursesToState)
 
-        setCurrentCourses([...courses, 
-            ...courseListImagesToBlobURL(fetchedCourses).map((course, _, array) => {
+        const courseList = [...courses,
+            ...courseListImagesToBlobURL(coursesToState).map((course, _, array) => {
                 return {...course, key:currentCourses.length + array.length + 1}
             })
-        ])
+        ]
+        courseListSortByDateTime(courseList)
+        setCurrentCourses(courseList)
+        if (coursesToState.length>0) {
+            setLoadedCoursesHashMap(prev => ({...prev, ...courseArrayToHashMap(coursesToState)}))
+        }
     }
 
     return (

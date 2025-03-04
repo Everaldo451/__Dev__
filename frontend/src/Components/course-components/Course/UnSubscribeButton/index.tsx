@@ -5,7 +5,6 @@ import { CourseContext } from "../../../../contexts/CourseContext";
 
 import SubscribePageButton from "../SubscribePageButton";
 import { api } from "../../../../api/api";
-import axios from "axios";
 
 export default function UnSubscribeButton(
     {children, course}:{children:React.ReactNode, course:CourseType}
@@ -21,7 +20,7 @@ export default function UnSubscribeButton(
                 })
 
             if (response.status == 200) {
-                setCourses(prev => new Set([...prev].filter((value) => value.id != course.id)))
+                setCourses(prev => [...prev].filter((value) => value.id != course.id))
             }
         } catch(error) {console.log(error)}
     }

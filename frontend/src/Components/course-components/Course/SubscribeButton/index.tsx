@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CourseType } from "../../../../types/CourseType";
 
 import { CourseContext } from "../../../../contexts/CourseContext";
+import { courseListSortByDateTime } from "../../../../utils/courseListModifiers";
 
 import SubscribePageButton from "../SubscribePageButton";
 import { api } from "../../../../api/api";
@@ -27,7 +28,11 @@ export default function SubscribeButton(
             if (response.status == 200) {
                 const courseToAdd = {...course}
                 courseToAdd.student_count += 1
-                setCourses(prev => new Set([courseToAdd, ...prev]))
+                setCourses((prev) => {
+                    const courses = [courseToAdd, ...prev]
+                    courseListSortByDateTime(courses)
+                    return courses
+                })
                 navigate("/")
             }
 

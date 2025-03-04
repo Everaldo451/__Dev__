@@ -9,7 +9,7 @@ import configureApiRequestInterceptor from './api/getCSRFCookieNames'
 export default function App() {
 
   const [user,setUser] = useState<UserType|null>(null)
-  const [courses, setCourses] = useState<Set<CourseType>>(new Set([]))
+  const [courses, setCourses] = useState<CourseType[]>([])
   const [loaded,setLoaded] = useState(false)
 
   useEffect(()=>{

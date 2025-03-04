@@ -2,6 +2,7 @@ import { useState, useContext, useEffect, SetStateAction } from "react"
 
 import { UserContext } from "../../../contexts/UserContext"
 import { CourseType } from "../../../types/CourseType"
+import { CourseHashMap } from "../courseInCacheFunctions"
 
 import AnimatedImage from "./AnimatedImage"
 import AddCourse from "../../course-components/AddCourse"
@@ -11,9 +12,12 @@ import styles from "./index.module.css"
 interface CatalogHeaderProps {
     setHidden: React.Dispatch<SetStateAction<boolean>>,
     setCurrentCourses: React.Dispatch<SetStateAction<CourseType[]>>
+    setLoadedCoursesHashMap: React.Dispatch<SetStateAction<CourseHashMap>>,
 }
 
-export default function CatalogHeader({setHidden, setCurrentCourses}:CatalogHeaderProps) {
+export default function CatalogHeader(
+    {setHidden, setLoadedCoursesHashMap, setCurrentCourses}:CatalogHeaderProps
+) {
 
     const [user, _] = useContext(UserContext)
     const [componentHidden, setComponentHidden] = useState(true)
@@ -29,6 +33,7 @@ export default function CatalogHeader({setHidden, setCurrentCourses}:CatalogHead
             {user && user.user_type == "teacher"?
                 <>
                     <AddCourse 
+                        setLoadedCoursesHashMap={setLoadedCoursesHashMap}
                         setCourses={setCurrentCourses} 
                         hiddenState={[componentHidden, setComponentHidden]}
                         slideIn={slideIn}

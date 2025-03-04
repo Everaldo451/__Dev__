@@ -7,6 +7,7 @@ import StyledFileField from "../form-fields/StyledFileField/index"
 import StyledDescriptionField from "../form-fields/StyledDescriptionField"
 
 import { CourseType } from "../../../types/CourseType"
+import { CourseHashMap, courseArrayToHashMap } from "../../CourseCatalog/courseInCacheFunctions"
 import { courseImageToBlobURL } from "../../../utils/courseListModifiers"
 
 import { api } from "../../../api/api"
@@ -14,11 +15,14 @@ import styles from "./index.module.css"
 
 interface AddCourseProps {
     setCourses: React.Dispatch<SetStateAction<CourseType[]>>,
+    setLoadedCoursesHashMap: React.Dispatch<SetStateAction<CourseHashMap>>
     hiddenState: [boolean, React.Dispatch<SetStateAction<boolean>>],
     slideIn: boolean
 }
 
-export default function AddCourse({setCourses, hiddenState, slideIn}:AddCourseProps) {
+export default function AddCourse(
+    {setCourses, setLoadedCoursesHashMap, hiddenState, slideIn}:AddCourseProps
+) {
     
     const [hidden, setHidden] = hiddenState
 
@@ -35,8 +39,11 @@ export default function AddCourse({setCourses, hiddenState, slideIn}:AddCoursePr
             })
 
             if (response.status == 200 && response.data.course satisfies CourseType) {
-                console.log(response.data.course)
-                setCourses(prev => [courseImageToBlobURL({...response.data.course}), ...prev])
+                const course:CourseType = response.data.course
+                const {id, ...others} = course
+                console.log(course)
+                setCourses(prev => [courseImageToBlobURL({...course}), ...prev])
+                setLoadedCoursesHashMap(prev => ({...prev, [String(id)]: others }))
                 setHidden(false)
             }
         } catch (error) {console.log(error)} 

@@ -13,25 +13,26 @@ import Course from "../course-components/Course"
 import DarkMask from "../DarkMask"
 import Filter from "../course-components/Filter"
 
+import { CourseHashMap, courseArrayToHashMap, courseHashMapToArray } from "./courseInCacheFunctions"
+import { courseListSortByDateTime } from "../../utils/courseListModifiers"
+
 import { CourseType } from "../../types/CourseType"
 import styles from "./index.module.css"
 
 
 interface CourseCatalogProps {
-    //initialfilters:[],
     userArea:boolean,
     courseStateOrContext:CourseContextType,
     requestData: RequestData
 }
 
 export default function CourseCatalog(
-    {//initialfilters
-        userArea, courseStateOrContext, requestData}:CourseCatalogProps
+    {userArea, courseStateOrContext, requestData}:CourseCatalogProps
 ){
 
     const [coursesInCache, setCoursesInCache] = courseStateOrContext
     const [currentCourses, setCurrentCourses] = useState<CourseType[]>([])
-    const [unFilteredCourses, setUnFilteredCourses] = useState<Set<CourseType>>(new Set())
+    const [loadedCoursesHashMap, setLoadedCoursesHashMap] = useState<CourseHashMap>({})
     const [page, setPage] = useState(1)
 
     const [hidden, setHidden] = useState(true)
@@ -43,7 +44,9 @@ export default function CourseCatalog(
 
     useEffect(() => {
         return () => {
-            setCoursesInCache(unFilteredCourses)
+            const coursesArray = courseHashMapToArray(loadedCoursesHashMap)
+            courseListSortByDateTime(coursesArray)
+            setCoursesInCache(coursesArray)
         }
     },[])
 
@@ -53,19 +56,22 @@ export default function CourseCatalog(
 
     useEffect(()=>{
         console.log(coursesInCache)
-        setCurrentCourses([...coursesInCache])
-        setUnFilteredCourses(new Set(coursesInCache))
+        setCurrentCourses(coursesInCache)
+        setLoadedCoursesHashMap(courseArrayToHashMap(coursesInCache))
     },[coursesInCache])
 
     return (
         <>
-            <CatalogHeader setHidden={setHidden} setCurrentCourses={setCurrentCourses}/>
+            <CatalogHeader 
+                setHidden={setHidden} 
+                setCurrentCourses={setCurrentCourses}
+                setLoadedCoursesHashMap={setLoadedCoursesHashMap}
+            />
 
             {!hidden?<DarkMask setHidden={setHidden} slideIn={slideIn} setSlideIn={setSlideIn}/>:null}
             <Filter 
                 slideIn={slideIn} 
-                //initialfilters={initialfilters}
-                unFilteredCoursesState={[unFilteredCourses, setUnFilteredCourses]} 
+                loadedCoursesHashMapState={[loadedCoursesHashMap, setLoadedCoursesHashMap]} 
                 currentCoursesState={[currentCourses, setCurrentCourses]}
                 requestData={requestData}
             />
@@ -74,7 +80,7 @@ export default function CourseCatalog(
                 <section className={styles.courses}>
 
                     {currentCourses
-                        .filter((_, index) => index >= 6*(page-1) && page*6 >= index)
+                        .filter((_, index) => index >= 6*(page-1) && page*6 > index)
                         .map(course =>
                             <Course 
                                 course={course} 

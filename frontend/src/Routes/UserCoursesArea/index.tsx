@@ -24,14 +24,12 @@ export default function UserCoursesArea() {
                 const response = await axios({
                     ...requestData,
                     params: {
-                        length:userCourses.size
+                        length:userCourses.length
                     }
                 })
             
                 if (response.data && response.data.courses satisfies CourseType[]) {
-                    setUserCourses(
-                        new Set([...courseListImagesToBlobURL(response.data.courses)])
-                    )
+                    setUserCourses(prev => [...prev, ...courseListImagesToBlobURL(response.data.courses)])
                 }
 
             } catch(error) {

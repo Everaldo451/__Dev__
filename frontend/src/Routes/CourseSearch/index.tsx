@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
 import { CourseType } from "../../types/CourseType"
-import { courseListImagesToBlobURL } from "../../utils/courseListModifiers"
+import { courseListImagesToBlobURL, } from "../../utils/courseListModifiers"
 import CourseCatalog from "../../components/CourseCatalog"
 import axios from "axios"
 
@@ -15,7 +15,7 @@ export default function CourseSearch() {
         url: "/api/courses/search",
         method: "GET",
     }
-    const [cachedCourses, setCachedCourses] = useState<Set<CourseType>>(new Set([]))
+    const [cachedCourses, setCachedCourses] = useState<CourseType[]>([])
 
     useEffect(() => {
         async function getFirstCourses() {
@@ -30,9 +30,7 @@ export default function CourseSearch() {
                 console.log(response.data)
             
                 if (response.data && response.data.courses satisfies CourseType[]) {
-                    setCachedCourses(
-                        new Set([...courseListImagesToBlobURL(response.data.courses)])
-                    )
+                    setCachedCourses([...courseListImagesToBlobURL(response.data.courses)])
                 }
             } catch(error) {
                 console.log("Error in course search")
@@ -47,7 +45,6 @@ export default function CourseSearch() {
     <>
         <main className={styles.CourseRoute}>
             <CourseCatalog 
-                //initialfilters={[]} 
                 userArea={false} 
                 requestData={requestData}
                 courseStateOrContext={[cachedCourses, setCachedCourses]}

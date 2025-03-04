@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, SetStateAction } from "react"
 import { setState } from "../../CourseCatalog/courseInCacheFunctions"
 import { CourseType } from "../../../types/CourseType"
+import { CourseHashMap } from "../../CourseCatalog/courseInCacheFunctions"
 import { RequestData } from "../../CourseCatalog"
 import NameField from "./NameField"
 import PriceField from "./PriceField"
@@ -11,7 +12,7 @@ import styles from "./index.module.css"
 export interface FilterProps {
     slideIn: boolean,
     //initialfilters: [],
-    unFilteredCoursesState: [Set<CourseType>, React.Dispatch<SetStateAction<Set<CourseType>>>],
+    loadedCoursesHashMapState: [CourseHashMap, React.Dispatch<SetStateAction<CourseHashMap>>],
     currentCoursesState: [CourseType[], React.Dispatch<SetStateAction<CourseType[]>>],
     requestData: RequestData
 }
@@ -25,19 +26,20 @@ export default function Filter(
     {
         slideIn, 
         //initialfilters, 
-        unFilteredCoursesState, 
+        loadedCoursesHashMapState, 
         currentCoursesState,
         requestData,
     }:FilterProps
 ) {
 
     const [currentCourses, setCurrentCourses] = currentCoursesState
-    const [unFilteredCourses, setUnFilteredCourses] = unFilteredCoursesState
+    const [loadedCoursesHashMap, setLoadedCoursesHashMap] = loadedCoursesHashMapState
     const [filterSwitchs, setFilterSwitchs] = useState<{[key:string]:FilterType}>({})
     const formRef=useRef<HTMLFormElement>(null)
 
-    const setLocalCourses = (courses:CourseType[]) => setState(courses, setUnFilteredCourses)
+    const setLocalCourses = (courses:CourseType[]) => setState(courses, setLoadedCoursesHashMap)
 
+    /*
     useEffect(() => {
         const formData=new FormData(formRef.current?formRef.current:undefined)
 
@@ -52,6 +54,7 @@ export default function Filter(
         }
         isNotFiltered?setLocalCourses(currentCourses):null
     },[currentCourses])
+    */
 
 
     return (
@@ -61,7 +64,7 @@ export default function Filter(
                 <PriceField setFilterSwitchs={setFilterSwitchs}/>
                 <LanguageField setFilterSwitchs={setFilterSwitchs}/>
                 <SubmitInput 
-                    unFilteredCourses={unFilteredCourses}
+                    loadedCoursesHashMapState={[loadedCoursesHashMap, setLoadedCoursesHashMap]}
                     currentCourses={currentCourses}
                     setCurrentCourses={setCurrentCourses}
                     requestData={requestData}
