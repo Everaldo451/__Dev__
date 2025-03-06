@@ -1,0 +1,33 @@
+button.styledButton {
+    position: relative;
+    padding: 15px;
+    background-color: #49575E;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+
+button.styledButton:hover {
+    cursor: pointer;
+}
+
+button.styledButton::before {
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 50%;
+    background-color: #E6E7EF;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -150%) rotate(-30deg);
+}
+
+button.styledButton::after {
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 50%;
+    background-color: #E6E7EF;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 150%) rotate(30deg);
+}

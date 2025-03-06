@@ -46,21 +46,6 @@ main.Home > section.aboutus {
     background-color: #9599AF;
 }
 
-main.Home > section.aboutus h2 {
-    margin: 0;
-    padding: 30px 0;
-    color: #D9D9D9;
-    font-size: 30px;
-    text-align: center;
-}
-
-main.Home > section.aboutus hr {
-    border: 1px solid black;
-    width: 100%;
-    margin: 0;
-}
-
-
 @media (max-width:700px) {
     main.Home > section.introduct {
         display: flex;

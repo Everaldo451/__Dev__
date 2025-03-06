@@ -54,8 +54,6 @@ export default function Home() {
                 </div>
             </section>
             <section className={styles.aboutus}>
-                <h2>About Us</h2>
-                <hr/>
                 <AboutUsTextChanger>
                     <AboutText index={0} title="History">
                         <p>Fundada em 2024, a __Dev foi uma página criada inicialmente 

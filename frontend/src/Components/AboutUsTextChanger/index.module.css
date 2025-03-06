@@ -1,29 +1,38 @@
-section.textChanger {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    grid-template-rows: 1fr;
-    align-items: center;
-    gap: 20px;
-}
-
 div.container {
-    margin: clamp(30px, 10vw, 70px);
+    margin: 50px clamp(50px, 20vw, 150px);
 }
 
-section.textChanger > button {
-    border-radius: 50%;
-    background-color: #D9D9D9;
-    border: none;
-    padding: clamp(12px, 2vw, 20px);
+section.content {
+    background-color: #E6E7EF;
+    padding: 40px;
 }
 
-section.textChanger > button:hover {
-    cursor: pointer;
+header.header {
+    display: flex;
+    align-items: center;
+    margin: 0 0 60px 0;
 }
 
-section.text p {
-    font-size: clamp(12px, 1.2vw, 15px);
-    text-align: justify;
+header.header h3.title {
+    position: relative;
+    margin: 0 15px;
+    font-size: 20px;
+    font-weight: normal;
+}
+header.header h3.title::after {
+    content: "";
+    position: absolute;
+    display: block;
+    top: 100%;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background-color: black;
+}
+
+header.header button.rightButton {
+    margin-left: auto;
+    transform: rotate(180deg);
 }
 
 @media (max-width:700px) {

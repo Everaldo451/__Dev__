@@ -15,7 +15,7 @@ export default function ConfigurationSectionChangeButton(
     }
 
     return (
-        <button onClick={onClick}>
+        <button className={styles.Button} onClick={onClick}>
             <img src={image} className={styles.buttonImage}/>
         </button>
     )

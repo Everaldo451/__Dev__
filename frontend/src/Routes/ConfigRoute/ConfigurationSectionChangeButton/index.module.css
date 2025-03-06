@@ -1,3 +1,19 @@
 img.buttonImage {
     width: 40px;
+    background-color: inherit;
+}
+
+button.Button {
+    background-color: inherit;
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    transition: all 0.5s;
+}
+
+button.Button:hover {
+    background-color: rgb(235, 235, 235);
+    cursor: pointer;
+    box-shadow: 2px 2px 5px var(--commonFieldColor);
 }

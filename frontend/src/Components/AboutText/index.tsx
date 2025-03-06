@@ -1,6 +1,5 @@
-import { CurrentTextIndex } from "../AboutUsTextChanger";
-import React, {useContext} from "react";
-import { useMediaQuery } from "react-responsive";
+import { CurrentTextIndex, CurrentTitle } from "../AboutUsTextChanger";
+import React, { useContext, useEffect } from "react";
 import styles from "./index.module.css"
 
 interface AboutTextProps {
@@ -12,17 +11,18 @@ interface AboutTextProps {
 export default function AboutText({children, title, index}:AboutTextProps) {
 
     const [textIndex, _] = useContext(CurrentTextIndex)
-    const isPhone = useMediaQuery({
-        query: "(max-width: 700px)"
-    })
+    const [__, setTitle] = useContext(CurrentTitle)
+
+    useEffect(() => {
+        textIndex==index?setTitle(title):null
+    },[textIndex])
 
     return (
         <>
-            {!isPhone && index!==textIndex?
+            {index!==textIndex?
                 null
                 :
                 <section className={styles.aboutText}>
-                    <h3 className={styles.title}>{title}</h3>
                     {children}
                 </section>
             }

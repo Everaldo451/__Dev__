@@ -56,7 +56,7 @@ export default function SubmitInput(
         inputValue:FormDataEntryValue, 
         coursesToFilter:CourseType[]
     ) {
-       
+        console.log(courseAttr, inputValue)
         const courses = inputValue!==""?
             coursesToFilter.filter(course => applyFilter(courseAttr, course[courseAttr], inputValue))
             :coursesToFilter
@@ -75,7 +75,11 @@ export default function SubmitInput(
         formData.forEach((value, key) => {
             courses = applyFilterToAllCourses(key as keyof CourseType, value, courses)
         })
-        if (courses.length != 0 && courses.length%courseListLength == 0) {return}
+        if (courses.length != 0 && courses.length%courseListLength == 0) {
+            courseListSortByDateTime(courses)
+            setCurrentCourses(courses)
+            return
+        }
 
         const data = filtersFormDataToObject(courses, formData)
 
@@ -88,6 +92,7 @@ export default function SubmitInput(
 
             const response = await axios(requestParams)
 
+            console.log(response.data.courses)
             if (response.data && response.data.courses satisfies CourseType[]) {
                 fetchedCourses = response.data.courses
             }
@@ -95,6 +100,7 @@ export default function SubmitInput(
             console.log(error)
         }
         
+        console.log(fetchedCourses)
         fetchedCourses.forEach((value) => {
             if (!(String(value.id) in loadedCoursesHashMap)) {
                 coursesToState.push(value)

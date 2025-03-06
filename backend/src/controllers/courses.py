@@ -149,18 +149,19 @@ class Search(Resource):
         args = CourseArgsParser.parse_args()
         filters = []
 
+        add_user_is_not_current_filter(current_user, filters)
         add_name_filter(args.get("name"), filters)
         result = add_price_filter(args.get("price"), filters)
         if result.get("error"):
             return {"message": result.get("message")}, result.get("status")
             
-        add_user_is_not_current_filter(current_user, filters)
         add_language_filter(args.get("language"), filters)
 
         length = args.get("length")
         try:
             self.logger.info("Filtering the courses.")
             response = filter_courses(filters, length)
+            print(f"filtered courses:{response}")
             self.logger.info("Returning response with status 200. Courses searched succesful.")
 
             return response
