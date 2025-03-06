@@ -12,7 +12,7 @@ services:
     environment:
       - DATABASE_URI=mysql+pymysql://root:${MYSQL_ROOT_PASSWORD}@db/${MYSQL_DATABASE}
       - SECRET_KEY=${FLASK_SECRET_KEY}
-      - PORT=${FLASK_PORT}
+      - PORT=5000
     networks:
       - app-network
   
@@ -26,7 +26,7 @@ services:
       - backend
     environment:
       - API_DOMAIN=backend
-      - API_PORT=${FLASK_PORT}
+      - API_PORT=5000
     networks:
       - app-network
 

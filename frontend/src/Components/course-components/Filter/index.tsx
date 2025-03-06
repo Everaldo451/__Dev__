@@ -1,5 +1,4 @@
-import { useEffect, useState, useRef, SetStateAction } from "react"
-import { setState } from "../../CourseCatalog/courseInCacheFunctions"
+import { useState, useRef, SetStateAction } from "react"
 import { CourseType } from "../../../types/CourseType"
 import { CourseHashMap } from "../../CourseCatalog/courseInCacheFunctions"
 import { RequestData } from "../../CourseCatalog"
@@ -36,26 +35,6 @@ export default function Filter(
     const [loadedCoursesHashMap, setLoadedCoursesHashMap] = loadedCoursesHashMapState
     const [filterSwitchs, setFilterSwitchs] = useState<{[key:string]:FilterType}>({})
     const formRef=useRef<HTMLFormElement>(null)
-
-    const setLocalCourses = (courses:CourseType[]) => setState(courses, setLoadedCoursesHashMap)
-
-    /*
-    useEffect(() => {
-        const formData=new FormData(formRef.current?formRef.current:undefined)
-
-        let isNotFiltered=true
-        for (const [filterName, filterData] of Object.entries(filterSwitchs)) {
-            const inputValue=formData.get(filterName)
-            if (inputValue===filterData.defaultValue) {
-                continue
-            }
-            isNotFiltered=false
-            break
-        }
-        isNotFiltered?setLocalCourses(currentCourses):null
-    },[currentCourses])
-    */
-
 
     return (
         <section className={`${styles.filter} ${slideIn?styles.active:""}`}>

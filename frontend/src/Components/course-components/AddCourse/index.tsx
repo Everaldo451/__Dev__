@@ -7,7 +7,7 @@ import StyledFileField from "../form-fields/StyledFileField/index"
 import StyledDescriptionField from "../form-fields/StyledDescriptionField"
 
 import { CourseType } from "../../../types/CourseType"
-import { CourseHashMap, courseArrayToHashMap } from "../../CourseCatalog/courseInCacheFunctions"
+import { CourseHashMap } from "../../CourseCatalog/courseInCacheFunctions"
 import { courseImageToBlobURL } from "../../../utils/courseListModifiers"
 
 import { api } from "../../../api/api"

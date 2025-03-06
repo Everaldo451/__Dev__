@@ -8,12 +8,11 @@ RUN npm run build
 
 FROM nginx:latest
 
-ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
-COPY nginx.conf /etc/nginx/templates/nginx.conf.template
+COPY /nginx/default.conf /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 
 ENV HOST=0.0.0.0
 ENV PORT=80
 EXPOSE 80
 
-CMD nginx -g "daemon off;"
+CMD ["nginx", "-g", "daemon off;"]
