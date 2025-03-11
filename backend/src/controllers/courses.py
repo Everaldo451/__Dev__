@@ -1,8 +1,8 @@
-from flask import request
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from ..models.course_model import Course, Languages
+from ..models.course_model import Languages
+from ..repositories.course_repository import CourseRepository
 from ..models.user_model import UserTypes
 from ..utils.filter_courses import filter_courses
 from ..utils.search_course_filters import add_name_filter, add_price_filter, add_language_filter, add_user_is_not_current_filter
@@ -35,10 +35,11 @@ class CourseList(Resource):
         self.logger.info("Starting create course route.")
         args = CreateCourseParser.parse_args()
         course = None
+        repo = CourseRepository(db.session)
 
         self.logger.info("Verifying if the couse exists.")
         try:
-            course = Course.query.filter_by(name=args.get("name")).first()
+            course = repo.filter_by(name=args.get("name"))
         except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason: {error}")
             return {"message":"Internal server Error"}, 500
@@ -64,18 +65,15 @@ class CourseList(Resource):
             lang = Languages(args.get("language"))
 
             self.logger.info("Creating course instance.")
-            newCourse = Course(
+            newCourse = repo.create(
                 name=args.get("name"), 
                 language=lang, 
                 description=args.get("description"),
                 price=args.get("price"),
                 image=image,
-                image_mime_type=mime_type
+                image_mime_type=mime_type,
+                users = set([current_user])
             )
-            newCourse.users.add(current_user)
-
-            self.logger.info("Registering course in database.")
-            newCourse.create()
 
             self.logger.info("Response with status 200.")
             response, status = {
@@ -113,9 +111,10 @@ class Courses(Resource):
     def delete(self, id):
         self.logger.info("Starting course delete route.")
         course=None
+        repo = CourseRepository(db.session)
         try:
             self.logger.info("Searching course by id.")
-            course = db.session.get(Course,id)
+            course = repo.get(id)
         except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
             return {"message":"Internal server error"}, 500
@@ -127,7 +126,7 @@ class Courses(Resource):
         
         try:
             self.logger.info("Delete the course.")
-            course.delete()
+            repo.delete(course)
         except SQLAlchemyError() as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
             return {"message":"Internal server error"}, 500

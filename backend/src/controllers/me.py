@@ -1,8 +1,9 @@
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
-from ..models.user_model import UserTypes, User
-from ..models.course_model import Course
+from ..models.user_model import UserTypes
+from ..repositories.user_repository import UserRepository
+from ..repositories.course_repository import CourseRepository
 from ..db import db
 from ..utils.filter_courses import filter_courses
 from ..utils.search_course_filters import add_user_is_current_filter, add_name_filter, add_price_filter, add_language_filter
@@ -23,6 +24,7 @@ class Me(Resource):
     @api.marshal_with(user_serializer)
     @api.doc(security="accessJWT")
     def get(self):
+        self.logger.info("Starting get user own data.")
         self.logger.info("Sending response with current user data, status 200.")
         return current_user
     
@@ -42,13 +44,12 @@ class Me(Resource):
         if len(args_with_value)!=1:
             self.logger.info("Sending response with status 400. Bad arguments.")
             return {"message": "You need to send exactly one attribute."}, 400
-        
-        for key, value in args_with_value.items():
+
+        try:
+            """
+            for key, value in args_with_value.items():
             self.logger.debug(f"Key value: {key}")
             self.logger.info("Verifying if the attribute exists.")
-            if not hasattr(current_user, key):
-                self.logger.info("Sending response with status 400. The attribute sent don't exists.")
-                return {"message": "The attribute sent don't exists."}, 400
             
             attribute_value=getattr(current_user, key)
             self.logger.info("Verifying if the current attribute value and the sent value are equal.")
@@ -56,14 +57,17 @@ class Me(Resource):
                 continue
 
             self.logger.info("Modifying the attribute with the sent value.")
-            setattr(current_user, key, value)
-        
-        try:
-            db.session.commit()
+            setattr(current_user, key, value)"
+            """
+            self.logger.info("Updating the user.")
+            UserRepository(db.session).update(current_user, **args_with_value)
             self.logger.info("Sending response with status 200. The attribute was changed successful.")
             return {"message": "The attribute was changed successful."}, 200
         except SQLAlchemyError as error:
             return {"message": f"Internal server error. Reason: \n\n {error}"}, 500
+        except AttributeError as error:
+            self.logger.info("Sending response with status 400. The attribute sent don't exists.")
+            return {"message": "The attribute sent don't exists."}, 400
     
 @api.route("/courses")
 class MeCourseList(Resource):
@@ -136,7 +140,7 @@ class MeCourse(Resource):
         course = None
         try:
             self.logger.info("Searching course by id.")
-            course = db.session.get(Course, id)
+            course = CourseRepository(db.session).get(id)
         except Exception as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
             return {"message":"Internal server error."}, 500
@@ -165,7 +169,7 @@ class MeCourse(Resource):
         course = None
         try: 
             self.logger.info("Searching course by id.")
-            course = db.session.get(Course, id)
+            course = CourseRepository(db.session).get(id)
         except Exception as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
             return {"message":"Internal server error."}, 500

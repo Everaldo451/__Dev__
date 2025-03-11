@@ -1,4 +1,5 @@
 from flask_jwt_extended import JWTManager
+from ..repositories.user_repository import UserRepository
 from ..models.user_model import User
 from ..db import db
 
@@ -12,7 +13,7 @@ def user_loader(jwt_header:dict, jwt_payload:dict) -> User|None:
     
     id = int(sub)
     try:
-        return db.session.get(User, jwt_payload.get("sub"))
+        return UserRepository(db.session).get(id)
     except Exception as error: 
         return None
 
