@@ -4,9 +4,9 @@ def test_email_change_success(client:FlaskClient, student_data, register_user):
     access_csrf_token, refresh_csrf_token = register_user
 
     response=client.patch("/me",
-        data = {"email": "joriginho@gmail.com"},
+        data = {"email": "jorge@gmail.com"},
         headers = {
-            "X-CSRF-TOKEN":access_csrf_token.value,
+            "X-CSRF-TOKEN":access_csrf_token,
         }
     )
 

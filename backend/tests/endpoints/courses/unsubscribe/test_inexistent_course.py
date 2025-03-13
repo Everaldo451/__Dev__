@@ -6,7 +6,7 @@ def test_inexistent_course(client:FlaskClient, register_user, subscribe_course):
 
     response=client.delete("/me/courses/2",
         headers={
-            "X-CSRF-TOKEN":access_csrf_token.value,
+            "X-CSRF-TOKEN":access_csrf_token,
         }
     )
 

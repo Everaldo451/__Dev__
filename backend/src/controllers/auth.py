@@ -32,7 +32,7 @@ class Signin(Resource):
     
         try: 
             self.logger.info("Sending response with status 200. Signin sucessfull.")
-            return create_response_all_tokens(str(user.id), "Login successful.", 200)
+            return create_response_all_tokens(str(user.id), "Login successful.", 200, self.logger)
         except Exception as error: 
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
             return {"message": "Internal server error."}, 500

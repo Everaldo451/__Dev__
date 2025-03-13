@@ -13,21 +13,13 @@ button.styledButton:hover {
 button.styledButton::before {
     content: "";
     position: absolute;
-    height: 2px;
-    width: 50%;
-    background-color: #E6E7EF;
+    height: 0;
+    width: 0;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -150%) rotate(-30deg);
-}
-
-button.styledButton::after {
-    content: "";
-    position: absolute;
-    height: 2px;
-    width: 50%;
-    background-color: #E6E7EF;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, 150%) rotate(30deg);
+    border-top: 8px solid transparent;
+    border-right: 15px solid #E6E7EF;
+    border-bottom: 8px solid transparent;
+    border-left: 0;
+    transform: translate(-50%, -50%);
 }

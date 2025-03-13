@@ -7,7 +7,7 @@ def test_inexistent_course(client:FlaskClient,  course_data, register_user):
 
     response = client.patch(f"/me/courses/1",
         headers = {
-            "X-CSRF-TOKEN":access_csrf_token.value,
+            "X-CSRF-TOKEN":access_csrf_token,
         }
     )
 

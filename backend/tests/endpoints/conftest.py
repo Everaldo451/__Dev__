@@ -53,15 +53,19 @@ def register_user(client:FlaskClient, user_data):
     response = client.post("/users",
         data=user_data,
     )
+    json = response.get_json()
     assert response.status_code == 200
+    csrf_tokens = json.get("csrf_token_cookies")
+    assert csrf_tokens
     response.close()
 
+
     with client.application.app_context():
-        access_csrf_cookie = client.get_cookie(config.access_csrf_cookie_name)
-        refresh_csrf_cookie = client.get_cookie(config.refresh_csrf_cookie_name)
+        access_csrf_cookie = csrf_tokens[config.access_csrf_cookie_name]
+        refresh_csrf_cookie = csrf_tokens[config.refresh_csrf_cookie_name]
 
-        assert access_csrf_cookie
-        assert refresh_csrf_cookie
+        assert access_csrf_cookie and isinstance(access_csrf_cookie, dict)
+        assert refresh_csrf_cookie and isinstance(refresh_csrf_cookie, dict)
 
-        yield [access_csrf_cookie, refresh_csrf_cookie]
+        yield [access_csrf_cookie.get("value"), refresh_csrf_cookie.get("value")]
     

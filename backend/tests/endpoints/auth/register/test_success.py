@@ -11,10 +11,7 @@ def test_student_success(client:FlaskClient, student_data):
     message = json["message"]
     assert message == "User created successful."
     assert response.status_code == 200
-
-    with client.application.app_context():
-        assert client.get_cookie(config.access_csrf_cookie_name)
-        assert client.get_cookie(config.refresh_csrf_cookie_name)
+    assert json.get("csrf_token_cookies")
 
 
 def test_teacher_success(client:FlaskClient, teacher_data):
@@ -27,7 +24,5 @@ def test_teacher_success(client:FlaskClient, teacher_data):
     message = json["message"]
     assert message == "User created successful."
     assert response.status_code == 200
-
-    with client.application.app_context():
-        assert client.get_cookie(config.access_csrf_cookie_name)
-        assert client.get_cookie(config.refresh_csrf_cookie_name)
+    assert json.get("csrf_token_cookies")
+    

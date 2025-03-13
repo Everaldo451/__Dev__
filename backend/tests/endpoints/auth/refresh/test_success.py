@@ -6,7 +6,7 @@ def test_success(client:FlaskClient, register_user):
 
     response = client.post("/auth/refresh",
         headers={
-            "X-CSRF-TOKEN": refresh_token.value
+            "X-CSRF-TOKEN": refresh_token
         }
     )
     

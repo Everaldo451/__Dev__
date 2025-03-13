@@ -61,14 +61,14 @@ class UserList(Resource):
 
             self.logger.debug(f"user value: {user}")
             self.logger.info("Sending response with status 200. User created successful.")
-            return create_response_all_tokens(str(user.id), "User created successful.", 200)
+            return create_response_all_tokens(str(user.id), "User created successful.", 200, self.logger)
         except ValueError as error: 
             message="Last name isn't present."
-            self.logger.info(f"Response with status 400. Reason:{message}")
+            self.logger.info(f"Response with status 400. Reason:{error}")
             return {"message": message}, 400
         except KeyError as error:
             message="Last name isn't present."
-            self.logger.info(f"Response with status 400. Reason:{message}")
+            self.logger.info(f"Response with status 400. Reason:{error}")
             return {"message": message}, 400
         except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")

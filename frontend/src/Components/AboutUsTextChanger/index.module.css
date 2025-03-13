@@ -32,7 +32,10 @@ header.header h3.title::after {
 
 header.header button.rightButton {
     margin-left: auto;
-    transform: rotate(180deg);
+}
+
+header.header button.rightButton::before {
+    transform: translate(-50%,-50%) rotate(180deg);
 }
 
 @media (max-width:700px) {

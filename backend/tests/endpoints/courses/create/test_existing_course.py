@@ -8,7 +8,7 @@ def test_existing_course(client:FlaskClient, teacher_data, create_course, course
         content_type = "multipart/form-data",
         data = course_data,
         headers = {
-            "X-CSRF-TOKEN":access_csrf_token.value,
+            "X-CSRF-TOKEN":access_csrf_token,
         }
     )
 

@@ -6,7 +6,7 @@ def test_with_user(client:FlaskClient, create_course, common_course_data, regist
 
     response = client.patch(f"/me/courses/1",
         headers = {
-            "X-CSRF-TOKEN":access_csrf_token.value,
+            "X-CSRF-TOKEN":access_csrf_token,
         }
     )
     response.close()

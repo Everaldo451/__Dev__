@@ -9,7 +9,7 @@ def test_invalid_credentials(client:FlaskClient, course_data, teacher_data, regi
         content_type = "multipart/form-data",
         data = course_data,
         headers = {
-            "X-CSRF-TOKEN":access_csrf_token.value,
+            "X-CSRF-TOKEN":access_csrf_token,
         }
     )
 

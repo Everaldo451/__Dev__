@@ -8,7 +8,7 @@ def test_success(client:FlaskClient, course_data, teacher_data, register_user):
         content_type = "multipart/form-data",
         data = course_data,
         headers = {
-            "X-CSRF-TOKEN":access_csrf_token.value,
+            "X-CSRF-TOKEN":access_csrf_token,
         }
     )
 
@@ -24,7 +24,7 @@ def test_success(client:FlaskClient, course_data, teacher_data, register_user):
 
     response = client.post("/auth/logout",
         headers = {
-            "X-CSRF-TOKEN":access_csrf_token.value,
+            "X-CSRF-TOKEN":access_csrf_token,
         }
     )
     response.close()

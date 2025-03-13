@@ -56,7 +56,7 @@ class Config(object):
     JWT_TOKEN_LOCATION = ["headers","cookies"]
     JWT_SESSION_COOKIE = False
     JWT_COOKIE_CSRF_PROTECT = True
-    JWT_CSRF_IN_COOKIES = True
+    JWT_CSRF_IN_COOKIES = False
     JWT_ACCESS_COOKIE_NAME = "access_token"
     JWT_REFRESH_COOKIE_NAME = "refresh_token"
 

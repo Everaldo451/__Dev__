@@ -7,6 +7,11 @@ import { AxiosError } from "axios";
 import axios from "axios";
 import styles from "./index.module.css"
 
+interface CSRFCookiesResponseData {
+    value:string,
+    lifetime:number
+}
+
 function Login(){
 
     const [user, setUser] = useContext(UserContext)
@@ -30,6 +35,22 @@ function Login(){
             console.log(response.data)
 
             if (response.status == 200) {
+                const csrf_cookies = response.data["csrf_token_cookies"]
+                if (!(csrf_cookies satisfies {[key: string]: CSRFCookiesResponseData})) {
+                    throw new AxiosError(
+                        "Internal Server Error",
+                        "500", 
+                        response.config, 
+                        response.request, 
+                        response
+                    )
+                }
+                for (const [key, value] of Object.entries(csrf_cookies)) {
+                    console.log(key, value)
+                    const csrf_cookie = value as CSRFCookiesResponseData
+                   
+                    document.cookie = `${key}=${csrf_cookie.value}; path=/; max-age=${csrf_cookie.lifetime}`;
+                }
                 await setUserContext(setUser)
                 navigate("/")
             }

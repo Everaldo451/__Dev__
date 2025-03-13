@@ -9,7 +9,7 @@ def test_user_is_student(client:FlaskClient, course_data, user_data, register_us
         content_type = "multipart/form-data",
         data = course_data,
         headers = {
-            "X-CSRF-TOKEN":access_csrf_token.value,
+            "X-CSRF-TOKEN":access_csrf_token,
         }
     )
 
