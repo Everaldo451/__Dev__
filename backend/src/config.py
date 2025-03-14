@@ -1,7 +1,6 @@
 from datetime import timedelta
 import os
 import copy
-from dotenv import load_dotenv
 
 LOGGERS={
     "version":1,
@@ -45,7 +44,6 @@ LOGGERS={
 main_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class Config(object):
-    load_dotenv()
 
     SECRET_KEY = os.getenv("SECRET_KEY")
     SESSION_COOKIE_HTTPONLY = True

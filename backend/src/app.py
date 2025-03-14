@@ -11,12 +11,15 @@ from .api import api
 from .db import db
 import os
 
-cors = CORS(origins="http://localhost:3000", supports_credentials=True)
 migrate = Migrate()
 
 def create_app():
     load_dotenv()
     app = Flask(__name__)
+    cors = CORS(
+        origins=f"http://{os.getenv("FRONT_DOMAIN")}:{os.getenv("FRONT_PORT")}", 
+        supports_credentials=True
+    )
 
     from . import config
     flask_env = os.getenv("FLASK_ENV")

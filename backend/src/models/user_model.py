@@ -15,7 +15,7 @@ class User(db.Model):
     first_name = mapped_column(String(50), nullable=False)
     last_name = mapped_column(String(100), nullable=False)
     email = mapped_column(String(100),unique=True, nullable=False)
-    password = mapped_column(String(50), nullable=False)
+    password = mapped_column(String(1000), nullable=False)
     user_type: Mapped[UserTypes] = mapped_column(Enum(UserTypes, native_enum = False), default=UserTypes.STUDENT)
     admin = mapped_column(Boolean(), default=False)
 

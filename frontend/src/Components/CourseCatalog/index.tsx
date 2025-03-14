@@ -74,6 +74,7 @@ export default function CourseCatalog(
                 loadedCoursesHashMapState={[loadedCoursesHashMap, setLoadedCoursesHashMap]} 
                 currentCoursesState={[currentCourses, setCurrentCourses]}
                 requestData={requestData}
+                page={page}
             />
 
             <div className={styles.container}>

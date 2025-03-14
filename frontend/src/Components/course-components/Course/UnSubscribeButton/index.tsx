@@ -14,7 +14,7 @@ export default function UnSubscribeButton(
     async function onClickIfUserIsStudent(e:React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault()
         try{
-            const response = await api.delete(`/api/me/courses/${course.id}`,
+            const response = await api.delete(`/me/courses/${course.id}`,
                 {
                     withCredentials: true,
                 })

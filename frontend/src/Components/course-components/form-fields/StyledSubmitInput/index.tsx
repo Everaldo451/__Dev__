@@ -1,7 +1,7 @@
 import styles from "./index.module.css"
 
 export default function StyledSubmitInput(
-    attrs: React.AllHTMLAttributes<HTMLInputElement>
+    attrs: React.DetailedHTMLProps<React.HTMLAttributes<HTMLInputElement>,HTMLInputElement> & React.AllHTMLAttributes<HTMLInputElement>
 ) {
 
     return(

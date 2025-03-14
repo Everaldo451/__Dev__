@@ -13,7 +13,8 @@ export interface FilterProps {
     //initialfilters: [],
     loadedCoursesHashMapState: [CourseHashMap, React.Dispatch<SetStateAction<CourseHashMap>>],
     currentCoursesState: [CourseType[], React.Dispatch<SetStateAction<CourseType[]>>],
-    requestData: RequestData
+    requestData: RequestData,
+    page:number
 }
 
 export interface FilterType {
@@ -28,6 +29,7 @@ export default function Filter(
         loadedCoursesHashMapState, 
         currentCoursesState,
         requestData,
+        page
     }:FilterProps
 ) {
 
@@ -47,6 +49,7 @@ export default function Filter(
                     currentCourses={currentCourses}
                     setCurrentCourses={setCurrentCourses}
                     requestData={requestData}
+                    page={page}
                     filterSwitchs={filterSwitchs}
                 />
             </form>

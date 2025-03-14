@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react"
 import { getState } from "../../../CourseCatalog/courseInCacheFunctions"
 import { courseListLength } from "../../../../courseListLenght"
 import { FilterProps, FilterType } from ".."
@@ -14,7 +15,8 @@ interface SubmitInputProps {
     loadedCoursesHashMapState: Pick<FilterProps, "loadedCoursesHashMapState">["loadedCoursesHashMapState"],
     currentCourses: Pick<FilterProps, "currentCoursesState">["currentCoursesState"][0],
     setCurrentCourses: Pick<FilterProps, "currentCoursesState">["currentCoursesState"][1],
-    requestData: FilterProps["requestData"]
+    requestData: FilterProps["requestData"],
+    page: FilterProps["page"]
 }
 
 export default function SubmitInput(
@@ -23,10 +25,12 @@ export default function SubmitInput(
         loadedCoursesHashMapState, 
         currentCourses, 
         setCurrentCourses, 
-        requestData
+        requestData,
+        page
     }: SubmitInputProps
 ) {
     const [loadedCoursesHashMap, setLoadedCoursesHashMap] = loadedCoursesHashMapState
+    const inputRef = useRef<HTMLInputElement>(null)
     const getLocalCourses = () => getState(loadedCoursesHashMap)
 
     function filtersFormDataToObject(courses:CourseType[], filtersFormData:FormData) {
@@ -64,12 +68,7 @@ export default function SubmitInput(
         return courses
     }
 
-    async function onClick(e:React.MouseEvent<HTMLInputElement>) {
-        e.preventDefault()
-        const parent = e.currentTarget.parentElement?
-            e.currentTarget.parentElement as HTMLFormElement:undefined
-
-        const formData = new FormData(parent)
+    async function fetchCourses(formData:FormData) {
 
         let courses = getLocalCourses()
         formData.forEach((value, key) => {
@@ -80,9 +79,7 @@ export default function SubmitInput(
             setCurrentCourses(courses)
             return
         }
-
         const data = filtersFormDataToObject(courses, formData)
-
         const coursesToState:CourseType[] = []
         let fetchedCourses:CourseType[] = []
         try {
@@ -91,23 +88,18 @@ export default function SubmitInput(
                 :{...requestData, data: data}
 
             const response = await axios(requestParams)
-
-            console.log(response.data.courses)
             if (response.data && response.data.courses satisfies CourseType[]) {
                 fetchedCourses = response.data.courses
             }
         } catch(error) {
             console.log(error)
         }
-        
-        console.log(fetchedCourses)
         fetchedCourses.forEach((value) => {
             if (!(String(value.id) in loadedCoursesHashMap)) {
                 coursesToState.push(value)
             }
         })
         console.log(courses,coursesToState)
-
         const courseList = [...courses,
             ...courseListImagesToBlobURL(coursesToState).map((course, _, array) => {
                 return {...course, key:currentCourses.length + array.length + 1}
@@ -120,7 +112,26 @@ export default function SubmitInput(
         }
     }
 
+    async function onClick(e:React.MouseEvent<HTMLInputElement>) {
+        e.preventDefault()
+        const form = e.currentTarget.parentElement?
+            e.currentTarget.parentElement as HTMLFormElement:undefined
+
+        const formData = new FormData(form)
+        await fetchCourses(formData)
+    }
+
+    useEffect(() => {
+        async function fetch() {
+            const form = inputRef.current?.parentElement as HTMLFormElement
+
+            const formData = new FormData(form)
+            await fetchCourses(formData)    
+        }
+        fetch()
+    },[page])
+
     return (
-        <StyledSubmitInput onClick={onClick} value="Apply"/>
+        <StyledSubmitInput ref={inputRef} onClick={onClick} value="Apply"/>
     )
 }

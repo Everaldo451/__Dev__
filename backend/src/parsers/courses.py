@@ -1,24 +1,24 @@
 from flask_restx import reqparse
 from werkzeug.datastructures import FileStorage
 from ..enums import Languages
-from .custom_types.no_html_str import no_html_str
+from .custom_types.escaped_html_str import escaped_html_str
 
 CreateCourseParser = reqparse.RequestParser()
 CreateCourseParser.add_argument(
     "name",
-    type=no_html_str,
+    type=escaped_html_str,
     required=True,
     help=""
 )
 CreateCourseParser.add_argument(
     "language",
-    type=no_html_str,
+    type=escaped_html_str,
     required=True,
     choices=[language.value for language in Languages]
 )
 CreateCourseParser.add_argument(
     "description",
-    type=no_html_str,
+    type=escaped_html_str,
     required=True,
 )
 CreateCourseParser.add_argument(
@@ -56,6 +56,6 @@ CourseArgsBaseParser.add_argument(
 CourseArgsParser = CourseArgsBaseParser.copy()
 CourseArgsParser.add_argument(
     "name",
-    type=no_html_str,
+    type=escaped_html_str,
     required=False
 )
