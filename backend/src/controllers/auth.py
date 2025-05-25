@@ -1,35 +1,34 @@
 from flask import make_response
-from flask_restx import Namespace, Resource
 from flask_jwt_extended import create_access_token, set_access_cookies
-from flask_jwt_extended import jwt_required, unset_jwt_cookies, current_user
-from models.user_model import User
-from utils.response_with_tokens import create_response_all_tokens
-from parsers.authentication import sigin_in_parser
-from types.request import Request
+from flask_jwt_extended import unset_jwt_cookies
+from ..utils.response_with_tokens import create_response_all_tokens
+from ..parsers.authentication import sigin_in_parser
+
+from ..repositories.entity import IUserRepository
+
+from ..types.request import Request
+from ..types.response import Response
 import logging
 
-
-#Authentication Blueprint
-api = Namespace("auth", path="/auth")
-
-@api.route("/signin")
-class Signin(Resource):
+class AuthenticationController:
 
     logger=logging.getLogger("endpoint_logger")
 
-    @api.expect(sigin_in_parser)
-    @api.header("X-CSRFToken", "A valid csrf token.")
-    @api.doc(security=None)
-    def post(self):
+    def __init__(self,
+                user_repository:IUserRepository
+                ):
+        self.user_repository = user_repository
+
+
+    def login(self, request:Request) -> Response:
         self.logger.info("Starting signin route.")
 
         args = sigin_in_parser.parse_args(strict=True)
         self.logger.info("User authentication.")
 
-        user = User.authenticate(email=args.get("email"), password=args.get("password"))
+        user = self.user_repository.authenticate(args.get("email"), args.get("password"))
         if user is None:
             self.logger.info("Sending response with status 400. Reason: Invalid request arguments.")
-
             return {"message":"Invalid email or password."}, 400
     
         try: 
@@ -39,15 +38,8 @@ class Signin(Resource):
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
             return {"message": "Internal server error."}, 500
 
-
-@api.route("/logout")
-class Signout(Resource):
-
-    logger=logging.getLogger("endpoint_logger")
-
-    @api.header("X-CSRFToken", "A valid csrf token.")
-    @api.doc(security=None)
-    def post(self):
+    
+    def logout(self, request:Request) -> Response:
         self.logger.info("Starting signout route.")
 
         response = make_response()
@@ -58,22 +50,14 @@ class Signout(Resource):
         return response
     
 
-@api.route("/refresh")
-class RefreshToken(Resource):
-
-    logger=logging.getLogger("endpoint_logger")
-
-    @jwt_required(locations=["cookies"], refresh=True)
-    @api.header("X-CSRFToken", "A valid csrf token.")
-    @api.doc(security="refreshJWT")
-    def post(self):
+    def refresh_jwt(self, request:Request) -> Response:
         self.logger.info("Starting refresh token route.")
 
         response = make_response()
         response.status_code = 200
 
         self.logger.info("Refreshing token.")
-        access_token = create_access_token(identity=str(current_user.id))
+        access_token = create_access_token(identity=str(request.user.id))
         self.logger.info("Set access token cookie.")
         set_access_cookies(response, access_token)
 

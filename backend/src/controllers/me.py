@@ -1,8 +1,4 @@
-from flask_restx import Resource
-from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import SQLAlchemyError
-from ..models.user_model import UserTypes
-from ..db import db
 from ..utils.filter_courses import filter_courses
 from ..utils.search_course_filters import add_user_is_current_filter, add_name_filter, add_price_filter, add_language_filter
 from ..parsers.courses import CourseArgsBaseParser
@@ -10,15 +6,21 @@ from ..parsers.user import UserConfigurationParser
 
 from ..types.request import Request
 from ..types.response import Response
-from ..repositories import IRepository
-import logging
+from ..repositories.entity import IUserRepository, ICourseyRepository
+from ..services.persistence import PersistenceService
 
+import logging
 
 class MeController:
 
     logger=logging.getLogger("endpoint_logger")
 
-    def __init__(self, user_repository:IRepository, course_repository:IRepository):
+    def __init__(self, 
+                persistence_service:PersistenceService, 
+                user_repository:IUserRepository, 
+                course_repository:ICourseyRepository
+                ):
+        self.persistence_service=persistence_service
         self.user_repository = user_repository
         self.course_repository = course_repository
 
@@ -42,7 +44,6 @@ class MeController:
             return {"message": "You need to send exactly one attribute."}, 400
 
         try:
-            self.user_repository.connect()
             self.user_repository.update(request.user, **args_with_value)
             self.logger.info("Sending response with status 200. The attribute was changed successful.")
             return {"message": "The attribute was changed successful."}, 200
@@ -93,7 +94,6 @@ class MeController:
         self.logger.info("Starting current user courses add route.")
         course = None
         try:
-            self.course_repository.connect()
             course = self.course_repository.get(id)
         except Exception as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
@@ -107,7 +107,7 @@ class MeController:
         try:
             request.user.courses.add(course)
             self.logger.info("Adding course to current user courses.")
-            db.session.commit()
+            self.persistence_service.save()
             self.logger.info("Sending response with status 200. Course added succesful.")
             return {"message":"User subscribed successful."}, 200
         except Exception as error:
@@ -118,7 +118,6 @@ class MeController:
     def remove_me_course(self, request:Request, id:int) -> Response:
         course = None
         try: 
-            self.course_repository.connect()
             self.logger.info("Searching course by id.")
             course = self.course_repository.get(id)
         except Exception as error:
@@ -138,7 +137,7 @@ class MeController:
         try:
             self.logger.info("Removing course from current user courses.")
             request.user.courses.remove(course)
-            db.session.commit()
+            self.persistence_service.save()
             self.logger.info("Sending response with status 200. Course removed succesful.")
             return {"message":"User unsubscribed sucessful."}, 200
         except Exception as error:

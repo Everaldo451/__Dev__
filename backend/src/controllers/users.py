@@ -3,9 +3,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from ..models.user_model import UserTypes
 from ..utils.response_with_tokens import create_response_all_tokens
 from ..parsers.authentication import RegisterParser
+
 from ..types.request import Request
 from ..types.response import Response
-from ..repositories import IRepository
+from ..repositories.entity import IUserRepository
+from ..services.persistence import PersistenceService
 
 import logging
 
@@ -13,23 +15,25 @@ class UserController:
 
     logger=logging.getLogger("endpoint_logger")
 
-    def __init__(self, user_repository:IRepository):
+    def __init__(self, 
+                persistence_service:PersistenceService, 
+                user_repository:IUserRepository
+                ):
+        self.persistence_service=persistence_service
         self.user_repository=user_repository
 
 
     def get_all_users(self, request:Request) -> Response:
-        self.user_repository.connect()
-        return self.user_repository.get_all(), 200
+        return self.user_repository.list(), 200
     
 
     def create_user(self, request:Request) -> Response:
         self.logger.info("Starting user register route.")
         args = RegisterParser.parse_args()
-        self.user_repository.connect()
 
         try:
             self.logger.info("Verifying if user with unique email exists.")
-            if self.user_repository.filter_by(email=args.get("email")):
+            if self.user_repository.filter(email=args.get("email")):
                 return {"message": "Current email is already registered."}, 400
         except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
@@ -71,8 +75,6 @@ class UserController:
         self.logger.info("Starting get user by id route.")
         user=None
         try: 
-            self.user_repository.connect()
-            self.logger.info("Searching user by id.")
             user = self.user_repository.get(id)
         except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
@@ -90,7 +92,6 @@ class UserController:
         self.logger.info("Starting delete user by id route.")
         user=None
         try:
-            self.user_repository.connect()
             user = self.user_repository.get(id)
         except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")

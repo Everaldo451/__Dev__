@@ -2,14 +2,17 @@ from flask import request as flask_request
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
 from ..models.user_model import UserTypes
-from ..repositories.user_repository import UserRepository
+
 from ..decorators.verify_permission import verify_user_permissions
 from ..api import user_serializer
 from ..parsers.authentication import RegisterParser
 from ..controllers.users import UserController
+
+from ..repositories.sqlalchemy.user_repository import UserRepository
+from ..services.persistence.db_service import SQLAlchemyService
 from ..adapters.request_adapter import RequestAdapter
 
-user_controller=UserController(UserRepository())
+user_controller=UserController(SQLAlchemyService() ,UserRepository())
 api = Namespace("users", path="/users")
 
 @api.route("")

@@ -4,22 +4,25 @@ from ..models.course_model import Languages
 from ..utils.filter_courses import filter_courses
 from ..utils.search_course_filters import add_name_filter, add_price_filter, add_language_filter, add_user_is_not_current_filter
 from ..parsers.courses import CreateCourseParser, CourseArgsParser
+
 from ..types.request import Request
 from ..types.response import Response
-from ..repositories import IRepository
+from ..repositories.entity import ICourseyRepository
+from ..services.persistence import PersistenceService
 
-from ..db import db
 import magic
 import io
 
 import logging
 
-#Course Blueprint
-
 class CourseController:
     logger=logging.getLogger("endpoint_logger")
 
-    def __init__(self, course_repository:IRepository):
+    def __init__(self,
+                persistence_service: PersistenceService,
+                course_repository:ICourseyRepository
+                ):
+        self.persistence_service=persistence_service
         self.course_repository=course_repository
 
 
@@ -29,8 +32,7 @@ class CourseController:
         course = None
 
         try:
-            self.course_repository.connect()
-            course = self.course_repository.filter_by(name=args.get("name"))
+            course = self.course_repository.filter(name=args.get("name"))
         except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason: {error}")
             return {"message":"Internal server Error"}, 500
@@ -75,7 +77,7 @@ class CourseController:
             response, status = {"message": "Invalid user"}, 500 
 
         if error is not None:
-            db.session.rollback()
+            self.persistence_service.undo()
 
         buffer.close()
         self.logger.info("Sending the response")
@@ -90,7 +92,6 @@ class CourseController:
         self.logger.info("Starting course delete route.")
         course=None
         try:
-            self.course_repository.connect()
             course = self.course_repository.get(id)
         except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
@@ -101,7 +102,6 @@ class CourseController:
             return {"message":"The current course don't exists."}, 404
         
         try:
-            self.course_repository.connect()
             self.course_repository.delete(course)
             self.logger.info("Returning response with status 200. Course deleted succesful.")
             return {"message":"Course deleted succesful."}, 200

@@ -3,18 +3,20 @@ from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
 
 from ..models.user_model import UserTypes
-from ..repositories.user_repository import UserRepository
-from ..repositories.course_repository import CourseRepository
 from ..decorators.verify_permission import verify_user_permissions
 from ..parsers.courses import CourseArgsBaseParser
 from ..parsers.user import UserConfigurationParser
 from ..controllers.me import MeController
+
+from ..repositories.sqlalchemy.user_repository import UserRepository
+from ..repositories.sqlalchemy.course_repository import CourseRepository
+from ..services.persistence.db_service import SQLAlchemyService
 from ..adapters.request_adapter import RequestAdapter
 
 from ..api import courses_response, user_serializer
 import logging
 
-me_controller = MeController(UserRepository(), CourseRepository())
+me_controller = MeController(SQLAlchemyService() ,UserRepository(), CourseRepository())
 api = Namespace("me", path="/me")
 
 @api.route("")

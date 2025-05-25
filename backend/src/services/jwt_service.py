@@ -1,7 +1,6 @@
 from flask_jwt_extended import JWTManager
-from ..repositories.user_repository import UserRepository
+from ..repositories.sqlalchemy.user_repository import UserRepository
 from ..models.user_model import User
-from ..db import db
 
 jwt = JWTManager()
 
@@ -14,7 +13,6 @@ def user_loader(jwt_header:dict, jwt_payload:dict) -> User|None:
     id = int(sub)
     try:
         user_repository=UserRepository()
-        user_repository.connect()
         return user_repository.get(id)
     except Exception as error: 
         return None

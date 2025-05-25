@@ -1,11 +1,14 @@
 from flask import request as flask_request
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, current_user
-from ..repositories.course_repository import CourseRepository
+
 from ..models.user_model import UserTypes
 from ..decorators.verify_permission import verify_user_permissions
 from ..parsers.courses import CreateCourseParser, CourseArgsParser
 from ..controllers.courses import CourseController
+
+from ..repositories.sqlalchemy.course_repository import CourseRepository
+from ..services.persistence.db_service import SQLAlchemyService
 from ..adapters.request_adapter import RequestAdapter
 
 from ..api import course_reponse, courses_response
@@ -14,8 +17,7 @@ import logging
 
 
 
-course_controller = CourseController(CourseRepository())
-#Course Blueprint
+course_controller = CourseController(SQLAlchemyService(), CourseRepository())
 api = Namespace("courses", path="/courses")
 
 @api.route("")
