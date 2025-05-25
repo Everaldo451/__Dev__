@@ -13,7 +13,9 @@ def user_loader(jwt_header:dict, jwt_payload:dict) -> User|None:
     
     id = int(sub)
     try:
-        return UserRepository(db.session).get(id)
+        user_repository=UserRepository()
+        user_repository.connect()
+        return user_repository.get(id)
     except Exception as error: 
         return None
 

@@ -1,6 +1,6 @@
-from .model_repository import ModelRepository
+from . import SQLAlchemyRepository
 from ..models.user_model import User
 
-class UserRepository(ModelRepository[User]):
+class UserRepository(SQLAlchemyRepository[User]):
     pass
         

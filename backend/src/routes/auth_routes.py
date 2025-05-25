@@ -2,12 +2,10 @@ from flask import make_response
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import create_access_token, set_access_cookies
 from flask_jwt_extended import jwt_required, unset_jwt_cookies, current_user
-from models.user_model import User
-from utils.response_with_tokens import create_response_all_tokens
-from parsers.authentication import sigin_in_parser
-from types.request import Request
+from ..models.user_model import User
+from ..utils.response_with_tokens import create_response_all_tokens
+from ..parsers.authentication import sigin_in_parser
 import logging
-
 
 #Authentication Blueprint
 api = Namespace("auth", path="/auth")

@@ -1,78 +1,65 @@
-from flask_restx import Namespace, Resource
-from flask_jwt_extended import jwt_required, current_user
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError
+
 from ..models.course_model import Languages
-from ..repositories.course_repository import CourseRepository
-from ..models.user_model import UserTypes
 from ..utils.filter_courses import filter_courses
 from ..utils.search_course_filters import add_name_filter, add_price_filter, add_language_filter, add_user_is_not_current_filter
-from ..decorators.verify_permission import verify_user_permissions
 from ..parsers.courses import CreateCourseParser, CourseArgsParser
-from ..api import course_reponse, courses_response
+from ..types.request import Request
+from ..types.response import Response
+from ..repositories import IRepository
+
 from ..db import db
-import logging
 import magic
 import io
 
+import logging
+
 #Course Blueprint
-api = Namespace("courses", path="/courses")
 
-@api.route("")
-class CourseList(Resource):
-
+class CourseController:
     logger=logging.getLogger("endpoint_logger")
 
-    @jwt_required(locations='cookies')
-    @verify_user_permissions(
-        [UserTypes.ADMIN, UserTypes.TEACHER], 
-        "Students cannot create a course."
-    )
-    @api.marshal_with(course_reponse)
-    @api.expect(CreateCourseParser)
-    @api.header("X-CSRFToken", "A valid csrf token.")
-    @api.doc(security="accessJWT")
-    def post(self):
+    def __init__(self, course_repository:IRepository):
+        self.course_repository=course_repository
+
+
+    def create_course(self, request:Request) -> Response:
         self.logger.info("Starting create course route.")
         args = CreateCourseParser.parse_args()
         course = None
-        repo = CourseRepository(db.session)
 
-        self.logger.info("Verifying if the couse exists.")
         try:
-            course = repo.filter_by(name=args.get("name"))
+            self.course_repository.connect()
+            course = self.course_repository.filter_by(name=args.get("name"))
         except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason: {error}")
             return {"message":"Internal server Error"}, 500
     
         if course is not None:
-            self.logger.info("Sending response with status 400. Course exists.")
-            return {"message":"Course with the current name already exists."}, 400
+            self.logger.info("Sending response with status 409. Course exists.")
+            return {"message":"Course with the current name already exists."}, 409
     
-        self.logger.info("Starting course creation.")
         error = None
         buffer = io.BytesIO()
         try:
             self.logger.info("Processing the image file.")
 
-            f = args.get("image")
-            f.save(buffer)
+            file = args.get("image")
+            file.save(buffer)
             buffer.seek(0)
             image = buffer.getvalue()
             mime = magic.Magic(True)
             mime_type = mime.from_buffer(image)
 
-            self.logger.info("Verifying if language is valid.")
             lang = Languages(args.get("language"))
-
-            self.logger.info("Creating course instance.")
-            newCourse = repo.create(
+            newCourse = self.course_repository.create(
                 name=args.get("name"), 
                 language=lang, 
                 description=args.get("description"),
                 price=args.get("price"),
                 image=image,
                 image_mime_type=mime_type,
-                users = set([current_user])
+                users = set([request.user])
             )
 
             self.logger.info("Response with status 200.")
@@ -93,62 +80,42 @@ class CourseList(Resource):
         buffer.close()
         self.logger.info("Sending the response")
         return response, status
-
-
-@api.route("/<int:id>")
-@api.doc(params={"id": "A course id."})
-class Courses(Resource):
-
-    logger=logging.getLogger("endpoint_logger")
     
-    @api.doc(security="accessJWT")
-    def get(self, id):pass
 
-    @verify_user_permissions([UserTypes.TEACHER, UserTypes.ADMIN])
-    @jwt_required(locations='cookies')
-    @api.header("X-CSRFToken", "A valid csrf token.")
-    @api.doc(security="accessJWT")
-    def delete(self, id):
+    def get_course(self, request:Request, id:int) -> Response:
+        pass
+
+    
+    def delete_course(self, request:Request, id:int) -> Response:
         self.logger.info("Starting course delete route.")
         course=None
-        repo = CourseRepository(db.session)
         try:
-            self.logger.info("Searching course by id.")
-            course = repo.get(id)
+            self.course_repository.connect()
+            course = self.course_repository.get(id)
         except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
             return {"message":"Internal server error"}, 500
     
-        self.logger.info("Verifying course exists.")
         if course is None:
             self.logger.info("Sending response with status 404. Course don't exists.")
             return {"message":"The current course don't exists."}, 404
         
         try:
-            self.logger.info("Delete the course.")
-            repo.delete(course)
-        except SQLAlchemyError() as error:
+            self.course_repository.connect()
+            self.course_repository.delete(course)
+            self.logger.info("Returning response with status 200. Course deleted succesful.")
+            return {"message":"Course deleted succesful."}, 200
+        except SQLAlchemyError as error:
             self.logger.error(f"Internal server error with status 500. Reason:\n\n {error}")
             return {"message":"Internal server error"}, 500
         
-        self.logger.info("Returning response with status 200. Course deleted succesful.")
-        return {"message":"Course deleted succesful."}, 200
-
-
-@api.route("/search")
-class Search(Resource):
-
-    logger=logging.getLogger("endpoint_logger")
     
-    @jwt_required(locations="cookies", optional=True)
-    @api.marshal_with(courses_response)
-    @api.expect(CourseArgsParser)
-    def get(self):
+    def custom_course_search(self, request:Request) -> Response:
         self.logger.info("Start course search")   
         args = CourseArgsParser.parse_args()
         filters = []
 
-        add_user_is_not_current_filter(current_user, filters)
+        add_user_is_not_current_filter(request.user, filters)
         add_name_filter(args.get("name"), filters)
         result = add_price_filter(args.get("price"), filters)
         if result.get("error"):

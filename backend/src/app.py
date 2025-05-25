@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 from .services.jwt_service import jwt
-from .initializers.controllers import initialize_api_controllers
+from .initializers.routers import initialize_api_routers
 from .middlewares.after.request_log import request_log
 import logging
 from .api import api
@@ -41,7 +41,7 @@ def create_app():
     cors.init_app(app)
     jwt.init_app(app)
 
-    initialize_api_controllers(api)
+    initialize_api_routers(api)
 
     app.after_request(request_log)
 

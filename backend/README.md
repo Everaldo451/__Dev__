@@ -15,6 +15,7 @@ venv\Scripts\activate
 
 ```bash
 pip install -r requirements.txt
+pip install python-magic-bin
 ```
 
 ### Linux
@@ -36,6 +37,7 @@ $ source venv/bin/activate
 
 ```bash
 $ pip install -r requirements.txt
+$ pip install python-magic
 ```
 
 ## Configuring

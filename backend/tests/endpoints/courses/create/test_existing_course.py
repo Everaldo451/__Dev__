@@ -16,4 +16,4 @@ def test_existing_course(client:FlaskClient, teacher_data, create_course, course
     assert json
     message = json["message"]
     assert message == "Course with the current name already exists."
-    assert response.status_code == 400
+    assert response.status_code == 409
