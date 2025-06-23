@@ -1,5 +1,4 @@
 from flask import Flask
-from flask.testing import FlaskClient
 import pytest
 import sys
 import os
@@ -7,17 +6,20 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 print(os.path.dirname(os.path.abspath(__file__)))
 
-from src.app import create_app
-from src.db import db
+from mocks.redis import RedisMock
+
 from src.models.user_model import User, UserTypes
 from src.models.course_model import Course, Languages
 
 @pytest.fixture
-def app():
+def app(mocker):
+    mocker.patch('redis.Redis', RedisMock())
+    from src.app import create_app
     return create_app()
 
 @pytest.fixture
 def db_conn(app:Flask):
+    from src.db import db
     with app.app_context():
         db.create_all()
         yield db

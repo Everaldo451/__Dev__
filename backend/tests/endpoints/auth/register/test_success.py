@@ -1,5 +1,4 @@
 from flask.testing import FlaskClient
-from flask_jwt_extended.config import config
 
 def test_student_success(client:FlaskClient, student_data):
 
