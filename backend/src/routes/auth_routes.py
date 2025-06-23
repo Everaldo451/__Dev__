@@ -8,9 +8,13 @@ from ..controllers.auth import AuthenticationController
 from ..repositories.sqlalchemy.user_repository import UserRepository
 from ..adapters.request_adapter import RequestAdapter
 
+from ..redis import redis_repository
 import logging
 
-auth_controller = AuthenticationController(UserRepository())
+auth_controller = AuthenticationController(
+    UserRepository(), 
+    redis_repository
+    )
 api = Namespace("auth", path="/auth")
 
 @api.route("/signin")

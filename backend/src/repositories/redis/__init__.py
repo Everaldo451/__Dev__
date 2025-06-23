@@ -3,7 +3,7 @@ from redis import Redis
 
 class RedisRepository(IRepository):
 
-    def __init__(self, redis_instance:Redis):
+    def __init__(self, redis_instance:Redis|None):
         self.redis = redis_instance
 
     def connect(self):

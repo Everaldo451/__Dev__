@@ -13,7 +13,7 @@ from src.models.course_model import Course, Languages
 
 @pytest.fixture
 def app(mocker):
-    mocker.patch('redis.Redis', RedisMock())
+    mocker.patch('redis.StrictRedis', RedisMock)
     from src.app import create_app
     return create_app()
 

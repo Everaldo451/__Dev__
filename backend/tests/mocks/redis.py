@@ -1,6 +1,6 @@
 class RedisMock:
 
-    def __init__(self):
+    def __init__(self, host, port, db, decode_responses):
         self.data = {}
 
     def get(self, name):

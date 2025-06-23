@@ -1,0 +1,5 @@
+#root > footer {
+    display: flex;
+    background-color: black;
+    margin-top: auto;
+}

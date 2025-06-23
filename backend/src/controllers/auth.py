@@ -1,10 +1,11 @@
 from flask import make_response
 from flask_jwt_extended import create_access_token, set_access_cookies
-from flask_jwt_extended import unset_jwt_cookies
+from flask_jwt_extended import unset_jwt_cookies, get_jwt
 from ..utils.response_with_tokens import create_response_all_tokens
 from ..parsers.authentication import sigin_in_parser
 
 from ..repositories.entity import IUserRepository
+from ..repositories import IRepository
 
 from ..types.request import Request
 from ..types.response import Response
@@ -15,9 +16,11 @@ class AuthenticationController:
     logger=logging.getLogger("endpoint_logger")
 
     def __init__(self,
-                user_repository:IUserRepository
+                user_repository:IUserRepository,
+                token_black_list_repository:IRepository
                 ):
         self.user_repository = user_repository
+        self.token_black_list_repository = token_black_list_repository
 
 
     def login(self, request:Request) -> Response:
@@ -45,6 +48,9 @@ class AuthenticationController:
         response = make_response()
         response.status_code = 204
         self.logger.info("Unset JWT cookies.")
+        token = get_jwt()
+        token_id = token.get("jti")
+        self.token_black_list_repository.create(id=int(token_id), value="", ex=1000)
         unset_jwt_cookies(response)
         self.logger.info("Sending response with status 204.")
         return response

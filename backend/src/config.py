@@ -58,6 +58,9 @@ class Config(object):
     JWT_ACCESS_COOKIE_NAME = "access_token"
     JWT_REFRESH_COOKIE_NAME = "refresh_token"
 
+    REDIS_DOMAIN = os.getenv("REDIS_DOMAIN")
+    REDIS_PORT = os.getenv("REDIS_PORT")
+
 class ProductionConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI", f"sqlite:///{main_dir}/production.db")
