@@ -50,7 +50,7 @@ class AuthenticationController:
         self.logger.info("Unset JWT cookies.")
         token = get_jwt()
         token_id = token.get("jti")
-        self.token_black_list_repository.create(id=int(token_id), value="", ex=1000)
+        self.token_black_list_repository.create(id=token_id, value="", ex=1000)
         unset_jwt_cookies(response)
         self.logger.info("Sending response with status 204.")
         return response

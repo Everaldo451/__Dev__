@@ -35,6 +35,7 @@ class Signout(Resource):
 
     logger=logging.getLogger("endpoint_logger")
 
+    @jwt_required(locations=["cookies"])
     @api.header("X-CSRFToken", "A valid csrf token.")
     @api.doc(security=None)
     def post(self):
