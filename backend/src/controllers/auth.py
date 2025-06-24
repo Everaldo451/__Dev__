@@ -1,6 +1,7 @@
 from flask import make_response
 from flask_jwt_extended import create_access_token, set_access_cookies
 from flask_jwt_extended import unset_jwt_cookies, get_jwt
+from flask_jwt_extended.config import config
 from ..utils.response_with_tokens import create_response_all_tokens
 from ..parsers.authentication import sigin_in_parser
 
@@ -50,7 +51,11 @@ class AuthenticationController:
         self.logger.info("Unset JWT cookies.")
         token = get_jwt()
         token_id = token.get("jti")
-        self.token_black_list_repository.create(id=token_id, value="", ex=1000)
+        self.token_black_list_repository.create(
+            id=token_id, 
+            value="",
+            ex=int(config.access_expires.total_seconds())
+        )
         unset_jwt_cookies(response)
         self.logger.info("Sending response with status 204.")
         return response
